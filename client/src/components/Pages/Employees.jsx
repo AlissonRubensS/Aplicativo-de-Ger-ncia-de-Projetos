@@ -1,7 +1,7 @@
-import NavBar from "../NavBar";
-import SearchBar from "./SearchBar";
-import EmployeeFramework from "./EmployeeFramework";
-import RegisterEmployeeModal from "./RegisterEmployeeModal";
+import NavBar from "../Ui/NavBar"
+import SearchBar from "../Ui/SearchBar";
+import EmployeeFramework from "../Ui/EmployeeFramework";
+import RegisterEmployeeModal from "../Ui/RegisterEmployeeModal";
 
 import { useState, useEffect } from "react";
 import axios from "axios";

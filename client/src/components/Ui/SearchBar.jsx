@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { CiSearch } from "react-icons/ci";
 import { IoFilterOutline } from "react-icons/io5";
 import { IoAddCircleSharp } from "react-icons/io5";

@@ -1,8 +1,4 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-
 import { useState } from "react";
-import axios from "axios";
 
 // import icones
 import { FaUserCircle } from "react-icons/fa";
@@ -34,12 +30,12 @@ export default function EmployeeFramework(props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const [name, setName] = useState(employee_name);
-  const [office, setOffice] = useState(employee_office);
-  const [pay, setPay] = useState(employee_pay);
-  const [absences, setAbsences] = useState(employee_absences);
-  const [overtime, setOvertime] = useState(employee_overtime);
-  const [performance, setPerformance] = useState(employee_performance);
+  const name = employee_name;
+  const office = employee_office;
+  const pay = employee_pay;
+  const absences = employee_absences;
+  const overtime = employee_overtime;
+  const performance = employee_performance;
 
   const deleteEmployee = async () => {
     //implementar

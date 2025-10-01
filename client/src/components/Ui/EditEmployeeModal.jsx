@@ -1,27 +1,20 @@
-/* eslint-disable react/prop-types */
-
-import SelectMenu from "../SelectMenu";
 import { IoMdClose } from "react-icons/io";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import SelectMenu from "./SelectMenu";
 import axios from "axios";
-import { useEffect } from "react";
 
-export default function RegisterEmployeeModal(props) {
-  const { visible, setVisible, onEmployeeChanged } = props;
+export default function EditEmployeeModal(props) {
+  const { visible, setVisible, user_id } = props;
+  const [employee_name, setEmployeeName] = useState("");
+  const [job_title, setJobTitle] = useState("");
   const [departments, setDepartments] = useState([]);
   const [selectedOption, setSelectedOption] = useState([]);
-  const [employee_name, setEmployeeName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [job_title, setJobTitle] = useState("");
   const [pay, setPay] = useState("");
 
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3001/department"
-        );
+        const response = await axios.get("http://localhost:3001/departments");
         const deptNames = response.data.map((dept) => dept.department_name);
         setDepartments(deptNames);
       } catch (error) {
@@ -29,45 +22,43 @@ export default function RegisterEmployeeModal(props) {
       }
     };
 
+    const search_employee = async (user_id) => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/employees/${user_id}`,
+          {
+            params: { user_id },
+          }
+        );
+        const user = response.data;
+        setEmployeeName(user.user_name);
+        setJobTitle(user.job_title);
+        setPay(user.salary);
+      } catch (error) {
+        console.error("Erro ao encontrar o funcionáio:", error);
+      }
+    };
+
     fetchDepartments();
-  }, []);
+    search_employee(user_id);
+  }, [user_id]);
 
-  const clearStates = () => {
-    setVisible(false);
-    setSelectedOption([]);
-    setEmployeeName("")
-    setEmail("");
-    setPassword("");
-    setJobTitle("")
-    setPay("");
-    onEmployeeChanged();
-  }
-
-  const registerEmployee = async () => {
-    console.log(email, employee_name, password, pay, job_title)
+  const handleUptadeEmployee = async (user_id) => {
     try {
-      const response = await axios.post(
-        "http://localhost:3001/employee",
-        {
-          email: email.trim(), 
-          user_name: employee_name.trim(),
-          pass: password.trim(),
-          access_type: 3, // default para funcionários
+      await axios.put(`http://localhost:3001/employees/${user_id}`, {
+        params: {
+          fk_user_id: user_id,
+          user_name: employee_name,
+          job_title: job_title,
           salary: pay,
-          job_title: job_title.trim(),
-          fk_department_id: 1, // departamento fixo
-        }
-      );
-
-      console.log("Resposta do servidor:", response.data);
+          fk_department_id: 1,
+        },
+      });
+      alert("Funcionário atualizado com sucesso!");
+      setVisible(false);
     } catch (error) {
-      console.error(
-        "Erro ao cadastrar funcionário:",
-        error.response?.data || error.message
-      );
+      console.log("erro ao atualizar dados", error);
     }
-
-    onEmployeeChanged();
   };
 
   return (
@@ -79,12 +70,12 @@ export default function RegisterEmployeeModal(props) {
               className="flex flex-col space-y-8"
               onSubmit={(e) => {
                 e.preventDefault();
-                registerEmployee();
-                clearStates();
+                handleUptadeEmployee(user_id);
+                setVisible(false);
               }}
             >
               <div className="flex flex-row items-center justify-between">
-                <p className="text-lg font-semibold">Cadastrar Funcionário</p>
+                <p className="text-lg font-semibold">Editar Funcinário</p>
                 <button
                   onClick={() => {
                     setVisible(false);
@@ -107,36 +98,6 @@ export default function RegisterEmployeeModal(props) {
                   onChange={(e) => setEmployeeName(e.target.value)}
                   required
                 />
-              </div>
-              <div className="flex flex-row items-center justify-between space-x-8">
-                <div className="flex flex-col w-full">
-                  <label name="email" className="text-gray-700">
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    className="p-2 rounded"
-                    placeholder="Digite o email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="flex flex-col w-full">
-                  <label htmlFor="pass" className="text-gray-700">
-                    Senha *
-                  </label>
-                  <input
-                    type="password"
-                    name="pass"
-                    className="p-2 rounded"
-                    placeholder="Digite a senha"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
               </div>
               <div className="flex flex-row items-center justify-between space-x-8">
                 <div className="flex flex-col w-full">
@@ -166,7 +127,37 @@ export default function RegisterEmployeeModal(props) {
                   />
                 </div>
               </div>
-              <div className="flex flex-col w-full">
+              <div className="flex flex-row items-center justify-between space-x-8">
+                <div className="flex flex-col w-full">
+                  <label name="job-title" className="text-gray-700">
+                    Cargo *
+                  </label>
+                  <input
+                    type="text"
+                    name="job-title"
+                    className="p-2 rounded"
+                    placeholder="Digite o cargo"
+                    value={job_title}
+                    onChange={(e) => setJobTitle(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="flex flex-col w-full">
+                  <label name="job-title" className="text-gray-700">
+                    Cargo *
+                  </label>
+                  <input
+                    type="text"
+                    name="job-title"
+                    className="p-2 rounded"
+                    placeholder="Digite o cargo"
+                    value={job_title}
+                    onChange={(e) => setJobTitle(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col space-y-4">
                 <label htmlFor="salary" className="text-gray-700">
                   Salário *
                 </label>
@@ -174,26 +165,25 @@ export default function RegisterEmployeeModal(props) {
                   type="text"
                   name="salary"
                   className="p-2 rounded"
-                  placeholder="Digite o salário"
+                  placeholder="Digite o nome completo"
                   value={pay}
                   onChange={(e) => setPay(e.target.value)}
                   required
                 />
               </div>
-              <div className="flex flex-row justify-end items-center space-x-4">
+              <div className="flex flex-row justify-end items-center gap-4">
                 <button
-                  className="p-4 items-center justify-center bg-slate-50 hover:bg-gray-300 rounded"
-                  onClick={() => {
-                    setVisible(false);
-                  }}
+                  type="button"
+                  className="p-4 bg-slate-50 hover:bg-gray-300 rounded"
+                  onClick={() => setVisible(false)}
                 >
                   Cancelar
                 </button>
                 <button
-                  className="items-center bg-green-600 text-white p-4 rounded hover:bg-green-700"
-                  type="subimit"
+                  type="submit"
+                  className="p-4 bg-green-600 text-white rounded hover:bg-green-700"
                 >
-                  Cadastrar Funcionário
+                  Editar Funcionário
                 </button>
               </div>
             </form>

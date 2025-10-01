@@ -1,4 +1,4 @@
-import NavBar from "../NavBar";
+import NavBar from "../Ui/NavBar";
 import { FaCalendar } from "react-icons/fa";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { FaLongArrowAltLeft, FaLongArrowAltRight } from "react-icons/fa";
@@ -9,8 +9,8 @@ import { TfiReload } from "react-icons/tfi";
 import { FiUser } from "react-icons/fi";
 import { useState } from "react";
 
-import SelectMenu from "../SelectMenu";
-import AddComponent from "./AddComponent";
+import SelectMenu from "../Ui/SelectMenu";
+import AddComponent from "../Ui/AddComponent";
 
 import axios from "axios";
 import { useEffect } from "react";
@@ -65,15 +65,13 @@ export default function Production() {
   const [selectedProj, setSelectedProj] = useState([]);
   // select employees
   const [employees, setEmployees] = useState([]);
-  const [selectedEmp, setSelectedEmp] = useState([])
+  const [selectedEmp, setSelectedEmp] = useState([]);
 
   useEffect(() => {
     // lista todos os departamentos
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3001/departments"
-        );
+        const response = await axios.get("http://localhost:3001/departments");
         const deptNames = response.data.map((dept) => dept.department_name);
         setDepartments(deptNames);
       } catch (error) {
@@ -116,17 +114,13 @@ export default function Production() {
     // lista todos os funcionários
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3001/employee", 
-        )
+        const response = await axios.get("http://localhost:3001/employee");
         const empNames = response.data.map((emp) => emp.user_name);
         setEmployees(empNames);
-      }catch (error){
-        console.error("Erro ao listar funcuinários", error)
+      } catch (error) {
+        console.error("Erro ao listar funcuinários", error);
       }
-    }
-
-    
+    };
 
     // roda todas as funções
     const run = async () => {

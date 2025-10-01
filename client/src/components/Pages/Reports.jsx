@@ -1,9 +1,9 @@
-import NavBar from "../NavBar";
-import SelectMenu from "../SelectMenu";
-import InfoCard from "./InfoCard";
-import CascadeTable from "./CascadeTable";
+import NavBar from "../Ui/NavBar";
+import CascadeTable from "../Ui/CascadeTable";
+import InfoCard from "../Ui/InfoCard";
+import SelectMenu from "../Ui/SelectMenu";
 
-function Projects() {
+export default function Reports() {
   const headersTableProjects = ["Projetos", "Valor"];
   const valuesTableProjects = {
     "Projeto 3": [
@@ -122,5 +122,3 @@ function Projects() {
     </>
   );
 }
-
-export default Projects;

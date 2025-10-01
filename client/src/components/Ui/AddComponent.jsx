@@ -1,6 +1,5 @@
-/* eslint-disable react/prop-types */
 import { IoMdClose } from "react-icons/io";
-import SelectMenu from "../SelectMenu";
+import SelectMenu from "./SelectMenu";
 
 function AddComponent({ props }) {
   const { isOpen, setOpen } = props;

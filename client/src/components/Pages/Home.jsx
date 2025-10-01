@@ -1,5 +1,5 @@
-import NavBar from '../NavBar.jsx';
-import DataPanel from './DataPanel.jsx';
+import NavBar from '../Ui/NavBar.jsx';
+import DataPanel from '../Ui/DataPanel.jsx';
 
 function Home() {
   localStorage.setItem("loginPermission", false);
