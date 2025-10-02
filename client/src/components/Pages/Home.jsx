@@ -3,6 +3,7 @@ import DataPanel from '../Ui/DataPanel.jsx';
 
 function Home() {
   localStorage.setItem("loginPermission", false);
+
   return (
     <div className="w-screen h-screen bg-slate-200 flex flex-col space-y-4 rounded-lg">
       <NavBar />

@@ -1,11 +1,13 @@
 import PropTypes from "prop-types";
 import { FaFilter } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
+import { selectedProjectContext } from "../Content/SeletedProject.jsx";
 
 function ProjectsList({ projects }) {
   const [filter, setFilter] = useState("Running");
   const [isExtend, setIsExtend] = useState(false);
-  const [currentProject, setCurrentProject] = useState(projects[0]);
+
+  const { currentProject, setCurrentProject } = useContext(selectedProjectContext);
 
   const projects_names = projects
     .filter((project) => {
@@ -13,7 +15,7 @@ function ProjectsList({ projects }) {
       return true; // sem filtro → mostra todos
     })
     .map((project, i) =>
-      currentProject.id === project.id ? (
+      currentProject && currentProject.id === project.id ? (
         <p className="text-blue-500" key={i}>
           {project.name}
         </p>
@@ -27,6 +29,16 @@ function ProjectsList({ projects }) {
         </button>
       )
     );
+
+  const setStyleAllButton = () =>
+    currentProject === null
+      ? "text-blue-500"
+      : "text-gray-400 hover:text-blue-400";
+
+  // Função para ver o valor da variavel.
+  useEffect(() => {
+    console.log("Projeto atual:", currentProject);
+  }, [currentProject]);
 
   return (
     <>
@@ -73,6 +85,12 @@ function ProjectsList({ projects }) {
             </label>
           </div>
         )}
+        <button
+          className={setStyleAllButton()}
+          onClick={() => setCurrentProject(null)}
+        >
+          Todos os Projetos
+        </button>
         {projects_names}
       </div>
     </>

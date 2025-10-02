@@ -1,4 +1,6 @@
-import { StrictMode } from "react";
+import { StrictMode, useState } from "react";
+import { selectedProjectContext } from "./components/Content/SeletedProject.jsx";
+
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
@@ -39,8 +41,15 @@ const router = createBrowserRouter([
   },
 ]);
 
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>
-);
+function Root() {
+  const [currentProject, setCurrentProject] = useState(null);
+  return (
+    <StrictMode>
+      <selectedProjectContext.Provider value={{ currentProject, setCurrentProject }}>
+        <RouterProvider router={router} />
+      </selectedProjectContext.Provider>
+    </StrictMode>
+  );
+}
+
+createRoot(document.getElementById("root")).render(<Root />);
