@@ -6,33 +6,33 @@ import Production from "./components/Pages/Production.jsx";
 import Projects from "./components/Pages/Projects.jsx";
 import Employees from "./components/Pages/Employees.jsx";
 import Reports from "./components/Pages/Reports.jsx";
-import App from "./App.jsx";
+import Login from "./components/Pages/Login.jsx";
 
 const loginPermission = sessionStorage.getItem("loginPermission");
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <Login />,
   },
   {
     path: "/home",
-    element: loginPermission ? <Home /> : <App />,
+    element: loginPermission ? <Home /> : <Login />,
   },
   {
     path: "/production",
-    element: loginPermission ? <Production /> : <App />,
+    element: loginPermission ? <Production /> : <Login />,
   },
   {
     path: "/employees",
-    element: loginPermission ? <Employees /> : <App />,
+    element: loginPermission ? <Employees /> : <Login />,
   },
   {
     path: "/reports",
-    element: loginPermission ? <Reports /> : <App />,
+    element: loginPermission ? <Reports /> : <Login />,
   },
   {
     path: "/projects",
-    element: loginPermission ? <Projects /> : <App />,
+    element: loginPermission ? <Projects /> : <Login />,
   },
 ]);
 
