@@ -12,7 +12,7 @@ function ProjectsList({ projects }) {
   const projects_names = projects
     .filter((project) => {
       if (isExtend) return project.status === filter;
-      return true; // sem filtro → mostra todos
+      return true;
     })
     .map((project, i) =>
       currentProject && currentProject.id === project.id ? (
@@ -99,11 +99,11 @@ function ProjectsList({ projects }) {
 
 ProjectsList.propTypes = {
   projects: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number,
-      name: PropTypes.string,
-      status: PropTypes.string,
-    })
+      PropTypes.shape({
+        id: PropTypes.number,
+        name: PropTypes.string,
+        status: PropTypes.string,
+      })
   ).isRequired,
 };
 

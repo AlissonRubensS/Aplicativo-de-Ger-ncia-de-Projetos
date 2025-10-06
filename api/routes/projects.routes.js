@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
   createProject,
-  listProjectById,
+  listProject,
   deleteProject,
   editProject,
 } from "../controllers/projects.controller.js";
@@ -9,7 +9,7 @@ import {
 const router = Router();
 
 router.post("/", createProject);
-router.get("/", listProjectById);
+router.get("/", listProject);
 router.put("/", editProject);
 router.delete("/", deleteProject);
 

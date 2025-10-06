@@ -49,7 +49,7 @@ export const createProject = async (req, res) => {
   }
 };
 
-export const listProjectById = async (req, res) => {
+export const listProject = async (req, res) => {
   try {
     const { user_id } = req.query;
     const response = await pool.query(
