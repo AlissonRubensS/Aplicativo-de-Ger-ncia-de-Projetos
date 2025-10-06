@@ -1,20 +1,22 @@
 import { useState } from "react";
 import { LoginService } from "../../../services/LoginService";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      const response = await LoginService(email, password);
-      alert("Login bem-sucedido:", response);
-      // Redirecionar ou atualizar o estado do aplicativo conforme necessário
-    } catch (error) {
-      alert("Falha no login. Verifique suas credenciais.");
-      console.error("Erro no login:", error);
-    }
+    const response = await LoginService(email, password);
+    if (response) {
+      sessionStorage.setItem("loginPermission", response);
+      navigate("/home");
+      window.location.reload();
+    }else{
+      alert("Login failed. Please check your credentials.");
+    } 
   };
 
   return (

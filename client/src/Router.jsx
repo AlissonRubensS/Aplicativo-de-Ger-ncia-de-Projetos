@@ -1,5 +1,4 @@
 import { createBrowserRouter } from "react-router-dom";
-import axios from "axios";
 
 // Importar as páginas
 import Home from "./components/Pages/Home.jsx";
@@ -10,10 +9,6 @@ import Reports from "./components/Pages/Reports.jsx";
 import Login from "./components/Pages/Login.jsx";
 
 const token = sessionStorage.getItem("loginPermission");
-if (token) {
-  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-}
-
 const router = createBrowserRouter([
   {
     path: "/",
