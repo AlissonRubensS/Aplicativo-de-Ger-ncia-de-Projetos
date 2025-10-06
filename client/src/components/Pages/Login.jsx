@@ -1,29 +1,19 @@
-import axios from "axios";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { LoginService } from "../../../services/LoginService";
 
 function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3001/login", {
-        email: username,
-        pass: password,
-      });
-      console.log("Resposta do servidor:", response.data);
-      if (response.data.token) {
-        sessionStorage.setItem("loginPermission", response.data.token);
-        navigate("/home");
-      } else {
-        alert("Login ou senha inválidos");
-      }
-      window.location.reload();
+      const response = await LoginService(email, password);
+      alert("Login bem-sucedido:", response);
+      // Redirecionar ou atualizar o estado do aplicativo conforme necessário
     } catch (error) {
-      console.error("Erro ao fazer login:", error);
+      alert("Falha no login. Verifique suas credenciais.");
+      console.error("Erro no login:", error);
     }
   };
 
@@ -39,14 +29,14 @@ function Login() {
         <h1 className="text-2xl font-bold mb-4">
           Sistema de Controle de Produção
         </h1>
-        <form className="flex flex-col min-w-80" onSubmit={handleSubmit}>
-          <label className="mb-2">Usuário:</label>
+        <form className="flex flex-col min-w-80" onSubmit={handleLogin}>
+          <label className="mb-2">Email:</label>
           <input
-            type="text"
-            placeholder="Usuário"
+            type="email"
+            placeholder="Email"
             className="border border-gray-300 rounded-md p-2 mb-4 shadow-sm"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <label className="mb-2">Senha:</label>
           <input

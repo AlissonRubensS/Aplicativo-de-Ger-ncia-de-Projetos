@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 // rotas
-app.use("/login", authRoutes)
+app.use("/auth", authRoutes)
 app.use("/components", componentsRoutes);
 app.use("/departments", departmentsRoutes);
 app.use("/employees", employeesRoutes);
