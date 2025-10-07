@@ -1,17 +1,15 @@
 import NavBar from "../Ui/NavBar";
 import ProjectsList from "../Ui/ProjectsList";
 import AddBudgetModal from "../Ui/AddBudgetModal";
-import { selectedProjectContext } from "@content/SeletedProject.jsx";
 
-import { listProjects } from "../../../services/ProjectService";
+import { selectedProjectContext } from "@content/SeletedProject.jsx";
+import { listProjects } from "@services/ProjectService";
 import { useEffect, useState, useContext } from "react";
 
 function Projects() {
   const [projects, setProjects] = useState([]); // inicial vazio
   const [isAddBudgetModalOpen, setAddBudgetModalOpen] = useState(false);
-  const { currentProject } = useContext(
-    selectedProjectContext
-  );
+  const { currentProject } = useContext(selectedProjectContext);
 
   useEffect(() => {
     async function fetchProjects() {
@@ -25,8 +23,16 @@ function Projects() {
     <>
       <div className="flex flex-col w-full h-screen overflow-y-auto">
         <NavBar />
+
+        <div className="flex flex-row justify-between items-center bg-white px-4 py-2 ml-4 mt-4 mr-4 rounded shadow">
+          <h1>Projetos</h1>
+          <button className="px-4 py-1 rounded bg-gray-100 hover:bg-gray-200">
+            Ir para Orçamento
+          </button>
+        </div>
+
         <div className="flex flex-row">
-          <div className="flex flex-col p-4 h-screen">
+          <div className="flex flex-col p-4 h-screen space-y-4">
             <ProjectsList
               projects={projects.map((project) => ({
                 id: project.project_id,
@@ -35,20 +41,26 @@ function Projects() {
               }))}
               setOpen={setAddBudgetModalOpen}
             />
+
+            <div className="bg-white rounded-sm shadow p-1  ">
+              <button>Concluir Projeto</button>
+            </div>
           </div>
-          <div className="flex flex-col p-4 w-full h-fit m-4 bg-white rounded shadow-sm">
-            <div>
-              <div>
-                {currentProject ? (
-                  <>
-                    <p>ID: {currentProject.id}</p>
-                    <p>Nome: {currentProject.name}</p>
-                    <p>Status: {currentProject.status}</p>
-                  </>
-                ) : (
-                  <p>Nenhum projeto selecionado</p>
-                )}
-              </div>
+          <div className="flex flex-col w-full h-full m-4 pb-4 space-y-8">
+            <div className="bg-white rounded shadow-sm p-4">
+              {currentProject ? (
+                <>
+                  <p>ID: {currentProject.id}</p>
+                  <p>Nome: {currentProject.name}</p>
+                  <p>Status: {currentProject.status}</p>
+                </>
+              ) : (
+                <p>Nenhum projeto selecionado</p>
+              )}
+            </div>
+
+            <div className="bg-white rounded shadow-sm p-4 h-full">
+              <h1>aqui vai ter a tabela</h1>
             </div>
           </div>
         </div>
