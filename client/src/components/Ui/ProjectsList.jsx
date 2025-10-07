@@ -39,7 +39,7 @@ function ProjectsList({ projects, setOpen }) {
 
   return (
     <>
-      <div className="flex flex-col bg-white shadow-sm rounded w-40 h-4/5 items-center space-y-2 p-1">
+      <div className="flex flex-col bg-white shadow-sm rounded w-40 h-full items-center space-y-2 p-1">
         {/* Botão de Adicionar Orçamento */}
         <button
           className="bg-green-300 hover:bg-green-400 py-px px-1 rounded-sm font-semibold"
