@@ -1,29 +1,28 @@
-import NavBar from "../Ui/NavBar"
+import NavBar from "../Ui/NavBar";
 import SearchBar from "../Ui/SearchBar";
 import EmployeeFramework from "../Ui/EmployeeFramework";
 import RegisterEmployeeModal from "../Ui/RegisterEmployeeModal";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { listEmployees } from "@services/EmployeesService";
 
 export default function Employees() {
   const [employees, setEmployees] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  // Função para listar todos os empregados
-
-  const listEmployees = async () => {
+  const fetchEmployees = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/employees");
-      setEmployees(response.data);
+      const data = await listEmployees(1);
+      data ? setEmployees(data) : null;
     } catch (error) {
-      console.error("Erro ao buscar empregados:", error);
+      console.error("Falha ao buscar funcionários:", error);
     }
   };
 
   useEffect(() => {
-    listEmployees();
+    fetchEmployees();
   }, []);
+
   return (
     <>
       <RegisterEmployeeModal

@@ -17,9 +17,7 @@ export default function RegisterEmployeeModal(props) {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3001/department"
-        );
+        const response = await axios.get("http://localhost:3001/department");
         const deptNames = response.data.map((dept) => dept.department_name);
         setDepartments(deptNames);
       } catch (error) {
@@ -33,29 +31,26 @@ export default function RegisterEmployeeModal(props) {
   const clearStates = () => {
     setVisible(false);
     setSelectedOption([]);
-    setEmployeeName("")
+    setEmployeeName("");
     setEmail("");
     setPassword("");
-    setJobTitle("")
+    setJobTitle("");
     setPay("");
     onEmployeeChanged();
-  }
+  };
 
   const registerEmployee = async () => {
-    console.log(email, employee_name, password, pay, job_title)
+    console.log(email, employee_name, password, pay, job_title);
     try {
-      const response = await axios.post(
-        "http://localhost:3001/employee",
-        {
-          email: email.trim(), 
-          user_name: employee_name.trim(),
-          pass: password.trim(),
-          access_type: 3, // default para funcionários
-          salary: pay,
-          job_title: job_title.trim(),
-          fk_department_id: 1, // departamento fixo
-        }
-      );
+      const response = await axios.post("http://localhost:3001/employee", {
+        email: email.trim(),
+        user_name: employee_name.trim(),
+        pass: password.trim(),
+        access_type: 3, // default para funcionários
+        salary: pay,
+        job_title: job_title.trim(),
+        fk_department_id: 1, // departamento fixo
+      });
 
       console.log("Resposta do servidor:", response.data);
     } catch (error) {
