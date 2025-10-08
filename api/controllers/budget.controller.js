@@ -1,6 +1,6 @@
 import { pool } from "../config/db.js";
 
-export async function createBudget(req, res) {
+export const createBudget = async (req, res) => {
   const { user_id, budget_name, budget_local, budget_desc } = req.body;
   try {
     const client = await pool.connect();
@@ -26,3 +26,20 @@ export async function createBudget(req, res) {
     res.status(500).json({ message: error.message });
   }
 }
+
+export const listBudget = async (req, res) => {
+  try {
+    const { user_id } = req.query;
+    const response = await pool.query(
+      `SELECT b.*
+       FROM BUDGETS b
+       JOIN BUDGETS_USERS bu ON b.budget_id = bu.fk_budget_id
+       WHERE bu.fk_user_id = $1`,
+      [user_id]
+    );
+    res.json(response.rows);
+  } catch (error) {
+    console.error("Erro ao listar orçamentos", error);
+    res.status(500).json({ error: "Erro ao listar orçamentos" });
+  }
+};

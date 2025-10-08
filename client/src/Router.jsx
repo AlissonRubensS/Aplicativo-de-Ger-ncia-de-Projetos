@@ -1,12 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
 
 // Importar as páginas
-import Home from "./components/Pages/Home.jsx";
-import Production from "./components/Pages/Production.jsx";
-import Projects from "./components/Pages/Projects.jsx";
-import Employees from "./components/Pages/Employees.jsx";
-import Reports from "./components/Pages/Reports.jsx";
-import Login from "./components/Pages/Login.jsx";
+import Home from "@pages/Home.jsx";
+import Production from "@pages/Production.jsx";
+import Projects from "@pages/Projects.jsx";
+import Employees from "@pages/Employees.jsx";
+import Reports from "@pages/Reports.jsx";
+import Login from "@pages/Login.jsx";
+import Budgets from "@pages/Budgets";
 
 const token = sessionStorage.getItem("loginPermission");
 const router = createBrowserRouter([
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
   {
     path: "/projects",
     element: token ? <Projects /> : <Login />,
+  },
+  {
+    path: "/budgets",
+    element: token ? <Budgets /> : <Login />,
   },
 ]);
 
