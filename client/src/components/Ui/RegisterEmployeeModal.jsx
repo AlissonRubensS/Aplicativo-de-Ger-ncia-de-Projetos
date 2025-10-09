@@ -1,13 +1,18 @@
 import SelectMenu from "./SelectMenu";
 import { IoMdClose } from "react-icons/io";
 import { useState } from "react";
-import axios from "axios";
-import { useEffect } from "react";
 
-export default function RegisterEmployeeModal(props) {
-  const { visible, setVisible, onEmployeeChanged } = props;
+import { useEffect } from "react";
+import { listDepartments } from "@services/DepartmentService";
+import { createEmployee } from "@services/EmployeesService";
+
+export default function RegisterEmployeeModal({
+  visible,
+  setVisible,
+  onEmployeeChanged,
+}) {
   const [departments, setDepartments] = useState([]);
-  const [selectedOption, setSelectedOption] = useState([]);
+  const [selectedDepartment, setSelectedDepartment] = useState([]);
   const [employee_name, setEmployeeName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,13 +21,8 @@ export default function RegisterEmployeeModal(props) {
 
   useEffect(() => {
     const fetchDepartments = async () => {
-      try {
-        const response = await axios.get("http://localhost:3001/department");
-        const deptNames = response.data.map((dept) => dept.department_name);
-        setDepartments(deptNames);
-      } catch (error) {
-        console.error("Erro ao listar departamentos:", error);
-      }
+      const data = await listDepartments();
+      setDepartments(data);
     };
 
     fetchDepartments();
@@ -30,7 +30,7 @@ export default function RegisterEmployeeModal(props) {
 
   const clearStates = () => {
     setVisible(false);
-    setSelectedOption([]);
+    setSelectedDepartment([]);
     setEmployeeName("");
     setEmail("");
     setPassword("");
@@ -39,28 +39,20 @@ export default function RegisterEmployeeModal(props) {
     onEmployeeChanged();
   };
 
-  const registerEmployee = async () => {
-    console.log(email, employee_name, password, pay, job_title);
+  const handleRegister = async () => {
     try {
-      const response = await axios.post("http://localhost:3001/employee", {
-        email: email.trim(),
-        user_name: employee_name.trim(),
-        pass: password.trim(),
-        access_type: 3, // default para funcionários
-        salary: pay,
-        job_title: job_title.trim(),
-        fk_department_id: 1, // departamento fixo
-      });
-
-      console.log("Resposta do servidor:", response.data);
-    } catch (error) {
-      console.error(
-        "Erro ao cadastrar funcionário:",
-        error.response?.data || error.message
+      await createEmployee(
+        email,
+        employee_name,
+        password,
+        3,
+        pay,
+        job_title,
+        1
       );
+    } catch (err) {
+      console.error("Erro ao cadastrar funcionario", err);
     }
-
-    onEmployeeChanged();
   };
 
   return (
@@ -72,7 +64,7 @@ export default function RegisterEmployeeModal(props) {
               className="flex flex-col space-y-8"
               onSubmit={(e) => {
                 e.preventDefault();
-                registerEmployee();
+                handleRegister();
                 clearStates();
               }}
             >
@@ -154,8 +146,8 @@ export default function RegisterEmployeeModal(props) {
                     variant="full"
                     options={departments}
                     maxSelections={1}
-                    selectedOption={selectedOption}
-                    setSelectedOption={setSelectedOption}
+                    selectedOption={selectedDepartment}
+                    setSelectedOption={setSelectedDepartment}
                   />
                 </div>
               </div>

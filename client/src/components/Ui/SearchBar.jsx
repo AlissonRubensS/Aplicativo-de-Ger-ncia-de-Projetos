@@ -1,5 +1,4 @@
 import { CiSearch } from "react-icons/ci";
-import { IoFilterOutline } from "react-icons/io5";
 import { IoAddCircleSharp } from "react-icons/io5";
 import { useState } from "react";
 
@@ -25,12 +24,12 @@ export default function SearchBar({
 
   return (
     <>
-      <div className="flex flex-row w-4/5 self-center bg-white shadow-md shadow-slate-400 rounded-sm px-8 py-2">
+      <div className="flex flex-row self-center bg-white shadow-md shadow-slate-400 rounded-sm px-8 py-2 w-full">
         {/* barra de pesquisa */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            search ? setEmployees(filterEmployees()) :  onEmployeeChanged;
+            search ? setEmployees(filterEmployees()) : onEmployeeChanged;
           }}
           className="flex flex-row w-full"
         >
@@ -48,12 +47,6 @@ export default function SearchBar({
           />
         </form>
         <div className="flex flex-row items-center space-x-2 ml-4">
-          {/* Filtros*/}
-          <button className="flex flex-row items-center space-x-1 hover:bg-gray-100 rounded p-1">
-            <IoFilterOutline />
-            <p>Filtrar</p>
-          </button>
-
           {/* Adicionar */}
           <button
             className="flex flex-row items-center space-x-1 hover:bg-gray-100 rounded p-1"

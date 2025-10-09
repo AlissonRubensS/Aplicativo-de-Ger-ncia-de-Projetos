@@ -57,7 +57,8 @@ function SelectMenu({
                 onClick={() => {
                   setSelectedOption((prev) => {
                     // se já estiver selecionado, remove
-                    if (prev.includes(o)) return prev.filter((x) => x !== o);
+                    if (prev.includes(o.department_name))
+                      return prev.filter((x) => x !== o.department_name);
 
                     // se maxSelections > 0 e já atingiu o limite, não adiciona
                     if (
@@ -68,13 +69,13 @@ function SelectMenu({
                       return prev;
 
                     // caso normal, adiciona
-                    return [...prev, o];
+                    return [...prev, o.department_name];
                   });
                   setOpen(false);
                 }}
               >
                 {checked ? <FaCheck /> : <span className="w-4" />}
-                <span className="truncate">{o}</span>
+                <span className="truncate">{o.department_name}</span>
               </button>
             );
           })}
