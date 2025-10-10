@@ -50,6 +50,7 @@ export default function RegisterEmployeeModal({
         job_title,
         1
       );
+      window.location.reload();
     } catch (err) {
       console.error("Erro ao cadastrar funcionario", err);
     }

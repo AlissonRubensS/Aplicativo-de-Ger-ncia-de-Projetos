@@ -22,15 +22,13 @@ export const createEmployee = async (
 ) => {
   try {
     const response = await axios.post(API_URL, {
-      params: {
-        email,
-        user_name,
-        pass,
-        access_type,
-        salary,
-        job_title,
-        fk_department_id,
-      },
+      email,
+      user_name,
+      pass,
+      access_type,
+      salary,
+      job_title,
+      fk_department_id,
     });
     return response.data;
   } catch (err) {
