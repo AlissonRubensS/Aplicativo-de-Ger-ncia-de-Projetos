@@ -1,59 +1,40 @@
 import { IoMdClose } from "react-icons/io";
 import { useEffect, useState } from "react";
+import { listDepartments } from "@services/DepartmentService";
+import { editEmployee } from "@services/EmployeesService";
 import SelectMenu from "./SelectMenu";
-import axios from "axios";
 
-export default function EditEmployeeModal(props) {
-  const { visible, setVisible, user_id } = props;
+export default function EditEmployeeModal({ visible, setVisible, user_id }) {
   const [employee_name, setEmployeeName] = useState("");
   const [job_title, setJobTitle] = useState("");
   const [departments, setDepartments] = useState([]);
   const [selectedOption, setSelectedOption] = useState([]);
   const [pay, setPay] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     const fetchDepartments = async () => {
-      try {
-        const response = await axios.get("http://localhost:3001/departments");
-        const deptNames = response.data.map((dept) => dept.department_name);
-        setDepartments(deptNames);
-      } catch (error) {
-        console.error("Erro ao listar departamentos:", error);
-      }
-    };
-
-    const search_employee = async (user_id) => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3001/employees/${user_id}`,
-          {
-            params: { user_id },
-          }
-        );
-        const user = response.data;
-        setEmployeeName(user.user_name);
-        setJobTitle(user.job_title);
-        setPay(user.salary);
-      } catch (error) {
-        console.error("Erro ao encontrar o funcionáio:", error);
-      }
+      const data = await listDepartments();
+      setDepartments(data);
     };
 
     fetchDepartments();
-    search_employee(user_id);
   }, [user_id]);
 
-  const handleUptadeEmployee = async (user_id) => {
+  const handleUptadeEmployee = async () => {
     try {
-      await axios.put(`http://localhost:3001/employees/${user_id}`, {
-        params: {
-          fk_user_id: user_id,
-          user_name: employee_name,
-          job_title: job_title,
-          salary: pay,
-          fk_department_id: 1,
-        },
-      });
+      await editEmployee(
+        user_id,
+        email,
+        employee_name,
+        password,
+        3,
+        pay,
+        1, // temporario, fazer flech no bd para pegar o a performance do funcionario.
+        job_title,
+        1, // temporario, fazer flech no bd para pegar o id do item selecionado.
+      );
       alert("Funcionário atualizado com sucesso!");
       setVisible(false);
     } catch (error) {
@@ -101,6 +82,36 @@ export default function EditEmployeeModal(props) {
               </div>
               <div className="flex flex-row items-center justify-between space-x-8">
                 <div className="flex flex-col w-full">
+                  <label name="email" className="text-gray-700">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    className="p-2 rounded"
+                    placeholder="Digite o email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="flex flex-col w-full">
+                  <label htmlFor="pass" className="text-gray-700">
+                    Senha *
+                  </label>
+                  <input
+                    type="password"
+                    name="pass"
+                    className="p-2 rounded"
+                    placeholder="Digite a senha"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="flex flex-row items-center justify-between space-x-8">
+                <div className="flex flex-col w-full">
                   <label name="job-title" className="text-gray-700">
                     Cargo *
                   </label>
@@ -124,36 +135,6 @@ export default function EditEmployeeModal(props) {
                     maxSelections={1}
                     selectedOption={selectedOption}
                     setSelectedOption={setSelectedOption}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-row items-center justify-between space-x-8">
-                <div className="flex flex-col w-full">
-                  <label name="job-title" className="text-gray-700">
-                    Cargo *
-                  </label>
-                  <input
-                    type="text"
-                    name="job-title"
-                    className="p-2 rounded"
-                    placeholder="Digite o cargo"
-                    value={job_title}
-                    onChange={(e) => setJobTitle(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="flex flex-col w-full">
-                  <label name="job-title" className="text-gray-700">
-                    Cargo *
-                  </label>
-                  <input
-                    type="text"
-                    name="job-title"
-                    className="p-2 rounded"
-                    placeholder="Digite o cargo"
-                    value={job_title}
-                    onChange={(e) => setJobTitle(e.target.value)}
-                    required
                   />
                 </div>
               </div>

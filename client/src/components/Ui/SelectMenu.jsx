@@ -36,7 +36,7 @@ function SelectMenu({
           className="absolute top-full left-0 right-0 mt-1 bg-white p-1 shadow-md rounded-md z-50
                      max-h-56 overflow-auto text-gray-700"
         >
-          {selectedOption.length > 0 && (
+          {selectedOption.length > 1 && (
             <button
               className="w-full text-left hover:bg-slate-200 p-1 rounded-md text-sm"
               onClick={() => {
@@ -49,7 +49,7 @@ function SelectMenu({
           )}
 
           {options.map((o) => {
-            const checked = selectedOption.includes(o);
+            const checked = selectedOption.includes(o.department_name);
             return (
               <button
                 key={o}
@@ -61,15 +61,18 @@ function SelectMenu({
                       return prev.filter((x) => x !== o.department_name);
 
                     // se maxSelections > 0 e já atingiu o limite, não adiciona
-                    if (
+                    if (maxSelections && maxSelections == 1) {
+                      return [o.department_name];
+                    } else if (
                       maxSelections &&
-                      maxSelections > 0 &&
+                      maxSelections > 1 &&
                       prev.length >= maxSelections
-                    )
+                    ) {
                       return prev;
-
-                    // caso normal, adiciona
-                    return [...prev, o.department_name];
+                    } else {
+                      // caso normal, adiciona
+                      return [...prev, o.department_name];
+                    }
                   });
                   setOpen(false);
                 }}

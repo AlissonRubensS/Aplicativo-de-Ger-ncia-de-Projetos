@@ -36,3 +36,34 @@ export const createEmployee = async (
     throw err;
   }
 };
+
+export const editEmployee = async (
+  user_id,
+  email,
+  user_name,
+  pass,
+  access_type,
+  salary,
+  performance,
+  job_title,
+  fk_department_id
+) => {
+  try {
+    const response = await axios.put(API_URL, {
+      user_id,
+      email,
+      user_name,
+      pass,
+      access_type,
+      salary,
+      performance,
+      job_title,
+      fk_department_id,
+    });
+    console.log("Operação realizada!");
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao editar funcionário", error);
+    throw error;
+  }
+};
