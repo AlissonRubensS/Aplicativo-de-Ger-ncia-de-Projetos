@@ -37,6 +37,7 @@ export default function EditEmployeeModal({ visible, setVisible, user_id }) {
       );
       alert("Funcionário atualizado com sucesso!");
       setVisible(false);
+      window.location.reload();
     } catch (error) {
       console.log("erro ao atualizar dados", error);
     }
