@@ -1,11 +1,24 @@
-import { FaTrash } from "react-icons/fa";
-import { MdEdit } from "react-icons/md";
+import DepartmentModalEdit from "./DepartmentModalEdit";
 import PropTypes from "prop-types";
 import { useState } from "react";
-import DepartmentModalEdit from "./DepartmentModalEdit";
+import { FaTrash } from "react-icons/fa";
+import { MdEdit } from "react-icons/md";
+import { deleteDepartment } from "@services/DepartmentService";
 
 function DepartmentCard({ id, name }) {
   const [isModalOpen, setModalOpen] = useState(false);
+
+  const handleDelete = async () => {
+    const CONFIRM = confirm(
+      `Tem certeza que quer excluir o departamento ${name}`
+    );
+    if (CONFIRM) {
+      const data = await deleteDepartment(id);
+      console.log(data);
+    }
+    window.location.reload();
+  };
+
   return (
     <>
       <DepartmentModalEdit
@@ -24,7 +37,7 @@ function DepartmentCard({ id, name }) {
             <button onClick={() => setModalOpen(!isModalOpen)}>
               <MdEdit size={20} />
             </button>
-            <button>
+            <button onClick={() => handleDelete()}>
               <FaTrash size={15} />
             </button>
           </div>

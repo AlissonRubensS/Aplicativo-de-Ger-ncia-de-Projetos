@@ -70,12 +70,37 @@ export const editDepartment = async (req, res) => {
     if (result.rowCount === 0) {
       return res.status(404).json({ error: "Departamento não encontrado." });
     }
-    console.log("Operação realizada")
+    console.log("Operação realizada");
     return res
       .status(200)
       .json({ message: "Departamento atualizado com sucesso!" });
   } catch (error) {
     console.error("Erro ao editar departamento:", error);
     res.status(500).json({ error: "Erro ao editar departamento" });
+  }
+};
+
+export const deleteDepartment = async (req, res) => {
+  try {
+    const { department_id } = req.query;
+    if (!department_id) {
+      return res.status(400).json({ error: "Erro ao editar departamento" });
+    }
+    const result = await pool.query(
+      "DELETE FROM DEPARTMENTS WHERE department_id = $1",
+      [department_id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Departamento não encontrado." });
+    }
+
+    console.log("Operação realizada");
+    return res
+      .status(200)
+      .json({ message: "Departamento exluido com sucesso!" });
+  } catch (error) {
+    console.error("Erro ao excluir departamento:", error);
+    res.status(500).json({ error: "Erro ao excluir departamento" });
   }
 };
