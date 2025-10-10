@@ -3,20 +3,15 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import { editDepartment } from "@services/DepartmentService";
 
-function DepartmentModalEdit({ visible, setVisible, department }) {
+function DepartmentModalEdit({ visible, setVisible, department, id }) {
   const [departmentName, setDepartmentName] = useState(
     department?.department_name || ""
   );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      await editDepartment({
-        department_id: department.department_id,
-        department_name: departmentName,
-      });
-
+      await editDepartment(id, departmentName);
       setVisible(false);
     } catch (error) {
       console.error("Erro ao editar departamento:", error);
@@ -79,6 +74,7 @@ DepartmentModalEdit.propTypes = {
   visible: PropTypes.bool.isRequired,
   setVisible: PropTypes.func.isRequired,
   department: PropTypes.object.isRequired, // precisa receber o departamento a ser editado
+  id: PropTypes.number.isRequired,
 };
 
 export default DepartmentModalEdit;

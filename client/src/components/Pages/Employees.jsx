@@ -78,6 +78,7 @@ export default function Employees() {
             {departments.map((dep) => (
               <DepartmentCard
                 key={dep.department_id}
+                id={dep.department_id}
                 name={dep.department_name}
               />
             ))}

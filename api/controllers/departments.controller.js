@@ -65,9 +65,15 @@ export const editDepartment = async (req, res) => {
     }
     const result = await pool.query(
       " UPDATE DEPARTMENTS SET department_name = $1 WHERE department_id = $2;",
-      [department_id, department_name]
+      [department_name, department_id]
     );
-    return result.data
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Departamento não encontrado." });
+    }
+    console.log("Operação realizada")
+    return res
+      .status(200)
+      .json({ message: "Departamento atualizado com sucesso!" });
   } catch (error) {
     console.error("Erro ao editar departamento:", error);
     res.status(500).json({ error: "Erro ao editar departamento" });

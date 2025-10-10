@@ -21,7 +21,12 @@ export const createDeparment = async (department_name) => {
 
 export const editDepartment = async (department_id, department_name) => {
   try {
-    axios.post(API_URL, { department_id, department_name });
+    const response = await axios.put(API_URL, {
+      department_id,
+      department_name,
+    });
+    console.log(response.data);
+    return response.data
   } catch (error) {
     console.error("Erro ao editar departamento", error);
   }
