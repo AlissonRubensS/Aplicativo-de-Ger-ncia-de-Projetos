@@ -13,6 +13,8 @@ function DepartmentModalEdit({ visible, setVisible, department, id }) {
     try {
       await editDepartment(id, departmentName);
       setVisible(false);
+      window.location.reload();
+
     } catch (error) {
       console.error("Erro ao editar departamento:", error);
       alert("Erro ao editar departamento.");
