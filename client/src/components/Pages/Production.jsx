@@ -110,7 +110,13 @@ export default function Production() {
 
   return (
     <>
-      <AddComponent isOpen={isAddOpen} setOpen={setIsAddOpen} />
+      <AddComponent
+        isOpen={isAddOpen}
+        setOpen={setIsAddOpen}
+        departmens={departments}
+        projects={projects}
+        employees={employees}
+      />
 
       <div className="bg-slate-200 flex flex-col space-y-5 rounded-lg p-0 m-0">
         <NavBar />

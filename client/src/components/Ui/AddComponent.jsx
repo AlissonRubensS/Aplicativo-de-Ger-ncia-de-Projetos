@@ -1,8 +1,13 @@
 import { IoMdClose } from "react-icons/io";
 import SelectDepartmentMenu from "./SelectDepartmentMenu";
 import SelectMenu from "./SelectMenu";
+import { useState } from "react";
 
-function AddComponent({ isOpen, setOpen }) {
+function AddComponent({ isOpen, setOpen, departmens, projects, employees }) {
+  const [selectDept, setSelectedDept] = useState([]);
+  const [selectedProj, setSelectedProj] = useState([]);
+  const [selectedEmp, setSelectedEmp] = useState([]);
+  const [selectedDay, setSelectedDay] = useState([]);
 
   return (
     <>
@@ -58,6 +63,9 @@ function AddComponent({ isOpen, setOpen }) {
                     "Sexta",
                     "Sábado",
                   ]}
+                  selectedOption={selectedDay}
+                  setSelectedOption={setSelectedDay}
+                  maxSelections={1}
                 />
               </div>
             </div>
@@ -88,12 +96,15 @@ function AddComponent({ isOpen, setOpen }) {
             <div className="flex flex-row items-center justify-between space-x-8">
               <div className="flex flex-col w-full">
                 <label htmlFor="departament" className="text-gray-700">
-                  Setor *
+                  Departamento *
                 </label>
                 <SelectDepartmentMenu
                   name="departament"
-                  options={["Setor 1"]}
                   variant="full"
+                  options={departmens}
+                  selectedOption={selectDept}
+                  setSelectedOption={setSelectedDept}
+                  maxSelections={1}
                 />
               </div>
               <div className="flex flex-col w-full">
@@ -102,8 +113,10 @@ function AddComponent({ isOpen, setOpen }) {
                 </label>
                 <SelectMenu
                   name="project"
-                  options={["Projeto 1"]}
                   variant="full"
+                  options={projects}
+                  selectedOption={selectedProj}
+                  setSelectedOption={setSelectedProj}
                 />
               </div>
             </div>
@@ -113,8 +126,10 @@ function AddComponent({ isOpen, setOpen }) {
               </label>
               <SelectMenu
                 name="employees"
-                options={["Func 1", "Func 2", "Func 3"]}
                 variant="full"
+                options={employees}
+                selectedOption={selectedEmp}
+                setSelectedOption={setSelectedEmp}
               />
             </div>
             <div className="flex flex-row justify-end items-center space-x-4">
