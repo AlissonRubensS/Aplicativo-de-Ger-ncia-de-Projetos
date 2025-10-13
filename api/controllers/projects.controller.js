@@ -52,6 +52,11 @@ export const createProject = async (req, res) => {
 export const listProject = async (req, res) => {
   try {
     const { user_id } = req.query;
+
+    if (!user_id) {
+      return res.status(200).json([]); // retorna array vazio se não tiver user_id
+    }
+
     const response = await pool.query(
       `SELECT p.*
        FROM PROJECTS p
@@ -59,6 +64,7 @@ export const listProject = async (req, res) => {
        WHERE pu.fk_user_id = $1`,
       [user_id]
     );
+
     res.json(response.rows);
   } catch (error) {
     console.error("Erro ao listar projetos", error);

@@ -14,3 +14,15 @@ export async function LoginService(email, pass) {
     throw error;
   }
 }
+
+export async function VerifyAuth() {
+  try {
+    const TOKEN = localStorage.getItem("token");
+    const response = await axios.get("http://localhost:3001/auth/verify", {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao verificar o token", error);
+  }
+}

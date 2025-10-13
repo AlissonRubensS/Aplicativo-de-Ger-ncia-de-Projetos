@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LoginService } from "../../../services/LoginService";
+import { LoginService } from "@services/AuthService";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -14,9 +14,9 @@ function Login() {
       sessionStorage.setItem("loginPermission", response);
       navigate("/home");
       window.location.reload();
-    }else{
+    } else {
       alert("Login failed. Please check your credentials.");
-    } 
+    }
   };
 
   return (

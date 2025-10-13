@@ -4,11 +4,10 @@ const API_URL = "http://localhost:3001/projects";
 
 // Function to list projects for a specific user
 export const listProjects = async (user_id) => {
+  if (!user_id) return []; // retorna vazio se user_id undefined
+
   try {
-    const response = await axios.get(`${API_URL}`, {
-      params: { user_id },
-    });
-    // Mapear os dados recebidos para instâncias da classe Project
+    const response = await axios.get(`${API_URL}`, { params: { user_id } });
     return Array.isArray(response.data)
       ? response.data.map(
           (proj) =>
@@ -23,9 +22,9 @@ export const listProjects = async (user_id) => {
               proj.status
             )
         )
-      : null;
+      : [];
   } catch (error) {
     console.error("Error fetching projects:", error);
-    return null;
+    return [];
   }
 };

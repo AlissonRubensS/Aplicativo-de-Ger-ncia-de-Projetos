@@ -17,6 +17,7 @@ import AddComponent from "../Ui/AddComponent";
 import { listDepartments } from "@services/DepartmentService.js";
 import { listProjects } from "@services/ProjectService.js";
 import { listEmployees } from "@services/EmployeesService.js";
+import { VerifyAuth } from "@services/AuthService.js";
 
 export default function Production() {
   const [offset, setOffset] = useState(0); // deslocamento em semanas
@@ -90,9 +91,9 @@ export default function Production() {
     }
   };
 
-  const fetchEmployees = async (user_id) => {
+  const fetchEmployees = async () => {
     try {
-      const data = await listEmployees(user_id);
+      const data = await listEmployees();
       if (data && Array.isArray(data)) {
         const employeesNames = data.map((e) => e.user_name);
         setEmployees(employeesNames);
@@ -103,9 +104,14 @@ export default function Production() {
   };
 
   useEffect(() => {
-    fetchProjects(1); // id temporário
-    fetchEmployees(1); // id temporário
-    fetchDepartments();
+    async function loadData() {
+      const user = await VerifyAuth()
+      await fetchProjects(user.user_id);
+      await fetchEmployees(); // funciona sempre
+      await fetchDepartments(); // funciona sempre
+    }
+
+    loadData();
   }, []);
 
   return (
