@@ -1,4 +1,5 @@
-import NavBar from "../Ui/NavBar";
+import { useState, useEffect } from "react";
+
 import { FaCalendar } from "react-icons/fa";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { FaLongArrowAltLeft, FaLongArrowAltRight } from "react-icons/fa";
@@ -7,13 +8,15 @@ import { CiFilter } from "react-icons/ci";
 import { IoMdAdd } from "react-icons/io";
 import { TfiReload } from "react-icons/tfi";
 import { FiUser } from "react-icons/fi";
-import { useState } from "react";
 
+import NavBar from "../Ui/NavBar";
 import SelectMenu from "../Ui/SelectMenu";
+import SelectDepartmentMenu from "../Ui/SelectDepartmentMenu";
 import AddComponent from "../Ui/AddComponent";
 
-import axios from "axios";
-import { useEffect } from "react";
+import { listDepartments } from "@services/DepartmentService.js";
+import { listProjects } from "@services/ProjectService.js";
+import { listEmployees } from "@services/EmployeesService.js";
 
 export default function Production() {
   const [offset, setOffset] = useState(0); // deslocamento em semanas
@@ -40,11 +43,8 @@ export default function Production() {
     }
     return week;
   };
-
   const weekDays = generateWeek(offset);
-
   const [isAddOpen, setIsAddOpen] = useState(false);
-
   const capitalizeFirst = (text) => {
     if (!text) return "";
 
@@ -53,10 +53,10 @@ export default function Production() {
       .map((chunk) => chunk.charAt(0).toUpperCase() + chunk.slice(1))
       .join("-");
   };
-
   const tasks = []; // alterar para os componentes cadastrados
 
   // CONSULTAS NO BANCO DE DADOS
+
   // select departments
   const [departments, setDepartments] = useState([]);
   const [selectedDept, setSelectedDept] = useState([]);
@@ -67,75 +67,50 @@ export default function Production() {
   const [employees, setEmployees] = useState([]);
   const [selectedEmp, setSelectedEmp] = useState([]);
 
-  useEffect(() => {
-    // lista todos os departamentos
-    const fetchDepartments = async () => {
-      try {
-        const response = await axios.get("http://localhost:3001/departments");
-        const deptNames = response.data.map((dept) => dept.department_name);
-        setDepartments(deptNames);
-      } catch (error) {
-        console.error("Erro ao listar departamentos:", error);
-      }
-    };
-
-    // pegar o id do usuário logado
-    async function getUserId() {
-      const token = sessionStorage.getItem("loginPermission");
-      if (!token) return null;
-
-      try {
-        const response = await axios.get("http://localhost:3001/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        return response.data.user_id;
-      } catch (err) {
-        console.error("Erro ao buscar user_id:", err);
-        return null;
-      }
+  // lista todos os departamentos
+  const fetchDepartments = async () => {
+    try {
+      const data = await listDepartments();
+      data ? setDepartments(data) : null;
+    } catch (error) {
+      console.error("Erro ao listar departamentos:", error);
     }
+  };
 
-    // lista os projetos que o usuário está cadastrado
-    const fetchProjects = async (user_id) => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3001/project/:user_id",
-          { params: { user_id } }
-        );
-        const projNames = response.data.map(
-          (projects) => projects.project_name
-        );
-        setProjects(projNames);
-      } catch (error) {
-        console.error("Error ao listar projetos", error);
+  // lista os projetos que o usuário está cadastrado
+  const fetchProjects = async (user_id) => {
+    try {
+      const data = await listProjects(user_id);
+      if (data && Array.isArray(data)) {
+        const projectsNames = data.map((p) => p.project_name);
+        setProjects(projectsNames);
       }
-    };
+    } catch (error) {
+      console.error("Error ao listar projetos", error);
+    }
+  };
 
-    // lista todos os funcionários
-    const fetchEmployees = async () => {
-      try {
-        const response = await axios.get("http://localhost:3001/employee");
-        const empNames = response.data.map((emp) => emp.user_name);
-        setEmployees(empNames);
-      } catch (error) {
-        console.error("Erro ao listar funcuinários", error);
+  const fetchEmployees = async (user_id) => {
+    try {
+      const data = await listEmployees(user_id);
+      if (data && Array.isArray(data)) {
+        const employeesNames = data.map((e) => e.user_name);
+        setEmployees(employeesNames);
       }
-    };
+    } catch (error) {
+      console.error("Erro ao listar funcionários", error);
+    }
+  };
 
-    // roda todas as funções
-    const run = async () => {
-      const id_user_login = await getUserId();
-      fetchProjects(id_user_login);
-      fetchDepartments();
-      fetchEmployees();
-    };
-
-    run();
+  useEffect(() => {
+    fetchProjects(1); // id temporário
+    fetchEmployees(1); // id temporário
+    fetchDepartments();
   }, []);
 
   return (
     <>
-      <AddComponent props={{ isOpen: isAddOpen, setOpen: setIsAddOpen }} />
+      <AddComponent isOpen={isAddOpen} setOpen={setIsAddOpen} />
 
       <div className="bg-slate-200 flex flex-col space-y-5 rounded-lg p-0 m-0">
         <NavBar />
@@ -191,7 +166,7 @@ export default function Production() {
           <div className="flex flex-row items-center space-x-2">
             <CiFilter className="h-5 w-5" />
             <p>Departamento:</p>
-            <SelectMenu
+            <SelectDepartmentMenu
               options={departments}
               selectedOption={selectedDept}
               setSelectedOption={setSelectedDept}

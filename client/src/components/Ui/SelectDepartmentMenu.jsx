@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaCheck } from "react-icons/fa6";
 import { IoChevronDownSharp } from "react-icons/io5";
 
-function SelectMenu({
+function SelectDepartmentMenu({
   variant = "small",
   maxSelections = 0,
   options = [],
@@ -49,7 +49,7 @@ function SelectMenu({
           )}
 
           {options.map((o) => {
-            const checked = selectedOption.includes(o);
+            const checked = selectedOption.includes(o.department_name);
             return (
               <button
                 key={o}
@@ -57,12 +57,12 @@ function SelectMenu({
                 onClick={() => {
                   setSelectedOption((prev) => {
                     // se já estiver selecionado, remove
-                    if (prev.includes(o))
-                      return prev.filter((x) => x !== o);
+                    if (prev.includes(o.department_name))
+                      return prev.filter((x) => x !== o.department_name);
 
                     // se maxSelections > 0 e já atingiu o limite, não adiciona
                     if (maxSelections && maxSelections == 1) {
-                      return [o];
+                      return [o.department_name];
                     } else if (
                       maxSelections &&
                       maxSelections > 1 &&
@@ -71,14 +71,14 @@ function SelectMenu({
                       return prev;
                     } else {
                       // caso normal, adiciona
-                      return [...prev, o];
+                      return [...prev, o.department_name];
                     }
                   });
                   setOpen(false);
                 }}
               >
                 {checked ? <FaCheck /> : <span className="w-4" />}
-                <span className="truncate">{o}</span>
+                <span className="truncate">{o.department_name}</span>
               </button>
             );
           })}
@@ -88,4 +88,4 @@ function SelectMenu({
   );
 }
 
-export default SelectMenu;
+export default SelectDepartmentMenu;

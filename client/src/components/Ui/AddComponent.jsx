@@ -1,8 +1,8 @@
 import { IoMdClose } from "react-icons/io";
+import SelectDepartmentMenu from "./SelectDepartmentMenu";
 import SelectMenu from "./SelectMenu";
 
-function AddComponent({ props }) {
-  const { isOpen, setOpen } = props;
+function AddComponent({ isOpen, setOpen }) {
 
   return (
     <>
@@ -67,13 +67,21 @@ function AddComponent({ props }) {
                 <label name="hourInit" className="text-gray-700">
                   Hora Inicial *
                 </label>
-                <input type="time" name="hourInit" className="p-2 rounded bg-gray-50" />
+                <input
+                  type="time"
+                  name="hourInit"
+                  className="p-2 rounded bg-gray-50"
+                />
               </div>
               <div className="flex flex-col w-full">
                 <label name="hourEnd" className="text-gray-700">
                   Hora Final *
                 </label>
-                <input type="time" name="hourEnd" className="p-2 rounded bg-gray-50" />
+                <input
+                  type="time"
+                  name="hourEnd"
+                  className="p-2 rounded bg-gray-50"
+                />
               </div>
             </div>
 
@@ -82,7 +90,7 @@ function AddComponent({ props }) {
                 <label htmlFor="departament" className="text-gray-700">
                   Setor *
                 </label>
-                <SelectMenu
+                <SelectDepartmentMenu
                   name="departament"
                   options={["Setor 1"]}
                   variant="full"
