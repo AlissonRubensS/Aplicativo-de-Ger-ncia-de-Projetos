@@ -1,4 +1,3 @@
-// routes/components.routes.js
 import { Router } from "express";
 import {
   createComponent,

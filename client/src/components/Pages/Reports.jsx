@@ -2,6 +2,10 @@ import NavBar from "../Ui/NavBar";
 import CascadeTable from "../Ui/CascadeTable";
 import InfoCard from "../Ui/InfoCard";
 import SelectMenu from "../Ui/SelectMenu";
+import { useState, useEffect } from "react";
+import { listProjects } from "@services/ProjectService.js";
+import { VwEquipmentDetailsByUser } from "@services/ViewService";
+import { VerifyAuth } from "@services/AuthService.js";
 
 export default function Reports() {
   const headersTableProjects = ["Projetos", "Valor"];
@@ -16,7 +20,6 @@ export default function Reports() {
     ],
   };
   const filtrosTableProjects = ["filtro 1", "filtro 2", "filtro 3"];
-
   const headerTableOffices = ["Setor", "Processos"];
   const valuesTableOffices = {
     "Setor 1": [
@@ -31,6 +34,47 @@ export default function Reports() {
     ],
   };
 
+  // lista os projetos que o usuário está cadastrado
+  const [projects, setProjects] = useState([]);
+  const [selectedProj, setSelectedProj] = useState([]);
+
+  const fetchProjects = async (user_id) => {
+    try {
+      const data = await listProjects(user_id);
+      if (data && Array.isArray(data)) {
+        const projectsNames = data.map((p) => p.project_name);
+        setProjects(projectsNames);
+      }
+    } catch (error) {
+      console.error("Error ao listar projetos", error);
+    }
+  };
+
+  const [equipaments, setEquipaments] = useState([]);
+  const [selectedEquip, setSelectedEquip] = useState([]);
+
+  const fetchEquipamentDetails = async (user_id) => {
+    try {
+      const data = await VwEquipmentDetailsByUser(user_id);
+      if (data && Array.isArray(data)) {
+        const equipamentsNames = data.map((e) => e.equipment_name);
+        setEquipaments(equipamentsNames);
+      }
+    } catch (error) {
+      console.error("Error ao listar equipamento", error);
+    }
+  };
+
+  useEffect(() => {
+    async function loadData() {
+      const user = await VerifyAuth();
+      await fetchProjects(user.user_id);
+      await fetchEquipamentDetails(user.user_id);
+    }
+
+    loadData();
+  }, []);
+
   return (
     <>
       <div className="space-y-4 pb-16">
@@ -42,11 +86,22 @@ export default function Reports() {
           <div className="flex flex-row space-x-2 text-sm">
             <div>
               <p className="text-xs">Projetos</p>
-              <SelectMenu className="text-sm h-6" />
+              <SelectMenu
+                className="text-sm h-6"
+                maxSelections={1}
+                options={projects}
+                selectedOption={selectedProj}
+                setSelectedOption={setSelectedProj}
+              />
             </div>
             <div>
               <p className="text-xs">Equipamento</p>
-              <SelectMenu className="text-sm h-6" />
+              <SelectMenu
+                className="text-sm h-6"
+                options={equipaments}
+                selectedOption={selectedEquip}
+                setSelectedOption={setSelectedEquip}
+              />
             </div>
             <div className="flex flex-col">
               <p className="self-center text-xs">Período</p>
