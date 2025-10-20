@@ -13,7 +13,7 @@ export const createBudget = async (req, res) => {
 
     const budget_id = budgetResult.rows[0].budget_id;
     await client.query(
-      `INSERT INTO budgets_users(fk_user_id, fk_budget_id) VALUES ($1, $2)`,
+      `INSERT INTO budgets_users(user_id, budget_id) VALUES ($1, $2)`,
       [user_id, budget_id]
     );
     client.release();
@@ -25,17 +25,16 @@ export const createBudget = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
 
 export const listBudget = async (req, res) => {
   try {
     const { user_id } = req.query;
     const response = await pool.query(
       `SELECT b.*
-       FROM BUDGETS b
-       JOIN BUDGETS_USERS bu ON b.budget_id = bu.fk_budget_id
-       WHERE bu.fk_user_id = $1`,
-      [user_id]
+        FROM BUDGETS b
+        JOIN BUDGETS_USERS bu ON b.budget_id = bu.budget_id
+        WHERE bu.user_id = ${user_id};`
     );
     res.json(response.rows);
   } catch (error) {

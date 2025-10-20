@@ -60,8 +60,8 @@ export const listProject = async (req, res) => {
     const response = await pool.query(
       `SELECT p.*
        FROM PROJECTS p
-       JOIN PROJECTS_USERS pu ON p.project_id = pu.fk_project_id
-       WHERE pu.fk_user_id = $1`,
+       JOIN PROJECTS_USERS pu ON p.project_id = pu.project_id
+       WHERE pu.user_id = $1`,
       [user_id]
     );
 

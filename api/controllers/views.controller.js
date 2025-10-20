@@ -63,3 +63,19 @@ export const VwTotalMaterialCostByProject = async (req, res) => {
     res.status(500).json({ message });
   }
 };
+
+export const VwProjectComponentStatus = async (req, res) => {
+  try {
+    const { project_id } = req.query;
+    if (!project_id) {
+      return res.status(200).json([]);
+    }
+    const response = await pool.query(
+      `SELECT * FROM vw_project_component_status WHERE project_id = ${project_id}`
+    );
+    res.json(response.rows);
+  } catch (error) {
+    console.error("Erro ao listar", error);
+    res.status(500).json({ message });
+  }
+};

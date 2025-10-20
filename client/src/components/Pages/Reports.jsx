@@ -2,6 +2,8 @@ import NavBar from "../Ui/NavBar";
 import CascadeTable from "../Ui/CascadeTable";
 import InfoCard from "../Ui/InfoCard";
 import SelectMenu from "../Ui/SelectMenu";
+import ProjectEvolutionGraph from "../Ui/ProjectEvolutionGraph";
+
 import { useState, useEffect } from "react";
 import { listProjects } from "@services/ProjectService.js";
 import { VwEquipmentDetailsByUser } from "@services/ViewService";
@@ -37,7 +39,6 @@ export default function Reports() {
   // lista os projetos que o usuário está cadastrado
   const [projects, setProjects] = useState([]);
   const [selectedProj, setSelectedProj] = useState([]);
-
   const fetchProjects = async (user_id) => {
     try {
       const data = await listProjects(user_id);
@@ -125,7 +126,7 @@ export default function Reports() {
 
         <div className="grid grid-cols-12 gap-4 mx-4">
           {/* Info Cards */}
-          <div className="col-span-7 bg-white py-1 px-2 rounded shadow-lg">
+          <div className="col-span-7 bg-white py-1 px-2 rounded shadow-lg flex flex-row self">
             <div className="flex flex-col space-y-8 w-1/6 py-1">
               <InfoCard
                 title="Entregues"
@@ -144,6 +145,9 @@ export default function Reports() {
                   <img src="src/imgs/desperdicio.png" className="w-6 h-6" />
                 }
               />
+            </div>
+            <div className="flex flex-col w-5/6 py-1">
+              <ProjectEvolutionGraph />
             </div>
           </div>
 

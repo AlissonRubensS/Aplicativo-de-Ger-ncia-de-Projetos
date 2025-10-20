@@ -63,3 +63,19 @@ export async function VwTotalMaterialCostByProject(project_id) {
     return [];
   }
 }
+
+export async function VwProjectComponentStatus(project_id) {
+  try {
+    if (!project_id) {
+      return [];
+    }
+    const response = await axios.get(
+      `${API_URL}/VwProjectComponentStatus`, {
+      params: { project_id },
+    });
+    return Array.isArray(response.data) ? response.data : [];
+  } catch (error) {
+    console.error("Error fetching", error);
+    return [];
+  }
+}

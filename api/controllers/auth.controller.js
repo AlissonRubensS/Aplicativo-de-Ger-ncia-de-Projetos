@@ -9,7 +9,7 @@ export async function Login(req, res) {
   const { email, pass } = req.body;
   try {
     const result = await pool.query(
-      "SELECT * FROM Users WHERE email = $1 AND pass = $2",
+      "SELECT * FROM Users WHERE email = $1 AND password = $2",
       [email, pass]
     );
 

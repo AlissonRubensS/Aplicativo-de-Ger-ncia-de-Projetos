@@ -6,7 +6,7 @@ export const getEmployees = async (req, res) => {
     const result = await pool.query(
       `SELECT u.user_id, u.user_name, e.job_title, e.salary, e.performance 
        FROM users u 
-       JOIN employees e ON u.user_id = e.fk_user_id`
+       JOIN employees e ON u.user_id = e.user_id`
     );
     res.json(result.rows);
   } catch (error) {
