@@ -3,10 +3,9 @@ import CascadeTable from "../Ui/CascadeTable";
 import InfoCard from "../Ui/InfoCard";
 import SelectMenu from "../Ui/SelectMenu";
 import ProjectEvolutionGraph from "../Ui/ProjectEvolutionGraph";
-
 import { useState, useEffect } from "react";
 import { listProjects } from "@services/ProjectService.js";
-import { VwEquipmentDetailsByUser } from "@services/ViewService";
+import { getEquipment } from "@services/EquipmentService";
 import { VerifyAuth } from "@services/AuthService.js";
 
 export default function Reports() {
@@ -56,10 +55,11 @@ export default function Reports() {
 
   const fetchEquipamentDetails = async (user_id) => {
     try {
-      const data = await VwEquipmentDetailsByUser(user_id);
+      console.log("user_id:", user_id);
+      const data = await getEquipment(user_id);
       if (data && Array.isArray(data)) {
-        const equipamentsNames = data.map((e) => e.equipment_name);
-        setEquipaments(equipamentsNames);
+        const equipamentNames = data.map((e) => e.equipment_name);
+        setEquipaments(equipamentNames);
       }
     } catch (error) {
       console.error("Error ao listar equipamento", error);
@@ -71,6 +71,7 @@ export default function Reports() {
       const user = await VerifyAuth();
       await fetchProjects(user.user_id);
       await fetchEquipamentDetails(user.user_id);
+      console.log("equipaments:", await getEquipment(1))
     }
 
     loadData();

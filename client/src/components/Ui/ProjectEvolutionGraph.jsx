@@ -1,16 +1,11 @@
 import { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
-import { VwProjectComponentStatus } from "@services/ViewService";
 
 const ProjectEvolutionGraph = () => {
   const project_id = 4;
 
   useEffect(() => {
-    const feltchStatus = async () => {
-      const response = await VwProjectComponentStatus(project_id);
-      return response;
-    };
-    feltchStatus();
+    console.log("Project ID:", project_id);
   }, []);
 
   // eslint-disable-next-line no-unused-vars
