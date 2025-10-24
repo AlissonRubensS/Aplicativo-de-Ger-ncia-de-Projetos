@@ -70,13 +70,24 @@ export default function Reports() {
 
   // Contar status dos componentes
   const [countStatus, setCountStatus] = useState();
-  const [startDate, setStartDate] = useState("2024-10-23");
-  const [endDate, setEndDate] = useState("2025-10-23");
+  const [startDate, setStartDate] = useState("2024-12-31");
+  const [endDate, setEndDate] = useState("2025-12-31");
+  const [totalComplete, setTotalComplete] = useState(0);
+  const [totalPending, setTotalPending] = useState(0);
 
-  const fetchStatusCount = async () => {
+  const fetchStatusCount = async (proejct_id, start_date, end_date) => {
     try {
-      const response = await countStatusComponents(startDate, endDate);
+      const response = await countStatusComponents(
+        proejct_id,
+        start_date,
+        end_date
+      );
       setCountStatus(response);
+      response.map((aux) =>
+        aux.status === "concluído"
+          ? setTotalComplete(totalComplete + parseInt(aux.numero_pecas))
+          : setTotalPending(totalPending + parseInt(aux.numero_pecas))
+      );
     } catch (error) {
       console.error(
         "Erro ao contar os status dos components no frontend",
@@ -90,17 +101,11 @@ export default function Reports() {
       const user = await VerifyAuth();
       await fetchProjects(user.user_id);
       await fetchEquipamentDetails(user.user_id);
-      await fetchStatusCount();
+      await fetchStatusCount(1, startDate, endDate);
     }
     loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (countStatus) {
-      alert(JSON.stringify(countStatus));
-    }
-  }, [countStatus]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endDate, startDate]);
 
   return (
     <>
@@ -160,24 +165,24 @@ export default function Reports() {
             <div className="flex flex-col space-y-8 w-1/6 py-1">
               <InfoCard
                 title="Entregues"
-                value={50}
+                value={totalComplete}
                 icon={<img src="src/imgs/entrega.png" className="w-6 h-6" />}
               />
               <InfoCard
                 title="Peças Pendentes"
-                value={50}
+                value={totalPending}
                 icon={<img src="src/imgs/caixa.png" className="w-6 h-6" />}
               />
               <InfoCard
                 title="Desperdício"
-                value={50}
+                value={0}
                 icon={
                   <img src="src/imgs/desperdicio.png" className="w-6 h-6" />
                 }
               />
             </div>
-            <div className="flex flex-col w-5/6 py-1">
-              <ProjectEvolutionGraph />
+            <div className="flex flex-col w-5/6 py-1 ml-8">
+              <ProjectEvolutionGraph data={countStatus} />
             </div>
           </div>
 

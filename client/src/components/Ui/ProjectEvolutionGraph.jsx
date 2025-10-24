@@ -1,102 +1,78 @@
-import { useEffect, useState } from "react";
-import ReactApexChart from "react-apexcharts";
+import Chart from "react-apexcharts";
 
-const ProjectEvolutionGraph = () => {
-  const project_id = 4;
+const ProjectStatusStackedChart = ({ data = [] }) => {
+  // Protege caso data seja vazio
+  if (!data.length) {
+    return <p>Carregando dados...</p>;
+  }
+  const categories = [...new Set(data.map((d) => d.equipment_name))];
+  const statuses = [...new Set(data.map((d) => d.status))];
+  const series = statuses.map((status) => ({
+    name: status,
+    data: categories.map((cat) => {
+      const item = data.find(
+        (d) => d.equipment_name === cat && d.status === status
+      );
+      return item ? Number(item.numero_pecas) : 0;
+    }),
+  }));
 
-  useEffect(() => {
-    console.log("Project ID:", project_id);
-  }, []);
-
-  // eslint-disable-next-line no-unused-vars
-  const [data, setData] = useState({
-    series: [
-      {
-        name: "PRODUCT A",
-        data: [44, 55, 41, 67, 22, 43],
-      },
-      {
-        name: "PRODUCT B",
-        data: [13, 23, 20, 8, 13, 27],
-      },
-      {
-        name: "PRODUCT C",
-        data: [11, 17, 15, 15, 21, 14],
-      },
-      {
-        name: "PRODUCT D",
-        data: [21, 7, 25, 13, 22, 8],
-      },
-    ],
-    options: {
-      chart: {
-        type: "bar",
-        height: 350,
-        stacked: true,
-        toolbar: {
-          show: false,
-        },
-        zoom: {
-          enabled: true,
-        },
-      },
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            legend: {
-              position: "bottom",
-              offsetX: -10,
-              offsetY: 0,
-            },
-          },
-        },
-      ],
-      plotOptions: {
-        bar: {
-          horizontal: false,
-          dataLabels: {
-            total: {
-              enabled: true,
-              style: {
-                fontSize: "13px",
-                fontWeight: 900,
-              },
-            },
-          },
-        },
-      },
-      xaxis: {
-        type: "datetime",
-        categories: [
-          "01/01/2011 GMT",
-          "01/02/2011 GMT",
-          "01/03/2011 GMT",
-          "01/04/2011 GMT",
-          "01/05/2011 GMT",
-          "01/06/2011 GMT",
-        ],
-      },
-      legend: {
-        position: "right",
-        offsetY: 40,
-      },
-      fill: {
-        opacity: 1,
+  const options = {
+    chart: {
+      type: "bar",
+      stacked: true,
+      toolbar: { show: false },
+      zoom: { enabled: false },
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: "30%",
+        borderRadius: 6,
       },
     },
-  });
+    xaxis: {
+      categories: categories,
+      axisBorder: { show: false },
+      axisTicks: { show: false },
+      labels: { style: { fontSize: "12px" } },
+    },
+    yaxis: {
+      title: { text: "Número de Componentes", style: { fontSize: "12px" } },
+      labels: { style: { fontSize: "12px" } },
+    },
+    legend: {
+      position: "right",
+      fontSize: "12px",
+      markers: { radius: 5 },
+      offsetY: 0,
+    },
+    grid: {
+      borderColor: "#eee",
+      row: { colors: ["transparent"], opacity: 0.5 },
+    },
+    dataLabels: {
+      enabled: true,
+      style: { fontSize: "10px", colors: ["#fff"] },
+      formatter: (val) => val,
+    },
+    colors: ["#4CAF50", "#F44336", "#FFC107", "#2196F3"], // cores por status
+    tooltip: {
+      y: {
+        formatter: (val) => `${val} componentes`,
+      },
+    },
+  };
 
   return (
-    <div className="chart-container">
-      <ReactApexChart
-        options={data.options}
-        series={data.series}
-        type="bar"
-        height={350}
-      />
-    </div>
+    <Chart
+      options={options}
+      series={series}
+      type="bar"
+      height={350}
+      width={700}
+    />
   );
 };
 
-export default ProjectEvolutionGraph;
+export default ProjectStatusStackedChart;
