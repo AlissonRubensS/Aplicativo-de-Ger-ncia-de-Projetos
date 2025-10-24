@@ -38,25 +38,24 @@ const ProjectStatusStackedChart = ({ data = [] }) => {
       labels: { style: { fontSize: "12px" } },
     },
     yaxis: {
-      title: { text: "Número de Componentes", style: { fontSize: "12px" } },
-      labels: { style: { fontSize: "12px" } },
+      show: false
     },
     legend: {
       position: "right",
       fontSize: "12px",
       markers: { radius: 5 },
-      offsetY: 0,
+      offsetY: 30,
+      offsetX: 20,
     },
     grid: {
       borderColor: "#eee",
-      row: { colors: ["transparent"], opacity: 0.5 },
     },
     dataLabels: {
       enabled: true,
-      style: { fontSize: "10px", colors: ["#fff"] },
+      style: { fontSize: "10px", colors: ["#000"] },
       formatter: (val) => val,
     },
-    colors: ["#4CAF50", "#F44336", "#FFC107", "#2196F3"], // cores por status
+    colors: ["#5EED9A", "#F3F4F7"],
     tooltip: {
       y: {
         formatter: (val) => `${val} componentes`,
@@ -69,8 +68,8 @@ const ProjectStatusStackedChart = ({ data = [] }) => {
       options={options}
       series={series}
       type="bar"
-      height={350}
-      width={700}
+      height={300}
+      width={650}
     />
   );
 };

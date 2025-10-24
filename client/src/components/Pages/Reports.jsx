@@ -39,30 +39,23 @@ export default function Reports() {
 
   // lista os projetos que o usuário está cadastrado
   const [projects, setProjects] = useState([]);
-  const [selectedProj, setSelectedProj] = useState([]);
+  const [selectedProj, setSelectedProj] = useState([1]);
   const fetchProjects = async (user_id) => {
     try {
       const data = await listProjects(user_id);
-      if (data && Array.isArray(data)) {
-        const projectsNames = data.map((p) => p.project_name);
-        setProjects(projectsNames);
-      }
+      setProjects(data);
     } catch (error) {
       console.error("Error ao listar projetos", error);
     }
   };
 
-  const [equipaments, setEquipaments] = useState([]);
+  const [equipments, setEquipments] = useState([]);
   const [selectedEquip, setSelectedEquip] = useState([]);
 
   const fetchEquipamentDetails = async (user_id) => {
     try {
-      console.log("user_id:", user_id);
       const data = await getEquipment(user_id);
-      if (data && Array.isArray(data)) {
-        const equipamentNames = data.map((e) => e.equipment_name);
-        setEquipaments(equipamentNames);
-      }
+      setEquipments(data)
     } catch (error) {
       console.error("Error ao listar equipamento", error);
     }
@@ -82,12 +75,33 @@ export default function Reports() {
         start_date,
         end_date
       );
-      setCountStatus(response);
+      let a = [];
+      let total_complete_temp = 0;
+      let total_pending_temp = 0;
       response.map((aux) =>
         aux.status === "concluído"
-          ? setTotalComplete(totalComplete + parseInt(aux.numero_pecas))
-          : setTotalPending(totalPending + parseInt(aux.numero_pecas))
+          ? [
+              (total_complete_temp =
+                total_complete_temp + parseInt(aux.numero_pecas)),
+              a.push({
+                equipment_name: aux.equipment_name,
+                status: "concluído",
+                numero_pecas: aux.numero_pecas,
+              }),
+            ]
+          : [
+              (total_pending_temp =
+                total_pending_temp + parseInt(aux.numero_pecas)),
+              a.push({
+                equipment_name: aux.equipment_name,
+                status: "pendente",
+                numero_pecas: aux.numero_pecas,
+              }),
+            ]
       );
+      setCountStatus(a);
+      setTotalComplete(total_complete_temp);
+      setTotalPending(total_pending_temp);
     } catch (error) {
       console.error(
         "Erro ao contar os status dos components no frontend",
@@ -101,11 +115,11 @@ export default function Reports() {
       const user = await VerifyAuth();
       await fetchProjects(user.user_id);
       await fetchEquipamentDetails(user.user_id);
-      await fetchStatusCount(1, startDate, endDate);
+      await fetchStatusCount(selectedProj[0], startDate, endDate);
     }
     loadData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endDate, startDate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endDate, startDate, selectedProj]);
 
   return (
     <>
@@ -118,10 +132,13 @@ export default function Reports() {
           <div className="flex flex-row space-x-2 text-sm">
             <div>
               <p className="text-xs">Projetos</p>
+              {/* <SelectProjects/> */}
               <SelectMenu
                 className="text-sm h-6"
                 maxSelections={1}
-                options={projects}
+                options={projects.map((proj) => {
+                  return { id: proj.project_id, label: proj.project_name };
+                })}
                 selectedOption={selectedProj}
                 setSelectedOption={setSelectedProj}
               />
@@ -130,7 +147,9 @@ export default function Reports() {
               <p className="text-xs">Equipamento</p>
               <SelectMenu
                 className="text-sm h-6"
-                options={equipaments}
+                options={ equipments.map((equip) => {
+                  return {id: equip.equipment_id, label: equip.equipment_name}
+                }) }
                 selectedOption={selectedEquip}
                 setSelectedOption={setSelectedEquip}
               />

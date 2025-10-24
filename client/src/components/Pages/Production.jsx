@@ -11,7 +11,6 @@ import { FiUser } from "react-icons/fi";
 
 import NavBar from "../Ui/NavBar";
 import SelectMenu from "../Ui/SelectMenu";
-import SelectDepartmentMenu from "../Ui/SelectDepartmentMenu";
 import AddComponent from "../Ui/AddComponent";
 
 import { listDepartments } from "@services/DepartmentService.js";
@@ -82,10 +81,7 @@ export default function Production() {
   const fetchProjects = async (user_id) => {
     try {
       const data = await listProjects(user_id);
-      if (data && Array.isArray(data)) {
-        const projectsNames = data.map((p) => p.project_name);
-        setProjects(projectsNames);
-      }
+      setProjects(data);
     } catch (error) {
       console.error("Error ao listar projetos", error);
     }
@@ -94,10 +90,7 @@ export default function Production() {
   const fetchEmployees = async () => {
     try {
       const data = await listEmployees();
-      if (data && Array.isArray(data)) {
-        const employeesNames = data.map((e) => e.user_name);
-        setEmployees(employeesNames);
-      }
+      setEmployees(data);
     } catch (error) {
       console.error("Erro ao listar funcionários", error);
     }
@@ -105,7 +98,7 @@ export default function Production() {
 
   useEffect(() => {
     async function loadData() {
-      const user = await VerifyAuth()
+      const user = await VerifyAuth();
       await fetchProjects(user.user_id);
       await fetchEmployees(); // funciona sempre
       await fetchDepartments(); // funciona sempre
@@ -178,8 +171,10 @@ export default function Production() {
           <div className="flex flex-row items-center space-x-2">
             <CiFilter className="h-5 w-5" />
             <p>Departamento:</p>
-            <SelectDepartmentMenu
-              options={departments}
+            <SelectMenu
+              options={departments.map((dep) => {
+                return { id: dep.departament_id, label: dep.department_name };
+              })}
               selectedOption={selectedDept}
               setSelectedOption={setSelectedDept}
             />
@@ -190,7 +185,9 @@ export default function Production() {
 
             <p>Projetos:</p>
             <SelectMenu
-              options={projects}
+              options={projects.map((proj) => {
+                return { id: proj.project_id, label: proj.project_name };
+              })}
               selectedOption={selectedProj}
               setSelectedOption={setSelectedProj}
             />
@@ -200,7 +197,9 @@ export default function Production() {
             <FiUser className="h-5 w-5" />
             <p>Funcionário:</p>
             <SelectMenu
-              options={employees}
+              options={employees.map((emp) => {
+                return { id: emp.user_id, label: emp.user_name };
+              })}
               selectedOption={selectedEmp}
               setSelectedOption={setSelectedEmp}
             />

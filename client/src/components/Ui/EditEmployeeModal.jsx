@@ -33,7 +33,7 @@ export default function EditEmployeeModal({ visible, setVisible, user_id }) {
         pay,
         1, // temporario, fazer flech no bd para pegar o a performance do funcionario.
         job_title,
-        1, // temporario, fazer flech no bd para pegar o id do item selecionado.
+        1 // temporario, fazer flech no bd para pegar o id do item selecionado.
       );
       alert("Funcionário atualizado com sucesso!");
       setVisible(false);
@@ -132,7 +132,12 @@ export default function EditEmployeeModal({ visible, setVisible, user_id }) {
                   </label>
                   <SelectMenu
                     variant="full"
-                    options={departments}
+                    options={departments.map((dep) => {
+                      return {
+                        id: dep.departament_id,
+                        label: dep.department_name,
+                      };
+                    })}
                     maxSelections={1}
                     selectedOption={selectedOption}
                     setSelectedOption={setSelectedOption}

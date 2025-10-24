@@ -145,7 +145,12 @@ export default function RegisterEmployeeModal({
                   </label>
                   <SelectMenu
                     variant="full"
-                    options={departments}
+                    options={departments.map((dep) => {
+                      return {
+                        id: dep.departament_id,
+                        label: dep.department_name,
+                      };
+                    })}
                     maxSelections={1}
                     selectedOption={selectedDepartment}
                     setSelectedOption={setSelectedDepartment}
