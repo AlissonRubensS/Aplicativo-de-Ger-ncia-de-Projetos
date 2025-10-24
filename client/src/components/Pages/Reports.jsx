@@ -4,9 +4,11 @@ import InfoCard from "../Ui/InfoCard";
 import SelectMenu from "../Ui/SelectMenu";
 import ProjectEvolutionGraph from "../Ui/ProjectEvolutionGraph";
 import { useState, useEffect } from "react";
+
 import { listProjects } from "@services/ProjectService.js";
 import { getEquipment } from "@services/EquipmentService";
 import { VerifyAuth } from "@services/AuthService.js";
+import { countStatusComponents } from "@services/ComponentsServices.js";
 
 export default function Reports() {
   const headersTableProjects = ["Projetos", "Valor"];
@@ -66,16 +68,39 @@ export default function Reports() {
     }
   };
 
+  // Contar status dos componentes
+  const [countStatus, setCountStatus] = useState();
+  const [startDate, setStartDate] = useState("2024-10-23");
+  const [endDate, setEndDate] = useState("2025-10-23");
+
+  const fetchStatusCount = async () => {
+    try {
+      const response = await countStatusComponents(startDate, endDate);
+      setCountStatus(response);
+    } catch (error) {
+      console.error(
+        "Erro ao contar os status dos components no frontend",
+        error
+      );
+    }
+  };
+
   useEffect(() => {
     async function loadData() {
       const user = await VerifyAuth();
       await fetchProjects(user.user_id);
       await fetchEquipamentDetails(user.user_id);
-      console.log("equipaments:", await getEquipment(1))
+      await fetchStatusCount();
     }
-
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (countStatus) {
+      alert(JSON.stringify(countStatus));
+    }
+  }, [countStatus]);
 
   return (
     <>
@@ -113,12 +138,16 @@ export default function Reports() {
                   name="date-in"
                   id="date-in"
                   className="bg-gray-50 p-1 rounded-md w-full text-xs"
+                  value={startDate}
+                  onChange={(o) => setStartDate(o.target.value)}
                 />
                 <input
                   type="date"
                   name="date-out"
                   id="date-out"
                   className="bg-gray-50 p-1 rounded-md w-full text-xs"
+                  value={endDate}
+                  onChange={(o) => setEndDate(o.target.value)}
                 />
               </div>
             </div>
