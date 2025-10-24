@@ -1,5 +1,4 @@
 import { IoMdClose } from "react-icons/io";
-import SelectDepartmentMenu from "./SelectDepartmentMenu";
 import SelectMenu from "./SelectMenu";
 import { useState } from "react";
 
@@ -98,10 +97,15 @@ function AddComponent({ isOpen, setOpen, departmens, projects, employees }) {
                 <label htmlFor="departament" className="text-gray-700">
                   Departamento *
                 </label>
-                <SelectDepartmentMenu
+                <SelectMenu
                   name="departament"
                   variant="full"
-                  options={departmens}
+                  options={departmens.map((dep) => {
+                    return {
+                      id: dep.department.id,
+                      label: dep.department_name,
+                    };
+                  })}
                   selectedOption={selectDept}
                   setSelectedOption={setSelectedDept}
                   maxSelections={1}

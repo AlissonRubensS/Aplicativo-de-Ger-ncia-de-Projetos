@@ -118,7 +118,6 @@ export default function Reports() {
       await fetchStatusCount(selectedProj[0], startDate, endDate);
     }
     loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endDate, startDate, selectedProj]);
 
   return (

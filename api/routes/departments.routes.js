@@ -1,7 +1,6 @@
 import { Router } from "express";
 import {
-  getDepartmentByName,
-  listDepartmentsByName,
+  listDepartmentsOrderName,
   createDeparment,
   editDepartment,
   deleteDepartment,
@@ -9,8 +8,7 @@ import {
 
 const router = Router();
 
-router.get("/", listDepartmentsByName);
-router.get("/$name", getDepartmentByName);
+router.get("/", listDepartmentsOrderName);
 router.post("/", createDeparment);
 router.put("/", editDepartment);
 router.delete("/", deleteDepartment);
