@@ -22,9 +22,9 @@ export const getEmployeeById = async (req, res) => {
     const response = await pool.query(
       `SELECT 
          u.user_id, u.email, u.user_name, u.pass, u.access_type, 
-         e.salary, e.performance, e.job_title, e.fk_department_id
+         e.salary, e.performance, e.job_title, e.department_id
        FROM users u 
-       JOIN employees e ON u.user_id = e.fk_user_id
+       JOIN employees e ON u.user_id = e.user_id
        WHERE u.user_id = $1`,
       [user_id]
     );
@@ -44,27 +44,27 @@ export const createEmployee = async (req, res) => {
     const {
       email,
       user_name,
-      pass,
+      password,
       access_type,
       salary,
       job_title,
-      fk_department_id,
+      department_id,
     } = req.body;
 
     await client.query("BEGIN");
 
     const userResult = await client.query(
-      `INSERT INTO users (email, user_name, pass, access_type)
+      `INSERT INTO users (email, user_name, password, access_type)
        VALUES ($1, $2, $3, $4) RETURNING user_id`,
-      [email.trim(), user_name.trim(), pass.trim(), access_type || 3]
+      [email.trim(), user_name.trim(), password.trim(), access_type || 3]
     );
 
     const userId = userResult.rows[0].user_id;
-
+    console.log(userId)
     await client.query(
-      `INSERT INTO employees (fk_user_id, salary, job_title, fk_department_id)
+      `INSERT INTO employees (user_id, salary, job_title, department_id)
        VALUES ($1, $2, $3, $4)`,
-      [userId, salary, job_title, fk_department_id]
+      [userId, salary, job_title, department_id]
     );
 
     await client.query("COMMIT");
@@ -90,7 +90,7 @@ export const editEmployee = async (req, res) => {
       salary,
       performance,
       job_title,
-      fk_department_id,
+      department_id,
     } = req.body;
 
     await client.query("BEGIN");
@@ -102,9 +102,9 @@ export const editEmployee = async (req, res) => {
     );
 
     await client.query(
-      `UPDATE employees SET salary = $1, performance = $2, job_title = $3, fk_department_id = $4
-       WHERE fk_user_id = $5`,
-      [salary, performance, job_title, fk_department_id, user_id]
+      `UPDATE employees SET salary = $1, performance = $2, job_title = $3, department_id = $4
+       WHERE user_id = $5`,
+      [salary, performance, job_title, department_id, user_id]
     );
 
     await client.query("COMMIT");

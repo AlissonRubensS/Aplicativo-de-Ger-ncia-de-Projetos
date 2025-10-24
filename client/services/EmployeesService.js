@@ -14,21 +14,21 @@ export const listEmployees = async () => {
 export const createEmployee = async (
   email,
   user_name,
-  pass,
+  password,
   access_type,
   salary,
   job_title,
-  fk_department_id
+  department_id
 ) => {
   try {
     const response = await axios.post(API_URL, {
       email,
       user_name,
-      pass,
+      password,
       access_type,
       salary,
       job_title,
-      fk_department_id,
+      department_id,
     });
     return response.data;
   } catch (err) {

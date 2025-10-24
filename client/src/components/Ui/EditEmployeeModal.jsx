@@ -18,7 +18,6 @@ export default function EditEmployeeModal({ visible, setVisible, user_id }) {
       const data = await listDepartments();
       setDepartments(data);
     };
-
     fetchDepartments();
   }, [user_id]);
 
@@ -134,7 +133,7 @@ export default function EditEmployeeModal({ visible, setVisible, user_id }) {
                     variant="full"
                     options={departments.map((dep) => {
                       return {
-                        id: dep.departament_id,
+                        id: dep.department_id,
                         label: dep.department_name,
                       };
                     })}

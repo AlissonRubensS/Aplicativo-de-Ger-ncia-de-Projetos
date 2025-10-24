@@ -1,8 +1,6 @@
 import SelectMenu from "./SelectMenu";
 import { IoMdClose } from "react-icons/io";
-import { useState } from "react";
-
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { listDepartments } from "@services/DepartmentService";
 import { createEmployee } from "@services/EmployeesService";
 
@@ -19,12 +17,12 @@ export default function RegisterEmployeeModal({
   const [job_title, setJobTitle] = useState("");
   const [pay, setPay] = useState("");
 
-  useEffect(() => {
-    const fetchDepartments = async () => {
-      const data = await listDepartments();
-      setDepartments(data);
-    };
+  const fetchDepartments = async () => {
+    const data = await listDepartments();
+    setDepartments(data);
+  };
 
+  useEffect(() => {
     fetchDepartments();
   }, []);
 
@@ -147,7 +145,7 @@ export default function RegisterEmployeeModal({
                     variant="full"
                     options={departments.map((dep) => {
                       return {
-                        id: dep.departament_id,
+                        id: dep.department_id,
                         label: dep.department_name,
                       };
                     })}
