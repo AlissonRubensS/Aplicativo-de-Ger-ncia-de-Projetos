@@ -10,14 +10,15 @@ import { listDepartments } from "@services/DepartmentService";
 
 export default function Employees() {
   // Funcionários Lógica
-  const [employees, setEmployees] = useState([]);
   const [isAddEmployeeModal, setAddEmployeeModal] = useState(false);
   const [isAddDepModal, setAddDepModal] = useState(false);
 
+  const [employees, setEmployees] = useState([]);
+  const [filterderEmployees, setFilteredEmployees] = useState([]);
   const fetchEmployees = async () => {
     try {
       const data = await listEmployees(1);
-      data ? setEmployees(data) : null;
+      data ? [setEmployees(data), setFilteredEmployees(data)] : null;
     } catch (error) {
       console.error("Falha ao buscar funcionários:", error);
     }
@@ -25,10 +26,11 @@ export default function Employees() {
 
   // Departamento Lógica
   const [departments, setDepatments] = useState([]);
+  const [filteredDepartments, setFilteredDepatments] = useState([]);
 
   const fetchDepartments = async () => {
     const data = await listDepartments();
-    data ? setDepatments(data) : null;
+    data ? [setDepatments(data), setFilteredDepatments(data)] : null;
   };
 
   // fetchs
@@ -57,10 +59,10 @@ export default function Employees() {
               isModalVisible={isAddEmployeeModal}
               setIsModalVisible={setAddEmployeeModal}
               list={employees}
-              setList={setEmployees}
+              setFilteredList={setFilteredEmployees}
             />
             <div className="flex flex-wrap justify-center gap-4 pb-16">
-              {employees.map((employee) => (
+              {filterderEmployees.map((employee) => (
                 <EmployeeFramework
                   key={employee.user_id}
                   user_id={employee.user_id}
@@ -80,9 +82,9 @@ export default function Employees() {
               isModalVisible={isAddDepModal}
               setIsModalVisible={setAddDepModal}
               list={departments}
-              setList={setDepatments}
+              setFilteredList={setFilteredDepatments}
             />
-            {departments.map((dep) => (
+            {filteredDepartments.map((dep) => (
               <DepartmentCard
                 key={dep.department_id}
                 id={dep.department_id}

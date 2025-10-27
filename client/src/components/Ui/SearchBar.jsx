@@ -3,20 +3,17 @@ import { IoAddCircleSharp } from "react-icons/io5";
 import { useState } from "react";
 
 export default function SearchBar({
-  onChanged,
   isModalVisible,
   setIsModalVisible,
   list,
-  setList,
+  setFilteredList,
 }) {
   const [search, setSearch] = useState("");
 
   const filterName = () => {
     const lowerCaseSearchTerm = search.toLowerCase();
-    const filteredResults = list.filter((name) => {
-      return JSON.stringify(name)
-        .toLowerCase()
-        .includes(lowerCaseSearchTerm);
+    let filteredResults = list.filter((name) => {
+      return JSON.stringify(name).toLowerCase().includes(lowerCaseSearchTerm);
     });
     return filteredResults;
   };
@@ -28,7 +25,9 @@ export default function SearchBar({
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            search ? setList(filterName()) : onChanged;
+            search.length > 0
+              ? setFilteredList(filterName())
+              : setFilteredList(list)
           }}
           className="flex flex-row w-full"
         >
