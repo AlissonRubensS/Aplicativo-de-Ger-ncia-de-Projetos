@@ -21,14 +21,13 @@ const ProjectStatusStackedChart = ({ data = [] }) => {
     chart: {
       type: "bar",
       stacked: true,
-      toolbar: { show: false },
+      toolbar: { show: true },
       zoom: { enabled: false },
     },
     plotOptions: {
       bar: {
         horizontal: false,
         columnWidth: "30%",
-        borderRadius: 6,
       },
     },
     xaxis: {
@@ -38,7 +37,7 @@ const ProjectStatusStackedChart = ({ data = [] }) => {
       labels: { style: { fontSize: "12px" } },
     },
     yaxis: {
-      show: false
+      show: false,
     },
     legend: {
       position: "right",
@@ -48,11 +47,11 @@ const ProjectStatusStackedChart = ({ data = [] }) => {
       offsetX: 20,
     },
     grid: {
-      borderColor: "#eee",
+      borderColor: "tranparent",
     },
     dataLabels: {
       enabled: true,
-      style: { fontSize: "10px", colors: ["#000"] },
+      style: { fontSize: "12px", colors: ["#000"] },
       formatter: (val) => val,
     },
     colors: ["#5EED9A", "#F3F4F7"],

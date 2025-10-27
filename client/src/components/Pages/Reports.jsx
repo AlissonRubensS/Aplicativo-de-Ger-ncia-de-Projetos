@@ -55,16 +55,27 @@ export default function Reports() {
   const fetchEquipamentDetails = async (user_id) => {
     try {
       const data = await getEquipment(user_id);
-      setEquipments(data)
+      setEquipments(data);
     } catch (error) {
       console.error("Error ao listar equipamento", error);
     }
   };
 
+  // Data atual
+  const today = new Date();
+  const threeMonthsAgo = new Date();
+  threeMonthsAgo.setMonth(today.getMonth() - 3);
+  const threeMonthsAhead = new Date();
+  threeMonthsAhead.setMonth(today.getMonth() + 3);
+  const [startDate, setStartDate] = useState(
+    threeMonthsAgo.toISOString().slice(0, 10)
+  );
+  const [endDate, setEndDate] = useState(
+    threeMonthsAhead.toISOString().slice(0, 10)
+  );
+  
   // Contar status dos componentes
   const [countStatus, setCountStatus] = useState();
-  const [startDate, setStartDate] = useState("2024-12-31");
-  const [endDate, setEndDate] = useState("2025-12-31");
   const [totalComplete, setTotalComplete] = useState(0);
   const [totalPending, setTotalPending] = useState(0);
 
@@ -146,9 +157,12 @@ export default function Reports() {
               <p className="text-xs">Equipamento</p>
               <SelectMenu
                 className="text-sm h-6"
-                options={ equipments.map((equip) => {
-                  return {id: equip.equipment_id, label: equip.equipment_name}
-                }) }
+                options={equipments.map((equip) => {
+                  return {
+                    id: equip.equipment_id,
+                    label: equip.equipment_name,
+                  };
+                })}
                 selectedOption={selectedEquip}
                 setSelectedOption={setSelectedEquip}
               />
