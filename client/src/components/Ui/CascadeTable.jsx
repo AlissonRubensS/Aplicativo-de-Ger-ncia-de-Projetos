@@ -1,38 +1,119 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import PropTypes from "prop-types";
+
+function normalize(str) {
+  return String(str ?? "").trim().toLowerCase();
+}
 
 function CascadeTable({ title, headers, values, filter }) {
   const [openGroups, setOpenGroups] = useState({});
   const [selectedFilterIndex, setSelectedFilterIndex] = useState(0);
 
-  const toggleGroup = (groupName) =>
-    setOpenGroups((prev) => ({ ...prev, [groupName]: !prev[groupName] }));
+  // 🔹 Cria lista de filtros de materiais (únicos, ordenados, + "Todos")
+  const filters = useMemo(() => {
+    const uniqueFromData = Array.from(
+      new Set(values.map((v) => normalize(v.material)))
+    ).filter(Boolean);
 
-  // soma a coluna selecionada
-  const calcularTotal = (groupItems) =>
-    groupItems.reduce((acc, row) => {
-      const val = Number(row[selectedFilterIndex + 1]) || 0;
-      return acc + val;
+    const normalizedPropFilter = Array.isArray(filter)
+      ? Array.from(new Set(filter.map((f) => normalize(f)).filter(Boolean)))
+      : [];
+
+    const base = normalizedPropFilter.length ? normalizedPropFilter : uniqueFromData;
+
+    const readable = base.map((s) => s.charAt(0).toUpperCase() + s.slice(1));
+
+    return ["Todos", ...readable];
+  }, [values, filter]);
+
+  const selectedFilter = filters[selectedFilterIndex] ?? filters[0];
+
+  // 🔹 Agrupa os dados em níveis (projeto > equipamento > componente)
+  const groupedData = useMemo(() => {
+    const grouped = {};
+    values.forEach((item) => {
+      const project = item.project ?? "Sem Projeto";
+      const equipment = item.equipment ?? "Sem Equipamento";
+      const component = item.component ?? "Sem Componente";
+      const material = item.material ?? "";
+      const quantity = Number(item.quantity) || 0;
+
+      if (!grouped[project]) grouped[project] = {};
+      if (!grouped[project][equipment]) grouped[project][equipment] = {};
+      if (!grouped[project][equipment][component])
+        grouped[project][equipment][component] = [];
+
+      grouped[project][equipment][component].push({ material, quantity });
+    });
+    return grouped;
+  }, [values]);
+
+  const toggleGroup = (key) =>
+    setOpenGroups((prev) => ({ ...prev, [key]: !prev[key] }));
+
+  // 🔹 Calcula total de um grupo com base no filtro atual
+  const calcularTotal = (items) => {
+    const sel = normalize(selectedFilter);
+    return items.reduce((acc, { material, quantity }) => {
+      const matNorm = normalize(material);
+      if (sel === "todos" || matNorm === sel) return acc + quantity;
+      return acc;
     }, 0);
+  };
+
+  // 🔹 Remove grupos que não têm uso do material selecionado
+  const filteredProjects = useMemo(() => {
+    const sel = normalize(selectedFilter);
+    const filtered = {};
+
+    for (const [project, equipments] of Object.entries(groupedData)) {
+      const validEquipments = {};
+
+      for (const [equipment, components] of Object.entries(equipments)) {
+        const validComponents = {};
+
+        for (const [component, materials] of Object.entries(components)) {
+          const filteredMaterials =
+            sel === "todos"
+              ? materials
+              : materials.filter((m) => normalize(m.material) === sel);
+
+          if (filteredMaterials.length > 0) {
+            validComponents[component] = filteredMaterials;
+          }
+        }
+
+        if (Object.keys(validComponents).length > 0) {
+          validEquipments[equipment] = validComponents;
+        }
+      }
+
+      if (Object.keys(validEquipments).length > 0) {
+        filtered[project] = validEquipments;
+      }
+    }
+
+    return filtered;
+  }, [groupedData, selectedFilter]);
 
   const displayedHeaders = [
     headers?.[0] || "Item",
-    filter?.[selectedFilterIndex] || headers?.[1] || "Valor",
+    headers?.[1] || "Quantidade",
   ];
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-2 text-base">
-      {/* Header com título e filtro */}
+    <div className="w-full max-w-6xl mx-auto p-2 text-base">
+      {/* 🔹 Cabeçalho */}
       <div className="relative bg-sky-200 font-bold py-1 px-2 flex items-center text-base">
         <h2 className="flex-1 text-center">{title}</h2>
-        {filter?.length > 1 && (
+        {filters.length > 1 && (
           <div className="absolute right-2">
             <select
               className="border-none rounded p-1 text-sm bg-transparent"
               value={selectedFilterIndex}
-              onChange={(e) => setSelectedFilterIndex(Number(e.target.value))}
+              onChange={(e) => setSelectedFilterIndex(Number(e.target.value) || 0)}
             >
-              {filter.map((f, i) => (
+              {filters.map((f, i) => (
                 <option key={i} value={i}>
                   {f}
                 </option>
@@ -42,88 +123,147 @@ function CascadeTable({ title, headers, values, filter }) {
         )}
       </div>
 
-      {/* Tabela */}
+      {/* 🔹 Tabela */}
       <table className="min-w-full border-collapse text-base">
         <thead>
           <tr className="bg-sky-200 uppercase font-semibold text-sm">
             {displayedHeaders.map((header, index) => (
-              <th
-                key={index}
-                className="p-2 border-b border-sky-300 text-center"
-              >
+              <th key={index} className="p-2 border-b border-sky-300 text-center">
                 {header}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {Object.entries(values).map(([groupName, groupItems]) => {
-            const total = calcularTotal(groupItems);
+          {Object.entries(filteredProjects).length === 0 ? (
+            <tr>
+              <td colSpan={2} className="text-center py-4 text-gray-500">
+                Nenhum item com o filtro selecionado.
+              </td>
+            </tr>
+          ) : (
+            Object.entries(filteredProjects).map(([project, equipments]) => {
+              const projectItems = Object.values(equipments).flatMap((components) =>
+                Object.values(components).flat()
+              );
+              const projectTotal = calcularTotal(projectItems);
 
-            return (
-              <React.Fragment key={groupName}>
-                {/* Linha do grupo */}
-                <tr className="bg-sky-50 hover:bg-sky-100 text-sm">
-                  <td colSpan={displayedHeaders.length - 1}>
-                    <button
-                      onClick={() => toggleGroup(groupName)}
-                      className="flex items-center justify-between w-full p-2 font-medium"
-                    >
-                      <span className="flex items-center gap-1">
-                        {openGroups[groupName] ? (
-                          <img
-                            src="src/imgs/remove-square.png"
-                            className="h-4 w-4"
-                            alt="collapse"
-                          />
-                        ) : (
-                          <img
-                            src="src/imgs/add-square.png"
-                            className="h-4 w-4"
-                            alt="expand"
-                          />
-                        )}
-                        {groupName}
-                      </span>
-                    </button>
-                  </td>
-                  <td className="text-center font-medium p-2">
-                    {filter[selectedFilterIndex]} Total: {total}
-                  </td>
-                </tr>
-
-                {/* Linhas do grupo */}
-                {openGroups[groupName] &&
-                  groupItems.map((row, rowIndex) => {
-                    const displayValue =
-                      Number(row[selectedFilterIndex + 1]) || 0;
-                    return (
-                      <tr
-                        key={rowIndex}
-                        className="bg-white hover:bg-sky-50 transition text-sm"
+              return (
+                <React.Fragment key={project}>
+                  {/* Projeto */}
+                  <tr className="bg-sky-100 hover:bg-sky-200 text-sm">
+                    <td colSpan={2}>
+                      <button
+                        onClick={() => toggleGroup(project)}
+                        className="flex items-center justify-between w-full p-2 font-medium"
                       >
-                        <td className="p-2 border-b border-sky-200 text-left">
-                          {row[0]}
-                        </td>
-                        <td className="p-2 border-b border-sky-200 text-center font-semibold">
-                          {displayValue}
-                        </td>
-                      </tr>
-                    );
-                  })}
-
-                {/* Total dentro do grupo */}
-                {openGroups[groupName] && (
-                  <tr className="bg-sky-100 font-bold text-sm">
-                    <td className="p-2 text-right">
-                      {filter[selectedFilterIndex]} Total
+                        <span className="flex items-center gap-2">
+                          <img
+                            src={
+                              openGroups[project]
+                                ? "src/imgs/remove-square.png"
+                                : "src/imgs/add-square.png"
+                            }
+                            className="h-4 w-4"
+                            alt="toggle"
+                          />
+                          {project}
+                        </span>
+                        <span>
+                          Total ({selectedFilter}): {projectTotal}
+                        </span>
+                      </button>
                     </td>
-                    <td className="p-2 text-center">{total}</td>
                   </tr>
-                )}
-              </React.Fragment>
-            );
-          })}
+
+                  {/* Equipamentos */}
+                  {openGroups[project] &&
+                    Object.entries(equipments).map(([equipment, components]) => {
+                      const equipKey = `${project}-${equipment}`;
+                      const equipItems = Object.values(components).flat();
+                      const equipTotal = calcularTotal(equipItems);
+
+                      return (
+                        <React.Fragment key={equipKey}>
+                          <tr className="bg-sky-50 hover:bg-sky-100 text-sm">
+                            <td colSpan={2}>
+                              <button
+                                onClick={() => toggleGroup(equipKey)}
+                                className="flex items-center justify-between w-full p-2 font-medium pl-6"
+                              >
+                                <span className="flex items-center gap-2">
+                                  <img
+                                    src={
+                                      openGroups[equipKey]
+                                        ? "src/imgs/remove-square.png"
+                                        : "src/imgs/add-square.png"
+                                    }
+                                    className="h-4 w-4"
+                                    alt="toggle"
+                                  />
+                                  {equipment}
+                                </span>
+                                <span>{equipTotal}</span>
+                              </button>
+                            </td>
+                          </tr>
+
+                          {/* Componentes */}
+                          {openGroups[equipKey] &&
+                            Object.entries(components).map(([component, materials]) => {
+                              const compKey = `${equipKey}-${component}`;
+                              const compTotal = calcularTotal(materials);
+
+                              return (
+                                <React.Fragment key={compKey}>
+                                  <tr className="bg-white hover:bg-sky-50 text-sm">
+                                    <td colSpan={2} className="p-2 pl-12 font-semibold">
+                                      <button
+                                        onClick={() => toggleGroup(compKey)}
+                                        className="flex items-center justify-between w-full"
+                                      >
+                                        <span className="flex items-center gap-2">
+                                          <img
+                                            src={
+                                              openGroups[compKey]
+                                                ? "src/imgs/remove-square.png"
+                                                : "src/imgs/add-square.png"
+                                            }
+                                            className="h-4 w-4"
+                                            alt="toggle"
+                                          />
+                                          {component}
+                                        </span>
+                                        <span>{compTotal}</span>
+                                      </button>
+                                    </td>
+                                  </tr>
+
+                                  {/* Materiais */}
+                                  {openGroups[compKey] &&
+                                    materials.map((m, i) => (
+                                      <tr
+                                        key={i}
+                                        className="bg-white hover:bg-sky-50 text-sm"
+                                      >
+                                        <td className="p-2 pl-16 border-b border-sky-100">
+                                          {m.material}
+                                        </td>
+                                        <td className="p-2 border-b border-sky-100 text-center">
+                                          {m.quantity}
+                                        </td>
+                                      </tr>
+                                    ))}
+                                </React.Fragment>
+                              );
+                            })}
+                        </React.Fragment>
+                      );
+                    })}
+                </React.Fragment>
+              );
+            })
+          )}
         </tbody>
       </table>
     </div>
@@ -132,9 +272,9 @@ function CascadeTable({ title, headers, values, filter }) {
 
 CascadeTable.propTypes = {
   title: PropTypes.string.isRequired,
-  headers: PropTypes.arrayOf(PropTypes.string).isRequired,
-  values: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.array)).isRequired,
+  headers: PropTypes.arrayOf(PropTypes.string),
   filter: PropTypes.arrayOf(PropTypes.string),
+  values: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default CascadeTable;

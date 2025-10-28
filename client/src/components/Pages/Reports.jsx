@@ -9,32 +9,20 @@ import { listProjects } from "@services/ProjectService.js";
 import { getEquipment } from "@services/EquipmentService";
 import { VerifyAuth } from "@services/AuthService.js";
 import { countStatusComponents } from "@services/ComponentsServices.js";
+import { vwProjectConsumedMaterials } from "@services/ViewsService.js";
 
 export default function Reports() {
-  const headersTableProjects = ["Projetos", "Valor"];
-  const valuesTableProjects = {
-    "Projeto 3": [
-      ["Peça 1", 30, 20, 15],
-      ["Peça 2", 22, 7, 35],
-    ],
-    "Projeto 4": [
-      ["Peça 3", 10, 5, 2],
-      ["Peça 4", 8, 3, 1],
-    ],
-  };
-  const filtrosTableProjects = ["filtro 1", "filtro 2", "filtro 3"];
-  const headerTableOffices = ["Setor", "Processos"];
-  const valuesTableOffices = {
-    "Setor 1": [
-      ["Processo 1", 10],
-      ["Processo 2", 20],
-      ["Processo 3", 10],
-    ],
-    "Setor 2": [
-      ["Processo 1", 10],
-      ["Processo 2", 20],
-      ["Processo 3", 10],
-    ],
+  const [dataProjects, setDataProjects] = useState([]);
+
+  const flechtProjectMaterials = async (user_id) => {
+    try {
+      const data = await vwProjectConsumedMaterials(user_id);
+      Array.isArray(data) && data
+        ? setDataProjects(data)
+        : alert("Erro ao carregar dados da view");
+    } catch (error) {
+      console.error("Erro no fecht", error);
+    }
   };
 
   // lista os projetos que o usuário está cadastrado
@@ -49,9 +37,9 @@ export default function Reports() {
     }
   };
 
+  // lista de equipamentos relacionados aos projetos do usuário
   const [equipments, setEquipments] = useState([]);
   const [selectedEquip, setSelectedEquip] = useState([]);
-
   const fetchEquipamentDetails = async (user_id) => {
     try {
       const data = await getEquipment(user_id);
@@ -67,13 +55,14 @@ export default function Reports() {
   threeMonthsAgo.setMonth(today.getMonth() - 3);
   const threeMonthsAhead = new Date();
   threeMonthsAhead.setMonth(today.getMonth() + 3);
+
   const [startDate, setStartDate] = useState(
     threeMonthsAgo.toISOString().slice(0, 10)
   );
   const [endDate, setEndDate] = useState(
     threeMonthsAhead.toISOString().slice(0, 10)
   );
-  
+
   // Contar status dos componentes
   const [countStatus, setCountStatus] = useState();
   const [totalComplete, setTotalComplete] = useState(0);
@@ -127,9 +116,12 @@ export default function Reports() {
       await fetchProjects(user.user_id);
       await fetchEquipamentDetails(user.user_id);
       await fetchStatusCount(selectedProj[0], startDate, endDate);
+      await flechtProjectMaterials(user.user_id);
     }
     loadData();
   }, [endDate, startDate, selectedProj]);
+
+  useEffect(() => console.log(JSON.stringify(dataProjects)), [dataProjects]);
 
   return (
     <>
@@ -221,10 +213,10 @@ export default function Reports() {
           {/* CascadeTable */}
           <div className="col-span-5 h-96 bg-white py-1 px-2 rounded shadow-lg overflow-auto">
             <CascadeTable
-              title="Detalhamento de Materiais por Projetos"
-              headers={headersTableProjects}
-              values={valuesTableProjects}
-              filter={filtrosTableProjects}
+              title="Detalhamento por Projeto"
+              headers={["Equipamentos", "Valores"]}
+              filter={() => dataProjects.map((f) => f.material)}
+              values={dataProjects}
             />
           </div>
 
@@ -236,12 +228,7 @@ export default function Reports() {
             <h1>Lead Time Meta X Real</h1>
           </div>
           <div className="bg-white py-1 px-2 rounded shadow-lg col-span-4 text-sm h-72 overflow-y-auto">
-            <CascadeTable
-              title="Processor em Atraso por Setor"
-              headers={headerTableOffices}
-              values={valuesTableOffices}
-              filter={["Dias Em Atraso"]}
-            />
+            {/* tabela 2 processos em atraso por setor */}
           </div>
         </div>
       </div>
