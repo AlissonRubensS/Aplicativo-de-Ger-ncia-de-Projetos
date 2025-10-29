@@ -10,8 +10,6 @@ const TotalConsumptionGraph = ({ data = [] }) => {
 
   const projects = [...new Set(data.map((d) => d.project_name))];
   const materials = [...new Set(data.map((d) => d.material_name))];
-
-  // Altura dinâmica (50px por projeto, mínimo de 250px)
   const chartHeight = Math.max(250, projects.length * 50);
 
   const series = materials.map((material) => ({
@@ -35,7 +33,7 @@ const TotalConsumptionGraph = ({ data = [] }) => {
       toolbar: { show: true },
       zoom: {
         enabled: true,
-        type: 'xy' // <-- MUDANÇA 1: Habilita o zoom por seleção em X e Y
+        type: 'xy' 
       },
     },
     plotOptions: {
@@ -125,18 +123,14 @@ const TotalConsumptionGraph = ({ data = [] }) => {
           </button>
         </div>
       </div>
-
-      {/* <-- MUDANÇA 2: Container com scroll Y e X */}
       <div className="flex-1 overflow-y-auto overflow-x-auto">
-        
-        {/* <-- MUDANÇA 3: Wrapper interno com altura dinâmica e LARGURA MÍNIMA */}
         <div style={{ minWidth: '600px', height: chartHeight }}>
           <Chart
             options={options}
             series={series}
             type="bar"
-            height="100%" // <-- MUDANÇA 4: Preenche o wrapper
-            width="100%"  // <-- MUDANÇA 5: Preenche o wrapper
+            height="100%" 
+            width="100%"
           />
         </div>
       </div>
