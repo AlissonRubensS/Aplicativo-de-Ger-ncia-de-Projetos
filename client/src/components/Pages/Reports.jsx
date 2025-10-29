@@ -4,6 +4,7 @@ import CascadeTableTwoLevel from "../Ui/CascadeTableTwoLevel";
 import InfoCard from "../Ui/InfoCard";
 import SelectMenu from "../Ui/SelectMenu";
 import ProjectEvolutionGraph from "../Ui/ProjectEvolutionGraph";
+import TotalConsumptionGraph from "../Ui/TotalConsumptionGraph";
 import { useState, useEffect } from "react";
 
 import { listProjects } from "@services/ProjectService.js";
@@ -231,8 +232,8 @@ export default function Reports() {
           </div>
 
           {/* Outros cards */}
-          <div className="bg-white py-1 px-2 rounded shadow-lg col-span-4 text-sm">
-            <h1>Comsumo Total</h1>
+          <div className="bg-white py-1 px-2 rounded shadow-lg col-span-4 text-sm h-72">
+            <TotalConsumptionGraph data={dataProjects} />
           </div>
           <div className="bg-white py-1 px-2 rounded shadow-lg col-span-4 text-sm">
             <h1>Lead Time Meta X Real</h1>
