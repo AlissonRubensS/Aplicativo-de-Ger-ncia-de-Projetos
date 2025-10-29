@@ -1,5 +1,6 @@
 import NavBar from "../Ui/NavBar";
 import CascadeTable from "../Ui/CascadeTable";
+import CascadeTableTwoLevel from "../Ui/CascadeTableTwoLevel";
 import InfoCard from "../Ui/InfoCard";
 import SelectMenu from "../Ui/SelectMenu";
 import ProjectEvolutionGraph from "../Ui/ProjectEvolutionGraph";
@@ -9,7 +10,10 @@ import { listProjects } from "@services/ProjectService.js";
 import { getEquipment } from "@services/EquipmentService";
 import { VerifyAuth } from "@services/AuthService.js";
 import { countStatusComponents } from "@services/ComponentsServices.js";
-import { vwProjectConsumedMaterials } from "@services/ViewsService.js";
+import {
+  vwProjectConsumedMaterials,
+  vwProjectDepartmentDelays,
+} from "@services/ViewsService.js";
 
 export default function Reports() {
   const [dataProjects, setDataProjects] = useState([]);
@@ -110,6 +114,13 @@ export default function Reports() {
     }
   };
 
+  // Processos em atraso
+  const [processDelaysList, setProcessDelaysList] = useState([]);
+  const processDelays = async () => {
+    const data = await vwProjectDepartmentDelays();
+    setProcessDelaysList(data)
+  };
+
   useEffect(() => {
     async function loadData() {
       const user = await VerifyAuth();
@@ -117,11 +128,10 @@ export default function Reports() {
       await fetchEquipamentDetails(user.user_id);
       await fetchStatusCount(selectedProj[0], startDate, endDate);
       await flechtProjectMaterials(user.user_id);
+      await processDelays();
     }
     loadData();
   }, [endDate, startDate, selectedProj]);
-
-  useEffect(() => console.log(JSON.stringify(dataProjects)), [dataProjects]);
 
   return (
     <>
@@ -229,6 +239,10 @@ export default function Reports() {
           </div>
           <div className="bg-white py-1 px-2 rounded shadow-lg col-span-4 text-sm h-72 overflow-y-auto">
             {/* tabela 2 processos em atraso por setor */}
+            <CascadeTableTwoLevel
+              title="Processos em Atraso por Departamento"
+              data={processDelaysList}
+            />
           </div>
         </div>
       </div>
