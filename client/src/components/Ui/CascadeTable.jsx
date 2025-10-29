@@ -12,7 +12,7 @@ function CascadeTable({ title, headers, values, filter }) {
   // 🔹 Cria lista de filtros de materiais (únicos, ordenados, + "Todos")
   const filters = useMemo(() => {
     const uniqueFromData = Array.from(
-      new Set(values.map((v) => normalize(v.material)))
+      new Set(values.map((v) => normalize(v.material_name)))
     ).filter(Boolean);
 
     const normalizedPropFilter = Array.isArray(filter)
@@ -32,18 +32,18 @@ function CascadeTable({ title, headers, values, filter }) {
   const groupedData = useMemo(() => {
     const grouped = {};
     values.forEach((item) => {
-      const project = item.project ?? "Sem Projeto";
-      const equipment = item.equipment ?? "Sem Equipamento";
-      const component = item.component ?? "Sem Componente";
-      const material = item.material ?? "";
-      const quantity = Number(item.quantity) || 0;
+      const project = item.project_name ?? "Sem Projeto";
+      const equipment = item.equipment_name ?? "Sem Equipamento";
+      const component = item.component_name ?? "Sem Componente";
+      const material = item.material_name ?? "";
+      const total_material_consumed = Number(item.total_material_consumed) || 0;
 
       if (!grouped[project]) grouped[project] = {};
       if (!grouped[project][equipment]) grouped[project][equipment] = {};
       if (!grouped[project][equipment][component])
         grouped[project][equipment][component] = [];
 
-      grouped[project][equipment][component].push({ material, quantity });
+      grouped[project][equipment][component].push({ material, total_material_consumed });
     });
     return grouped;
   }, [values]);
@@ -54,9 +54,9 @@ function CascadeTable({ title, headers, values, filter }) {
   // 🔹 Calcula total de um grupo com base no filtro atual
   const calcularTotal = (items) => {
     const sel = normalize(selectedFilter);
-    return items.reduce((acc, { material, quantity }) => {
+    return items.reduce((acc, { material, total_material_consumed }) => {
       const matNorm = normalize(material);
-      if (sel === "todos" || matNorm === sel) return acc + quantity;
+      if (sel === "todos" || matNorm === sel) return acc + total_material_consumed;
       return acc;
     }, 0);
   };
@@ -250,7 +250,7 @@ function CascadeTable({ title, headers, values, filter }) {
                                           {m.material}
                                         </td>
                                         <td className="p-2 border-b border-sky-100 text-center">
-                                          {m.quantity}
+                                          {m.total_material_consumed}
                                         </td>
                                       </tr>
                                     ))}

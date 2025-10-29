@@ -118,7 +118,7 @@ export default function Reports() {
   const [processDelaysList, setProcessDelaysList] = useState([]);
   const processDelays = async () => {
     const data = await vwProjectDepartmentDelays();
-    setProcessDelaysList(data)
+    setProcessDelaysList(data);
   };
 
   useEffect(() => {
@@ -225,7 +225,7 @@ export default function Reports() {
             <CascadeTable
               title="Detalhamento por Projeto"
               headers={["Equipamentos", "Valores"]}
-              filter={() => dataProjects.map((f) => f.material)}
+              filter={() => dataProjects.map((p) => p.material_name)}
               values={dataProjects}
             />
           </div>
