@@ -118,7 +118,7 @@ export default function Production() {
       />
 
       <div className="bg-slate-200 flex flex-col space-y-5 rounded-lg p-0 m-0">
-        <NavBar />
+        <NavBar select_index={2}/>
         <div className="glass-effect bg-gray-50 flex flex-row items-center justify-between mx-8 p-4 shadow-md rounded-md">
           {/* Opções da Produção */}
           <div className="flex flex-row items-center space-x-2">

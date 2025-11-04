@@ -6,7 +6,7 @@ function Home() {
 
   return (
     <div className="w-screen h-screen bg-slate-200 flex flex-col space-y-4 rounded-lg">
-      <NavBar />
+      <NavBar select_index={0} />
       <div className='flex flex-row justify-center items-start space-x-8'>
         <DataPanel title="Planejado" value={0} unit="KG"/>
         <DataPanel title="Processado" value={1} unit="KG"/>

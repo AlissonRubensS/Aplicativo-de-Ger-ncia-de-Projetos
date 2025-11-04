@@ -67,8 +67,8 @@ const ProjectStatusStackedChart = ({ data = [] }) => {
       options={options}
       series={series}
       type="bar"
-      height={300}
-      width={650}
+      height="100%"
+      width="100%"
     />
   );
 };

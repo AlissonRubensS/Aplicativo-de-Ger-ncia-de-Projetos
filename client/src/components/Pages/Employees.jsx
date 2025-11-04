@@ -52,7 +52,7 @@ export default function Employees() {
       />
 
       <div className="flex flex-col w-screen h-screen space-y-4 overflow-x-hidden">
-        <NavBar />
+        <NavBar select_index={4}/>
         <div className="bg-slate-200 flex flex-row items-start w-screen h-screen">
           <div className="flex flex-col w-4/6 space-y-4 p-4">
             <SearchBar

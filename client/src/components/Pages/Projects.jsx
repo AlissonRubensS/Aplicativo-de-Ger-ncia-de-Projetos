@@ -23,8 +23,8 @@ function Projects() {
 
   return (
     <>
-      <div className="flex flex-col w-full h-screen overflow-y-auto">
-        <NavBar />
+      <div className="flex flex-col w-screen overflow-y-auto">
+        <NavBar select_index={1} />
 
         <div className="flex flex-row justify-between items-center bg-white px-4 py-2 ml-4 mt-4 mr-4 rounded shadow">
           <h1>Projetos</h1>

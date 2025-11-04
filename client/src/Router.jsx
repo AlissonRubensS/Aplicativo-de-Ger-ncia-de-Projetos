@@ -7,7 +7,8 @@ import Projects from "@pages/Projects.jsx";
 import Employees from "@pages/Employees.jsx";
 import Reports from "@pages/Reports.jsx";
 import Login from "@pages/Login.jsx";
-import Budgets from "@pages/Budgets";
+import Budgets from "@pages/Budgets.jsx";
+import Recipes from "@pages/Recipes.jsx";
 
 const token = sessionStorage.getItem("loginPermission");
 const router = createBrowserRouter([
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
   {
     path: "/budgets",
     element: token ? <Budgets /> : <Login />,
+  },
+  {
+    path: "/recipes",
+    element: token ? <Recipes /> : <Login />,
   },
 ]);
 

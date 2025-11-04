@@ -136,8 +136,8 @@ export default function Reports() {
 
   return (
     <>
-      <div className="space-y-4 pb-16">
-        <NavBar />
+      <div className="h-screen w-screen space-y-4 pb-16">
+        <NavBar select_index={3}/>
 
         {/* Título da Página */}
         <div className="flex flex-row bg-white py-1 px-2 items-center justify-between shadow-lg mx-4 rounded">
@@ -232,13 +232,13 @@ export default function Reports() {
           </div>
 
           {/* Outros cards */}
-          <div className="bg-white py-1 px-2 rounded shadow-lg col-span-4 text-sm h-72">
+          <div className="bg-white py-1 px-2 rounded shadow-lg col-span-4 text-sm h-96">
             <TotalConsumptionGraph data={dataProjects} />
           </div>
-          <div className="bg-white py-1 px-2 rounded shadow-lg col-span-4 text-sm">
+          <div className="bg-white py-1 px-2 rounded shadow-lg col-span-4 text-sm h-96">
             <h1>Lead Time Meta X Real</h1>
           </div>
-          <div className="bg-white py-1 px-2 rounded shadow-lg col-span-4 text-sm h-72 overflow-y-auto">
+          <div className="bg-white py-1 px-2 rounded shadow-lg col-span-4 text-sm h-96 overflow-y-auto">
             {/* tabela 2 processos em atraso por setor */}
             <CascadeTableTwoLevel
               title="Processos em Atraso por Departamento"
