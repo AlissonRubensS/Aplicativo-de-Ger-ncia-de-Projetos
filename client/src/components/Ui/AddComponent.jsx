@@ -102,7 +102,7 @@ function AddComponent({ isOpen, setOpen, departmens, projects, employees }) {
                   variant="full"
                   options={departmens.map((dep) => {
                     return {
-                      id: dep.department.id,
+                      id: dep.department_id,
                       label: dep.department_name,
                     };
                   })}

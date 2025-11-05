@@ -7,7 +7,7 @@ export default function RecipeHeader() {
 
   return (
     <>
-      {isModalVisible && <RecipeRegisterModal />}
+      {isModalVisible && <RecipeRegisterModal setVisible={setModalVisible}/>}
 
       <div className="flex justify-center">
         <div className="flex flex-row justify-between items-center bg-white rounded-lg shadow-sm w-4/5 py-2 px-8">
