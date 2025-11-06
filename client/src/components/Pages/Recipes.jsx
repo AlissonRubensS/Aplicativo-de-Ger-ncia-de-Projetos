@@ -5,28 +5,37 @@ import { useState } from "react";
 
 function Recipes() {
   const [recipeCards, setRecipeCards] = useState([
-    { id: Date.now(), name: "", type: "", values: [] },
+    {
+      id: Date.now(),
+      name: "",
+      type: "",
+      recipeItens: [{ label: "", qtd: 0, value: 0.0, uni: "uni" }],
+    },
   ]);
 
   const addBlankCard = () => {
     setRecipeCards((prev) => [
       ...prev,
-      { id: Date.now() + Math.random(), name: "", type: "", values: [] },
+      {
+        id: Date.now() + Math.random(),
+        name: "",
+        type: "",
+        recipeItens: [{ label: "", qtd: 0, value: 0.0, uni: "uni" }],
+      },
     ]);
   };
-
   return (
     <>
-      <div className="h-screen w-screen flex flex-col space-y-8">
+      <div className="h-screen max-w-screen flex flex-col space-y-8 mb-28 overflow-x-hidden">
         <NavBar select_index={5} />
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-4 text-sm">
           <RecipeHeader onAddCard={addBlankCard} />
           {recipeCards.map((card) => (
             <RecipeCard
               key={card.id}
               name={card.name}
               type={card.type}
-              values={card.values}
+              values={card.recipeItens}
             />
           ))}
         </div>

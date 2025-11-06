@@ -164,7 +164,7 @@ function NavBar({ select_index }) {
   );
 }
 
-NavBar.PropTypes = {
+NavBar.propTypes = {
   select_index: PropTypes.number.isRequired,
 };
 
