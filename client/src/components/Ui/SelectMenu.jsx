@@ -6,7 +6,7 @@ function SelectMenu({
   variant = "small",
   maxSelections = 0,
   options = [],           // [{ id, label }]
-  selectedOption = [],    // [ id ]
+  selectedOption = [],    // [ id ] 
   setSelectedOption,
 }) {
   const [isOpen, setOpen] = useState(false);

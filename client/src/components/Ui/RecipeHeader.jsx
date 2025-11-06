@@ -1,14 +1,11 @@
 import { IoAddOutline } from "react-icons/io5";
-import RecipeRegisterModal from "./RecipeRegisterModal";
 import { useState } from "react";
 
-export default function RecipeHeader() {
-  const [isModalVisible, setModalVisible] = useState(false);
+export default function RecipeHeader({ onAddCard }) {
+  const [search, setSearch] = useState("");
 
   return (
     <>
-      {isModalVisible && <RecipeRegisterModal setVisible={setModalVisible}/>}
-
       <div className="flex justify-center">
         <div className="flex flex-row justify-between items-center bg-white rounded-lg shadow-sm w-4/5 py-2 px-8">
           <div className="flex flex-col space-y-2">
@@ -17,8 +14,11 @@ export default function RecipeHeader() {
           </div>
 
           <div className="flex flex-row space-x-2 items-center">
-            <form className="bg-white-gray px-4 py-2 rounded flex align-middle justify-between space-x-4">
-              <button>
+            <form
+              className="bg-white-gray px-4 py-2 rounded flex align-middle justify-between space-x-4"
+              onSubmit={(e) => e.preventDefault()}
+            >
+              <button type="button">
                 <img
                   src="\src\imgs\lupa-icon.png"
                   alt="imagem de uma pesquisa"
@@ -30,11 +30,13 @@ export default function RecipeHeader() {
                 type="text"
                 placeholder="Pesquisar receitas"
                 className="bg-transparent"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
               />
             </form>
             <button
               className="flex items-center px-4 py-2 bg-spring-green rounded-lg hover:bg-green-600 transition font-semibold space-x-2"
-              onClick={() => setModalVisible(true)}
+              onClick={() => onAddCard && onAddCard()}
             >
               <IoAddOutline size={22} />
               <p>Nova Receita</p>

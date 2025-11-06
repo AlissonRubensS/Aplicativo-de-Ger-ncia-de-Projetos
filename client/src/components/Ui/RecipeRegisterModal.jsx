@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
+import SelectMenu from "./SelectMenu.jsx";
+
+// Services
+import { listMaterials } from "../../../services/MaterialService.js";
 
 function RecipeRegisterModal({ setVisible }) {
   const [type, setType] = useState("equipment");
   const [recipeName, setRecipeName] = useState("");
   const [recipeDesc, setRecipeDesc] = useState("");
   const [recipelist, setRecipeList] = useState([]);
+  const [selectMatriz, setSelectMatriz] = useState([[]]);  // [ [id], [id], [id]... ] 
 
   let label = type === "equipment" ? "Componentes" : "Materiais";
 
@@ -17,6 +22,7 @@ function RecipeRegisterModal({ setVisible }) {
     setRecipeName("");
     setRecipeDesc("");
     setRecipeList([]);
+    setSelectMatriz([[]]);
     setVisible(false);
   };
 
@@ -26,6 +32,21 @@ function RecipeRegisterModal({ setVisible }) {
       exit();
     }
   };
+
+  // Requisições ao Banco de Dados
+  // Materiais
+  const [materials, setMaterials] = useState([]);
+
+  const flechtMaterials = async () => {
+    const data = await listMaterials();
+    setMaterials(data);
+  };
+
+  useEffect(() => {
+    flechtMaterials();
+  }, []);
+
+  // useEffect(() => alert(JSON.stringify(selectMatriz)), [selectMatriz]);
 
   return (
     <>
@@ -98,12 +119,9 @@ function RecipeRegisterModal({ setVisible }) {
                 type="button"
                 className="bg-blue-500 text-white px-4 py-1 rounded w-fit"
                 onClick={(e) => {
-                  //TODO: Trocar por um componente para selecionar o material ou componente
                   e.preventDefault();
-                  setRecipeList((prev) => [
-                    ...prev,
-                    { label: <p>Nova Receita</p>, value: 0, uni: "Uni" },
-                  ]);
+                  setRecipeList((prev) => [...prev, { value: "", uni: "Uni" }]);
+                  setSelectMatriz((prev) => prev.length > 1 ? [...prev, []] : [ [ ] ]);
                 }}
               >
                 Adicionar {label}
@@ -119,22 +137,68 @@ function RecipeRegisterModal({ setVisible }) {
                   </thead>
                   <tbody>
                     {recipelist.length > 0 ? (
-                      recipelist.map((o, i) => (
+                      recipelist.map((row, i) => (
                         <tr
                           key={i}
                           className="border-t border-gray-300 align-middle"
                         >
-                          <td className="align-middle py-2 w-1/3">{o.label}</td>
-                          <td className="align-middle py-2 w-1/3">{o.value}</td>
+                          <td className="align-middle text-center py-2 w-1/3">
+                            <SelectMenu
+                              maxSelections={1}
+                              options={
+                                type === "equipment"
+                                  ? [{ id: 1, label: "teste" }]
+                                  : Array.isArray(materials)
+                                  ? materials.map((m) => ({
+                                      id: m.material_id,
+                                      label: m.material_name,
+                                    }))
+                                  : []
+                              }
+                              selectedOption={selectMatriz[i] || []}
+                              setSelectedOption={(updater) => {
+                                setSelectMatriz((prev) => {
+                                  const next = [...prev];
+                                  const current = prev[i] || [];
+                                  const updated =
+                                    typeof updater === "function"
+                                      ? updater(current)
+                                      : updater;
+                                  next[i] = Array.isArray(updated)
+                                    ? updated
+                                    : [updated];
+                                  return next;
+                                });
+                              }}
+                            />
+                          </td>
+                          <td className="align-middle text-center py-2 w-1/3">
+                            <input
+                              type="number"
+                              value={row.value}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setRecipeList((prev) =>
+                                  prev.map((r, j) =>
+                                    j === i ? { ...r, value: val } : r
+                                  )
+                                );
+                              }}
+                              className="p-1 rounded w-12 text-center [&::-webkit-inner-spin-button]:appearance-none "
+                            />
+                          </td>
                           <td className="align-middle py-2 w-1/3">
-                            <div className="flex items-center gap-2">
-                              <p>{o.uni}</p>
+                            <div className="flex items-center justify-center gap-2">
+                              <p>{row.uni}</p>
                               <button
                                 type="button"
                                 className="text-red-600 hover:bg-red-100 rounded"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   setRecipeList((prev) =>
+                                    prev.filter((_, index) => index !== i)
+                                  );
+                                  setSelectMatriz((prev) =>
                                     prev.filter((_, index) => index !== i)
                                   );
                                 }}
@@ -166,7 +230,11 @@ function RecipeRegisterModal({ setVisible }) {
               Cancelar
             </button>
             <button
-              type="submit"
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                exit();
+              }}
               className="bg-green-400 hover:bg-green-500 text-white rounded px-4 py-1"
             >
               Salvar
