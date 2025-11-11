@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import SelectMenu from "./SelectMenu.jsx";
 import { FaRegTrashAlt } from "react-icons/fa";
 
@@ -37,8 +36,6 @@ function StyledTable({
     ]);
     localSetSelect((prev) => [...prev, []]);
   };
-
-  useEffect(() => console.log(JSON.stringify(materials)), [materials]);
 
   return (
     <div className="flex flex-col space-y-2 w-full text-sm">
