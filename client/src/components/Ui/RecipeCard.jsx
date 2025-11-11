@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { FaRegSave } from "react-icons/fa";
 import RecipeTable from "./RecipeTable.jsx";
-import { listMaterials } from "../../../services/MaterialService.js";
+import { listMaterials } from "@services/MaterialService.js";
+import { vwComponentRecipeMaterials } from "@services/ViewsService.js";
 
 function RecipeCard({ name = "", type = "equipment", values = [] }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Editable states
   const [recipeName, setRecipeName] = useState(name);
+  const [hourMans, setHourMans] = useState();
   const [recipeType, setRecipeType] = useState(type || "equipment");
   const [recipelist, setRecipeList] = useState(
     values.map((v) => ({
@@ -17,7 +19,7 @@ function RecipeCard({ name = "", type = "equipment", values = [] }) {
       uni: v.uni,
     }))
   );
-  
+
   const [selectMatriz, setSelectMatriz] = useState(
     values.map((v) => [v.label])
   );
@@ -25,11 +27,15 @@ function RecipeCard({ name = "", type = "equipment", values = [] }) {
   const label = recipeType === "equipment" ? "Componentes" : "Materiais";
 
   const [materials, setMaterials] = useState([]);
+  const [componentRecipes, setComponentRecipes] = useState([]);
 
   useEffect(() => {
     listMaterials()
       .then(setMaterials)
       .catch(() => setMaterials([]));
+    vwComponentRecipeMaterials()
+      .then(setComponentRecipes)
+      .catch(() => setComponentRecipes([]));
   }, []);
 
   // Auto scroll to bottom when rows change or on expand
@@ -47,21 +53,99 @@ function RecipeCard({ name = "", type = "equipment", values = [] }) {
     setRecipeName("");
   };
 
-  useEffect(()=>{
-    recipelist.map((r) => console.log(JSON.stringify(r)))
-  }, [recipelist])
+  // Calcular totais dinâmicos
+  // Calcular totais dinâmicos
+  const getTotals = () => {
+    if (recipeType === "equipment") {
+      // Equipamento → somar materiais dos componentes
+      const totals = {
+        Resina: 0,
+        Manta: 0,
+        Roving: 0,
+        Catalizador: 0,
+        Tecido: 0,
+        "Horas-Homem": 0,
+        "Valor Total": 0,
+      };
+
+      // Loop pelos itens da tabela
+      recipelist.forEach((item) => {
+        // Encontra os dados completos do componente no state
+        const compData = componentRecipes.find(
+          (c) => c.componente === item.label
+        );
+
+        if (compData) {
+          const qtd = Number(item.qtd) || 0;
+
+          // Soma os materiais com base na quantidade
+          totals.Resina += (Number(compData.resina) || 0) * qtd;
+          totals.Manta += (Number(compData.manta) || 0) * qtd;
+          totals.Roving += (Number(compData.roving) || 0) * qtd;
+          totals.Catalizador += (Number(compData.catalizador) || 0) * qtd;
+          totals.Tecido += (Number(compData.tecido) || 0) * qtd;
+
+          // Soma as horas-homem com base na quantidade
+          totals["Horas-Homem"] += (Number(compData.horas_homem) || 0) * qtd;
+        }
+      });
+
+      // O "Valor Total" é a soma dos valores já calculados pela tabela
+      // É mais seguro do que recalcular aqui.
+      totals["Valor Total"] = recipelist.reduce(
+        (sum, item) => sum + Number(item.value || 0),
+        0
+      );
+
+      return totals;
+    } else {
+      // Componente → soma simples
+      const totalValue = recipelist.reduce(
+        (sum, item) => sum + Number(item.value || 0),
+        0
+      );
+
+      // Adicionei Horas-Homem aqui, pois você tem um input para isso
+      return {
+        "Valor Total": totalValue,
+        "Horas-Homem": Number(hourMans) || 0,
+      };
+    }
+  };
 
   return (
-    <div className="m-auto bg-white rounded shadow-md w-3/5 border border-gray-200 p-4 space-y-4 text-sm">
+    <div className="m-auto bg-white rounded shadow-md w-4/5 border border-gray-200 p-4 space-y-4 text-sm">
       {isExpanded ? (
         <div className="flex flex-col gap-4 px-4">
           <div className="flex items-center gap-4 text-sm">
-            <input
-              className="border rounded p-2 flex-1 "
-              value={recipeName}
-              onChange={(e) => setRecipeName(e.target.value)}
-              placeholder="Digite o nome da receita"
-            />
+            <label
+              htmlFor="nameInput"
+              className="flex flex-col justify-center text-center gap-2 w-full"
+            >
+              Nome da Receita
+              <input
+                className="border rounded p-2 flex-1"
+                value={recipeName}
+                onChange={(e) => setRecipeName(e.target.value)}
+                placeholder="Digite o nome da receita"
+                id="nameInput"
+              />
+            </label>
+            {recipeType !== "equipment" && (
+              <label
+                htmlFor="manHourInput"
+                className="flex flex-col justify-center text-center gap-2 w-1/2"
+              >
+                Total de Horas-Homem
+                <input
+                  className="border rounded p-2 flex-1 "
+                  value={hourMans}
+                  onChange={(e) => setHourMans(e.target.value)}
+                  placeholder="Digite o total de Horas-Homem do componente"
+                  id="manHourInput"
+                />
+              </label>
+            )}
             <label className="flex items-center gap-2 border border-gray-200 rounded-md px-3 py-2 cursor-pointer hover:bg-gray-50">
               <input
                 type="radio"
@@ -102,19 +186,17 @@ function RecipeCard({ name = "", type = "equipment", values = [] }) {
           </div>
         </div>
       )}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 px-16">
-        {(values.length
-          ? values
-          : [{ label: "Resina", value: 0, uni: "Kg" }]
-        ).map((v, i) => (
+      <div className=" flex flex-wrap justify-center gap-4 px-16">
+        {Object.entries(getTotals()).map(([label, value], i) => (
           <div
             key={i}
-            className="bg-gray-50 rounded-lg p-2 flex flex-col items-center justify-center border border-gray-200"
+            className="bg-gray-50 rounded-lg p-2 flex flex-col items-center justify-center border w-28 border-gray-200"
           >
-            <p className="text-xs text-gray-600 font-medium mb-1">{v.label}</p>
+            <p className="text-xs text-gray-600 font-medium mb-1">{label}</p>
             <div className="flex items-end gap-1">
-              <p className="text-base font-semibold text-gray-800">{v.value}</p>
-              <p className="text-xs text-gray-500 mb-1">{v.uni}</p>
+              <p className="text-base font-semibold text-gray-800">
+                {typeof value === "number" ? value.toFixed(2) : value}
+              </p>
             </div>
           </div>
         ))}
@@ -131,7 +213,9 @@ function RecipeCard({ name = "", type = "equipment", values = [] }) {
             >
               <RecipeTable
                 recipeType={recipeType}
-                materials={materials}
+                materials={
+                  recipeType === "equipment" ? componentRecipes : materials
+                }
                 recipelist={recipelist}
                 setRecipeList={setRecipeList}
                 selectMatriz={selectMatriz}
@@ -143,7 +227,7 @@ function RecipeCard({ name = "", type = "equipment", values = [] }) {
           <div className="flex flex-row justify-end p-2 gap-2">
             <button
               className="bg-white-gray p-2 rounded font-semibold text-sm"
-              onClick={() => setIsExpanded(false)}
+              onClick={() => (setIsExpanded(false), clearStates) }
             >
               Cancelar
             </button>

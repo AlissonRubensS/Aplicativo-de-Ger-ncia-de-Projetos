@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import SelectMenu from "./SelectMenu.jsx";
 import { FaRegTrashAlt } from "react-icons/fa";
 
@@ -31,10 +32,13 @@ function StyledTable({
   const handleAdd = () => {
     localSetRows((prev) => [
       ...prev,
-      { label: "", qtd: 0, value: 0.0, uni: "kg" },
+      // FIX: A unidade padrão para "equipment" deve ser 'uni'
+      { label: "", qtd: 0, value: 0.0, uni: recipeType === "equipment" ? "uni" : "kg" },
     ]);
     localSetSelect((prev) => [...prev, []]);
   };
+
+  useEffect(() => console.log(JSON.stringify(materials)), [materials]);
 
   return (
     <div className="flex flex-col space-y-2 w-full text-sm">
@@ -63,13 +67,16 @@ function StyledTable({
                     {(() => {
                       const optList =
                         recipeType === "equipment"
-                          ? [{ id: 1, label: "Componente A" }]
+                          ? Array.isArray(materials)
+                            ? materials.map((c) => ({
+                                id: c.component_id, 
+                                label: c.componente,
+                              }))
+                            : []
                           : Array.isArray(materials)
                           ? materials.map((m) => ({
                               id: m.material_id,
                               label: m.material_name,
-                              value: m.value,
-                              uni: m.uni,
                             }))
                           : [];
                       return (
@@ -109,7 +116,11 @@ function StyledTable({
                             // Busca o material completo do banco para pegar value e uni
                             const selectedMaterial =
                               recipeType === "equipment"
-                                ? null
+                                ? Array.isArray(materials) 
+                                  ? materials.find(
+                                      (m) => m.component_id === selectedId
+                                    )
+                                  : null
                                 : Array.isArray(materials)
                                 ? materials.find(
                                     (m) => m.material_id === selectedId
@@ -118,8 +129,14 @@ function StyledTable({
 
                             // Extrai value e uni do material ou usa valores padrão
                             const materialValue =
-                              selectedMaterial?.value || 0.0;
-                            const materialUnit = selectedMaterial?.uni || "Kg";
+                              recipeType === "equipment"
+                                ? selectedMaterial?.total_value || 0.0
+                                : selectedMaterial?.value || 0.0;
+                            
+                            const materialUnit =
+                              recipeType === "equipment"
+                                ? "uni" 
+                                : selectedMaterial?.uni || "Kg";
 
                             // Calcula valor total (preço * quantidade atual)
                             const currentQtd = Number(localRows[i]?.qtd || 0);
@@ -152,16 +169,26 @@ function StyledTable({
 
                         // Busca o preço unitário do material selecionado
                         const selectedId = localSelect[i]?.[0];
+                        
+                        // FIX: LÓGICA COPIADA DO 'setSelectedOption' PARA FUNCIONAR AQUI TMB
                         const selectedMaterial =
                           recipeType === "equipment"
-                            ? null
+                            ? Array.isArray(materials)
+                              ? materials.find(
+                                  (m) => m.component_id === selectedId
+                                )
+                              : null
                             : Array.isArray(materials)
                             ? materials.find(
                                 (m) => m.material_id === selectedId
                               )
                             : null;
 
-                        const materialValue = selectedMaterial?.value || 0.0;
+                        // FIX: LÓGICA COPIADA DO 'setSelectedOption'
+                        const materialValue =
+                          recipeType === "equipment"
+                            ? selectedMaterial?.total_value || 0.0
+                            : selectedMaterial?.value || 0.0;
 
                         // Calcula novo valor total
                         const newValue = materialValue * qtdNum;

@@ -4,6 +4,7 @@ import RecipeCard from "../Ui/RecipeCard";
 import { useState } from "react";
 
 function Recipes() {
+  // estado temporario
   const [recipeCards, setRecipeCards] = useState([
     {
       id: Date.now(),

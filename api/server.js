@@ -10,6 +10,7 @@ import equipmentRoutes from "./routes/equipment.routes.js";
 import budgetRoutes from "./routes/budget.routes.js";
 import viewRoutes from "./routes/view.routes.js";
 import materialRoutes from "./routes/materiails.routes.js";
+import componentRecipeRoutes from "./routes/componentRecipes.routes.js";
 
 const app = express();
 app.use(cors());
@@ -25,6 +26,7 @@ app.use("/equipments", equipmentRoutes);
 app.use("/budgets", budgetRoutes);
 app.use("/views", viewRoutes);
 app.use("/materials", materialRoutes);
+app.use("/component-recipes", componentRecipeRoutes);
 
 app.listen(3001, () => {
   console.log("API rodando na porta 3001");
