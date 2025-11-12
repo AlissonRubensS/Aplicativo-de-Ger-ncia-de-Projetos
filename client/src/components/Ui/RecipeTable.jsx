@@ -32,7 +32,13 @@ function StyledTable({
     localSetRows((prev) => [
       ...prev,
       // FIX: A unidade padrão para "equipment" deve ser 'uni'
-      { label: "", qtd: 0, value: 0.0, uni: recipeType === "equipment" ? "uni" : "kg" },
+      {
+        id: null,
+        label: "",
+        qtd: 0,
+        value: 0.0,
+        uni: recipeType === "equipment" ? "uni" : "kg",
+      },
     ]);
     localSetSelect((prev) => [...prev, []]);
   };
@@ -66,7 +72,7 @@ function StyledTable({
                         recipeType === "equipment"
                           ? Array.isArray(materials)
                             ? materials.map((c) => ({
-                                id: c.component_id, 
+                                id: c.component_id,
                                 label: c.componente,
                               }))
                             : []
@@ -113,7 +119,7 @@ function StyledTable({
                             // Busca o material completo do banco para pegar value e uni
                             const selectedMaterial =
                               recipeType === "equipment"
-                                ? Array.isArray(materials) 
+                                ? Array.isArray(materials)
                                   ? materials.find(
                                       (m) => m.component_id === selectedId
                                     )
@@ -129,10 +135,10 @@ function StyledTable({
                               recipeType === "equipment"
                                 ? selectedMaterial?.total_value || 0.0
                                 : selectedMaterial?.value || 0.0;
-                            
+
                             const materialUnit =
                               recipeType === "equipment"
-                                ? "uni" 
+                                ? "uni"
                                 : selectedMaterial?.uni || "Kg";
 
                             // Calcula valor total (preço * quantidade atual)
@@ -144,6 +150,7 @@ function StyledTable({
                                 j === i
                                   ? {
                                       ...r,
+                                      id: selectedId,
                                       label: selectedLabel,
                                       value: totalValue,
                                       uni: materialUnit,
@@ -166,7 +173,7 @@ function StyledTable({
 
                         // Busca o preço unitário do material selecionado
                         const selectedId = localSelect[i]?.[0];
-                        
+
                         // FIX: LÓGICA COPIADA DO 'setSelectedOption' PARA FUNCIONAR AQUI TMB
                         const selectedMaterial =
                           recipeType === "equipment"

@@ -13,6 +13,7 @@ function RecipeCard({ name = "", type = "equipment", values = [] }) {
   const [recipeType, setRecipeType] = useState(type || "equipment");
   const [recipelist, setRecipeList] = useState(
     values.map((v) => ({
+      id: null,
       label: v.label,
       qtd: v.qtd,
       value: v.value,
@@ -54,7 +55,6 @@ function RecipeCard({ name = "", type = "equipment", values = [] }) {
   };
 
   // Calcular totais dinâmicos
-  // Calcular totais dinâmicos
   const getTotals = () => {
     if (recipeType === "equipment") {
       // Equipamento → somar materiais dos componentes
@@ -72,7 +72,7 @@ function RecipeCard({ name = "", type = "equipment", values = [] }) {
       recipelist.forEach((item) => {
         // Encontra os dados completos do componente no state
         const compData = componentRecipes.find(
-          (c) => c.componente === item.label
+          (c) => c.component_id === item.id
         );
 
         if (compData) {
@@ -84,14 +84,9 @@ function RecipeCard({ name = "", type = "equipment", values = [] }) {
           totals.Roving += (Number(compData.roving) || 0) * qtd;
           totals.Catalizador += (Number(compData.catalizador) || 0) * qtd;
           totals.Tecido += (Number(compData.tecido) || 0) * qtd;
-
-          // Soma as horas-homem com base na quantidade
           totals["Horas-Homem"] += (Number(compData.horas_homem) || 0) * qtd;
         }
       });
-
-      // O "Valor Total" é a soma dos valores já calculados pela tabela
-      // É mais seguro do que recalcular aqui.
       totals["Valor Total"] = recipelist.reduce(
         (sum, item) => sum + Number(item.value || 0),
         0
@@ -99,13 +94,10 @@ function RecipeCard({ name = "", type = "equipment", values = [] }) {
 
       return totals;
     } else {
-      // Componente → soma simples
       const totalValue = recipelist.reduce(
         (sum, item) => sum + Number(item.value || 0),
         0
       );
-
-      // Adicionei Horas-Homem aqui, pois você tem um input para isso
       return {
         "Valor Total": totalValue,
         "Horas-Homem": Number(hourMans) || 0,
@@ -227,7 +219,7 @@ function RecipeCard({ name = "", type = "equipment", values = [] }) {
           <div className="flex flex-row justify-end p-2 gap-2">
             <button
               className="bg-white-gray p-2 rounded font-semibold text-sm"
-              onClick={() => (setIsExpanded(false), clearStates) }
+              onClick={() => (setIsExpanded(false), clearStates)}
             >
               Cancelar
             </button>

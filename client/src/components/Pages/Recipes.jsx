@@ -10,7 +10,7 @@ function Recipes() {
       id: Date.now(),
       name: "",
       type: "",
-      recipeItens: [{ label: "", qtd: 0, value: 0.0, uni: "uni" }],
+      recipeItens: [{ id: null, label: "", qtd: 0, value: 0.0, uni: "uni" }],
     },
   ]);
 
@@ -21,7 +21,7 @@ function Recipes() {
         id: Date.now() + Math.random(),
         name: "",
         type: "",
-        recipeItens: [{ label: "", qtd: 0, value: 0.0, uni: "uni" }],
+        recipeItens: [{ id: null, label: "", qtd: 0, value: 0.0, uni: "uni" }],
       },
     ]);
   };
