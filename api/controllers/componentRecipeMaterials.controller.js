@@ -33,16 +33,21 @@ export const readCompRecipeMat = async (req, res) => {
 
 export const updateCompRecipeMat = async (req, res) => {
   try {
-    const { component_recipe_id, material_id, quantity_plan } = req.body;
+    const { component_recipe_id, material_id } = req.params;
+    const { quantity_plan } = req.body;
     const response = await pool.query(
       `UPDATE component_recipes_materials
         SET 
-            quantity_plan = $3
+            quantity_plan = $3 
         WHERE component_recipe_id = $1 AND material_id = $2
         RETURNING *`,
       [component_recipe_id, material_id, quantity_plan]
     );
-    res.status(200).json(response.rows);
+    response.rowCount > 0
+      ? res.status(200).json(response.rows)
+      : res
+          .status(404)
+          .json({ error: "Não foi possivel encontrar a relação na tebela" });
   } catch (error) {
     res
       .status(500)
@@ -52,7 +57,7 @@ export const updateCompRecipeMat = async (req, res) => {
 
 export const deleteCompRecipeMat = async (req, res) => {
   try {
-    const { component_recipe_id, material_id } = req.query;
+    const { component_recipe_id, material_id } = req.params;
     const response = await pool.query(
       `
         DELETE FROM component_recipes_materials 
@@ -61,7 +66,11 @@ export const deleteCompRecipeMat = async (req, res) => {
         RETURNING *`,
       [component_recipe_id, material_id]
     );
-    res.status(200).json(response.rows);
+    response.rowCount > 0
+      ? res.status(200).json(response.rows)
+      : res
+          .status(404)
+          .json({ error: "Não foi possivel encontrar a relação na tebela" });
   } catch (error) {
     res
       .status(500)

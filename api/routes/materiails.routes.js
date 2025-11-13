@@ -10,7 +10,7 @@ const router = Router();
 
 router.get("/", listMaterials);
 router.post("/", createMaterial);
-router.put("/", updateMaterial);
-router.delete("/", deleteMaterial);
+router.put("/:id", updateMaterial);
+router.delete("/:id", deleteMaterial);
 
 export default router;

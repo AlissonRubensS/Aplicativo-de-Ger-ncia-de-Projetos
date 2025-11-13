@@ -10,7 +10,7 @@ const router = Router();
 
 router.post("/", createEquipRecipeCompRecipe)
 router.get("/", readEquipRecipeCompRecipe);
-router.put("/", updateEquipRecipeCompRecipe);
-router.delete("/", deleteEquipRecipeCompRecipe);
+router.put("/:equipment_recipe_id/:component_recipe_id", updateEquipRecipeCompRecipe);
+router.delete("/:equipment_recipe_id/:component_recipe_id", deleteEquipRecipeCompRecipe);
 
 export default router;

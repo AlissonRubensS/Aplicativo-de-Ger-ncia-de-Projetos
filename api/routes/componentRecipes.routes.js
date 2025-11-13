@@ -10,7 +10,7 @@ const router = Router();
 
 router.get("/", getComponentRecipe);
 router.post("/", createComponentRecipe);
-router.delete("/", deleteComponentRecipe);
-router.put("/", updateComponentRecipe);
+router.delete("/:id", deleteComponentRecipe);
+router.put("/:id", updateComponentRecipe);
 
 export default router;

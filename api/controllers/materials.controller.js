@@ -23,7 +23,9 @@ export const createMaterial = async (req, res) => {
 
 export const updateMaterial = async (req, res) => {
   try {
-    const { material_name, material_desc, value, uni, material_id } = req.body;
+    const { material_name, material_desc, value, uni } = req.body;
+    const { id: material_id } = req.params;
+
     const response = await pool.query(
       `UPDATE materials
           SET 
@@ -36,7 +38,9 @@ export const updateMaterial = async (req, res) => {
           RETURNING *`,
       [material_name, material_desc, value, uni, material_id]
     );
-    res.status(200).json(response.rows);
+    response.rowCount > 0
+      ? res.status(200).json(response.rows)
+      : res.status(404).json({ error: "Material não encontrado" });
   } catch (error) {
     res.status(500).json({ error: "Erro ao editar material" + error });
   }
@@ -44,12 +48,15 @@ export const updateMaterial = async (req, res) => {
 
 export const deleteMaterial = async (req, res) => {
   try {
-    const { material_id } = req.query;
+    const { id: material_id } = req.params;
+
     const response = await pool.query(
       "DELETE FROM materials WHERE material_id = $1 RETURNING *",
       [material_id]
     );
-    res.status(200).json(response.rows);
+    response.rowCount > 0
+      ? res.status(200).json(response.rows)
+      : res.status(404).json({ error: "Material não encontrado" });
   } catch (error) {
     res.status(500).json({ error: "Erro ao excluir material " + error });
   }

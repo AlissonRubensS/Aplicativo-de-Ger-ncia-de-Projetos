@@ -10,7 +10,7 @@ const router = Router();
 
 router.post("/", createCompRecipeMat)
 router.get("/", readCompRecipeMat);
-router.put("/", updateCompRecipeMat);
-router.delete("/", deleteCompRecipeMat);
+router.put("/:component_recipe_id/:material_id", updateCompRecipeMat);
+router.delete("/:component_recipe_id/:material_id", deleteCompRecipeMat);
 
 export default router;

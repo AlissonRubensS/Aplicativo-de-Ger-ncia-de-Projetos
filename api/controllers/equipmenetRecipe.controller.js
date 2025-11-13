@@ -18,22 +18,27 @@ export const createEquipmentRecipe = async (req, res) => {
     );
     res.status(200).json(response.rows);
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        error: "Erro ao cadastrar nova receita de Equipamento " + error,
-      });
+    res.status(500).json({
+      error: "Erro ao cadastrar nova receita de Equipamento " + error,
+    });
   }
 };
 
 export const deleteEquipmentRecipe = async (req, res) => {
   try {
-    const { equipment_recipe_id } = req.query;
+    const { id: equipment_recipe_id } = req.params;
     const response = await pool.query(
       "DELETE FROM equipment_recipes WHERE equipment_recipe_id = $1 RETURNING *",
       [equipment_recipe_id]
     );
-    res.status(200).json(response.rows);
+
+    if (response.rowCount === 0) {
+      res
+        .status(404)
+        .json({ error: "Não foi possivel encontrar a relação na tebela" });
+    } else {
+      res.status(200).json(response.rows);
+    }
   } catch (error) {
     res
       .status(500)
@@ -43,7 +48,9 @@ export const deleteEquipmentRecipe = async (req, res) => {
 
 export const updateEquipmentRecipe = async (req, res) => {
   try {
-    const { equipment_recipe_id, recipe_name } = req.body;
+    const { id: equipment_recipe_id } = req.params;
+    const { recipe_name } = req.body;
+
     const response = await pool.query(
       `
       UPDATE equipment_recipes
@@ -54,7 +61,13 @@ export const updateEquipmentRecipe = async (req, res) => {
       `,
       [recipe_name, equipment_recipe_id]
     );
-    res.status(200).json(response.rows);
+    if (response.rowCount === 0) {
+      res
+        .status(404)
+        .json({ error: "Não foi possivel encontrar a relação na tebela" });
+    } else {
+      res.status(200).json(response.rows);
+    }
   } catch (error) {
     res
       .status(500)

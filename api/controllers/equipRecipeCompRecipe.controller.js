@@ -34,8 +34,8 @@ export const readEquipRecipeCompRecipe = async (req, res) => {
 
 export const updateEquipRecipeCompRecipe = async (req, res) => {
   try {
-    const { equipment_recipe_id, component_recipe_id, quantity_plan } =
-      req.body;
+    const { quantity_plan } = req.body;
+    const { equipment_recipe_id, component_recipe_id } = req.params;
     const response = await pool.query(
       `UPDATE equipment_recipes_component_recipes
         SET 
@@ -44,7 +44,11 @@ export const updateEquipRecipeCompRecipe = async (req, res) => {
         RETURNING *`,
       [equipment_recipe_id, component_recipe_id, quantity_plan]
     );
-    res.status(200).json(response.rows);
+    response.rowCount > 0
+      ? res.status(200).json(response.rows)
+      : res
+          .status(404)
+          .json({ error: "Não foi possivel encontrar a relação na tebela" });
   } catch (error) {
     res
       .status(500)
@@ -54,7 +58,7 @@ export const updateEquipRecipeCompRecipe = async (req, res) => {
 
 export const deleteEquipRecipeCompRecipe = async (req, res) => {
   try {
-    const { equipment_recipe_id, component_recipe_id } = req.query;
+    const { equipment_recipe_id, component_recipe_id } = req.params;
     const response = await pool.query(
       `
         DELETE FROM equipment_recipes_component_recipes 
@@ -63,7 +67,11 @@ export const deleteEquipRecipeCompRecipe = async (req, res) => {
         RETURNING *`,
       [equipment_recipe_id, component_recipe_id]
     );
-    res.status(200).json(response.rows);
+    response.rowCount > 0
+      ? res.status(200).json(response.rows)
+      : res
+          .status(404)
+          .json({ error: "Não foi possivel encontrar a relação na tebela" });
   } catch (error) {
     res
       .status(500)

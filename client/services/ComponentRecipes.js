@@ -25,9 +25,7 @@ export const createComponentRecipe = async (recipe_name, man_hours) => {
 
 export const deleteComponentRecipe = async (component_recipe_id) => {
   try {
-    const response = await axios.delete(API_URL, {
-      component_recipe_id,
-    });
+    const response = await axios.delete(`${API_URL}/${component_recipe_id}`);
     return response.data;
   } catch (error) {
     console.error(
@@ -45,12 +43,9 @@ export const updateComponentRecipe = async (
   man_hours
 ) => {
   try {
-    const response = await axios.put(API_URL, {
-      params: {
-        component_recipe_id,
-        recipe_name,
-        man_hours,
-      },
+    const response = await axios.put(`${API_URL}/${component_recipe_id}`, {
+      recipe_name,
+      man_hours,
     });
     return response.data;
   } catch (error) {

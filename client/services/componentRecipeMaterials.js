@@ -1,7 +1,7 @@
 import axios from "axios";
-const API_URL = "http://localhost:3001/materials";
+const API_URL = "http://localhost:3001/comp-recipe-mat";
 
-export const listMaterials = async () => {
+export const readCompRecipeMat = async () => {
   try {
     const response = await axios.get(API_URL);
     return Array.isArray(response.data) ? response.data : [];
@@ -11,18 +11,16 @@ export const listMaterials = async () => {
   }
 };
 
-export const createMaterial = async (
-  material_name,
-  material_desc,
-  value,
-  uni
+export const createCompRecipeMat = async (
+  component_recipe_id,
+  material_id,
+  quantity_plan
 ) => {
   try {
     const response = await axios.post(API_URL, {
-      material_name,
-      material_desc,
-      value,
-      uni,
+      component_recipe_id,
+      material_id,
+      quantity_plan,
     });
 
     return response.data;
@@ -32,20 +30,18 @@ export const createMaterial = async (
   }
 };
 
-export const updateMaterial = async (
-  material_name,
-  material_desc,
-  value,
-  uni,
-  material_id
+export const updateCompRecipeMat = async (
+  component_recipe_id,
+  material_id,
+  quantity_plan
 ) => {
   try {
-    const response = await axios.put(`${API_URL}/${material_id}`, {
-      material_name,
-      material_desc,
-      value,
-      uni,
-    });
+    const response = await axios.put(
+      `${API_URL}/${component_recipe_id}/${material_id}`,
+      {
+        quantity_plan,
+      }
+    );
 
     return response.data;
   } catch (error) {
@@ -54,9 +50,9 @@ export const updateMaterial = async (
   }
 };
 
-export const deleteMaterial = async (material_id) => {
+export const deleteMaterial = async (component_recipe_id, material_id) => {
   try {
-    const response = await axios.delete(`${API_URL}/${material_id}`);
+    const response = await axios.delete(`${API_URL}/${component_recipe_id}/${material_id}`);
     return response.data;
   } catch (error) {
     console.error("Error criar Material:", error);
