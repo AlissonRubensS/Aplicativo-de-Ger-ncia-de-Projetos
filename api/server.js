@@ -38,8 +38,8 @@ app.use("/views", viewRoutes);
 
 // Rotas para o que é Realmente produzido
 app.use("/components", componentsRoutes);
-app.use("/projects", projectsRoutes);
 app.use("/equipments", equipmentRoutes);
+app.use("/projects", projectsRoutes);
 
 // Rotas para Receitas / Planejamento
 app.use("/comp-recipe-mat", componentRecipeMaterialsRouter);

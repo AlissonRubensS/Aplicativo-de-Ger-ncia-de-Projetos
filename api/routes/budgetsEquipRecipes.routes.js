@@ -4,7 +4,7 @@ import {
   readBudgetsEquipRecipes,
   updateBudgetsEquipRecipes,
   deleteBudgetsEquipRecipes,
-} from "../controllers/budgetsEquipRecipes.controller";
+} from "../controllers/budgetsEquipRecipes.controller.js";
 
 const router = Router();
 
