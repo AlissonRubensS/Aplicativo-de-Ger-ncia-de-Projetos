@@ -1,3 +1,4 @@
+import { response } from "express";
 import { pool } from "../config/db.js";
 
 export const vwProjectConsumedMaterials = async (req, res) => {
@@ -43,6 +44,23 @@ export const vwComponentRecipeMaterials = async (req, res) => {
     console.error("Erro ao contar materiais da receita do componente", error);
     res.status(500).json({
       error: "Erro ao contar materiais da receita do componente" + error,
+    });
+  }
+};
+
+export const vwEquipmentRecipesMaterialSummary = async (req, res) => {
+  try {
+    const response = await pool.query(
+      "SELECT * FROM view_equipment_recipes_material_summary"
+    );
+    res.status(200).json(response.rows);
+  } catch (error) {
+    console.error(
+      "Erro ao listar o sumario de materiais do equipamento",
+      error
+    );
+    res.status(500).json({
+      error: "Erro ao listar o sumario de materiais do equipamento" + error,
     });
   }
 };

@@ -7,7 +7,9 @@ function Root() {
   const [currentProject, setCurrentProject] = useState(null);
   return (
     <StrictMode>
-      <selectedProjectContext.Provider value={{ currentProject, setCurrentProject }}>
+      <selectedProjectContext.Provider
+        value={{ currentProject, setCurrentProject }}
+      >
         <RouterProvider router={router} />
       </selectedProjectContext.Provider>
     </StrictMode>
