@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import NavBar from "../Ui/NavBar";
 import AddMaterialModal from "../Ui/AddMaterialModal";
 import AddComponenteRecipeModal from "../Ui/AddComponenteRecipeModal";
+import AddEquipmentRecipeModal from "../Ui/AddEquipmentRecipeModal";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 
 import { listMaterials } from "@services/MaterialService.js";
@@ -96,6 +97,16 @@ function Recipes() {
           setAddModalVisible((prev) => ({
             ...prev,
             Componente: !prev.Componente,
+          }))
+        }
+      />
+      
+      <AddEquipmentRecipeModal
+        isVisible={isAddModalVisible.Equipamento}
+        setVisible={() =>
+          setAddModalVisible((prev) => ({
+            ...prev,
+            Equipamento: !prev.Equipamento,
           }))
         }
       />

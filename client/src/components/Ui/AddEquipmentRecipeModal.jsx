@@ -1,21 +1,18 @@
 import { IoMdClose } from "react-icons/io";
 import { useState } from "react";
 
-export default function AddComponenteRecipeModal({isVisible, setVisible}) {
-  const [componenteRecipeName, setComponentRecipeName] = useState("");
-  const [manHours, setManHours] = useState("");
+export default function AddEquipmentRecipeModal({ isVisible, setVisible }) {
+  const [equipmentRecipeName, setEquipmentRecipeName] = useState("");
 
   const clearStates = () => {
-    setComponentRecipeName("");
-    setManHours("");
+    setEquipmentRecipeName("");
     setVisible(false);
   };
 
   const handleSave = async () => {
     try {
       console.log("Salvar material", {
-        componenteRecipeName,
-        manHours,
+        equipmentRecipeName,
       });
 
       clearStates();
@@ -38,7 +35,9 @@ export default function AddComponenteRecipeModal({isVisible, setVisible}) {
             >
               {/* Título + botão X */}
               <div className="flex flex-row items-center justify-between">
-                <p className="text-lg font-semibold">Adicionar Receita do Componente</p>
+                <p className="text-lg font-semibold">
+                  Adicionar Receita do Equipamento
+                </p>
 
                 <button onClick={() => setVisible(false)} type="button">
                   <IoMdClose className="text-gray-600 hover:text-gray-700 hover:bg-gray-300 rounded" />
@@ -52,21 +51,8 @@ export default function AddComponenteRecipeModal({isVisible, setVisible}) {
                   type="text"
                   className="p-2 rounded"
                   placeholder="Digite o nome do material"
-                  value={componenteRecipeName}
-                  onChange={(e) => setComponentRecipeName(e.target.value)}
-                  required
-                />
-              </div>
-
-              {/* Descrição */}
-              <div className="flex flex-col space-y-2">
-                <label className="text-gray-700">Descrição *</label>
-                <input
-                  type="text"
-                  className="p-2 rounded"
-                  placeholder="Digite a descrição"
-                  value={manHours}
-                  onChange={(e) => setManHours(e.target.value)}
+                  value={equipmentRecipeName}
+                  onChange={(e) => setEquipmentRecipeName(e.target.value)}
                   required
                 />
               </div>
