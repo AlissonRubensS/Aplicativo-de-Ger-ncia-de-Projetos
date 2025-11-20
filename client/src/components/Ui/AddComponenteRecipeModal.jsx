@@ -37,7 +37,7 @@ export default function AddComponenteRecipeModal({isVisible, setVisible}) {
               }}
             >
               {/* Título + botão X */}
-              <div className="flex flex-row items-center justify-between">
+              <div className="flex flex-row items-center justify-between space-x-2">
                 <p className="text-lg font-semibold">Adicionar Receita do Componente</p>
 
                 <button onClick={() => setVisible(false)} type="button">
@@ -74,7 +74,7 @@ export default function AddComponenteRecipeModal({isVisible, setVisible}) {
               {/* Botões */}
               <div className="flex flex-row justify-end items-center space-x-4">
                 <button
-                  className="p-4 bg-slate-50 hover:bg-gray-300 rounded"
+                  className="p-2 bg-slate-50 hover:bg-gray-300 rounded"
                   onClick={() => setVisible(false)}
                   type="button"
                 >
@@ -82,7 +82,7 @@ export default function AddComponenteRecipeModal({isVisible, setVisible}) {
                 </button>
 
                 <button
-                  className="bg-green-600 text-white p-4 rounded hover:bg-green-700"
+                  className="bg-green-600 text-white p-2 rounded hover:bg-green-700"
                   type="submit"
                 >
                   Salvar Receita

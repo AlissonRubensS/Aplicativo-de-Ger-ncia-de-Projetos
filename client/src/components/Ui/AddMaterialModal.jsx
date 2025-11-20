@@ -1,15 +1,16 @@
 import { IoMdClose } from "react-icons/io";
 import { useState } from "react";
+import SelectMenu from "./SelectMenu";
 
 export default function AddMaterialModal({ isVisible, setVisible }) {
   const [materialName, setMaterialName] = useState("");
   const [materialDesc, setMaterialDesc] = useState("");
-  const [materialUni, setMaterialUni] = useState("");
+  const [materialUni, setMaterialUni] = useState([]);
 
   const clearStates = () => {
     setMaterialName("");
     setMaterialDesc("");
-    setMaterialUni("");
+    setMaterialUni([]);
     setVisible(false);
   };
 
@@ -77,20 +78,27 @@ export default function AddMaterialModal({ isVisible, setVisible }) {
               {/* Unidade */}
               <div className="flex flex-col space-y-2">
                 <label className="text-gray-700">Unidade *</label>
-                <input
-                  type="text"
-                  className="p-2 rounded"
-                  placeholder="Ex: kg, L, m²..."
-                  value={materialUni}
-                  onChange={(e) => setMaterialUni(e.target.value)}
-                  required
+                <SelectMenu
+                  maxSelections={1}
+                  options={[
+                    { id: 0, label: "t" },
+                    { id: 1, label: "kg" },
+                    { id: 2, label: "g" },
+                    { id: 3, label: "Uni" },
+                    { id: 4, label: "Caixa" },
+                    { id: 5, label: "Milheiro" },
+                    { id: 6, label: "L" },
+                    { id: 7, label: "ml" },
+                  ]}
+                  selectedOption={materialUni}
+                  setSelectedOption={setMaterialUni}
                 />
               </div>
 
               {/* Botões */}
               <div className="flex flex-row justify-end items-center space-x-4">
                 <button
-                  className="p-4 bg-slate-50 hover:bg-gray-300 rounded"
+                  className="p-2 bg-slate-50 hover:bg-gray-300 rounded"
                   onClick={() => setVisible(false)}
                   type="button"
                 >
@@ -98,7 +106,7 @@ export default function AddMaterialModal({ isVisible, setVisible }) {
                 </button>
 
                 <button
-                  className="bg-green-600 text-white p-4 rounded hover:bg-green-700"
+                  className="bg-green-600 text-white p-2 rounded hover:bg-green-700"
                   type="submit"
                 >
                   Salvar Material
