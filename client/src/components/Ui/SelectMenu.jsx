@@ -5,8 +5,8 @@ import { IoChevronDownSharp } from "react-icons/io5";
 function SelectMenu({
   variant = "small",
   maxSelections = 0,
-  options = [],           // [{ id, label }]
-  selectedOption = [],    // [ id ] 
+  options = [], // [{ id, label }]
+  selectedOption = [], // [ id ]
   setSelectedOption,
 }) {
   const [isOpen, setOpen] = useState(false);
@@ -18,12 +18,12 @@ function SelectMenu({
   };
 
   return (
-    <div className={`relative ${containerWidth}`}>
+    <div className={`relative z-[9999]${containerWidth}`}>
       {/* Botão */}
       <button
         type="button"
         className="flex items-center justify-between bg-gray-50 p-1 rounded-md w-full text-left"
-        onClick={() => setOpen(v => !v)}
+        onClick={() => setOpen((v) => !v)}
       >
         <span className="truncate">
           {selectedOption.length === 0
@@ -34,14 +34,12 @@ function SelectMenu({
         </span>
         <IoChevronDownSharp className="text-gray-500 shrink-0" />
       </button>
-
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white p-1 shadow-md rounded-md z-50 max-h-56 overflow-auto text-gray-700">
-
+        <div className="absolute top-full left-0 mt-1 w-full max-h-[40vh] overflow-auto bg-white p-1 shadow-md rounded-md z-50 text-gray-700 whitespace-nowrap">
           {selectedOption.length > 1 && (
             <button
-              className="w-full text-left hover:bg-slate-200 p-1 rounded-md text-sm"
+              className="w-full text-left hover:bg-slate-200 p-1 rounded-md text-xs border-b"
               onClick={() => {
                 setSelectedOption([]);
                 setOpen(false);
@@ -59,24 +57,30 @@ function SelectMenu({
                 key={o.id}
                 className="w-full flex items-center gap-2 text-left hover:bg-slate-200 p-1 rounded-md"
                 onClick={() => {
-                  setSelectedOption(prev => {
+                  setSelectedOption((prev) => {
                     if (prev.includes(o.id))
-                      return prev.filter(x => x !== o.id);
+                      return prev.filter((x) => x !== o.id);
 
                     if (maxSelections === 1) return [o.id];
-                    if (maxSelections > 1 && prev.length >= maxSelections) return prev;
+                    if (maxSelections > 1 && prev.length >= maxSelections)
+                      return prev;
 
                     return [...prev, o.id];
                   });
-                  setOpen(false);
+                  if (
+                    selectedOption.length >= maxSelections &&
+                    maxSelections >= 1
+                  ) {
+                    setOpen(false);
+                  }
                 }}
+                type="button"
               >
                 {checked ? <FaCheck /> : <span className="w-4" />}
-                <span className="truncate">{o.label}</span>
+                <span>{o.label}</span>
               </button>
             );
           })}
-
         </div>
       )}
     </div>
