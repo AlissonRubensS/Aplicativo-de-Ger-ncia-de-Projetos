@@ -4,13 +4,15 @@ import { useEffect, useState } from "react";
 import SelectMenu from "./SelectMenu";
 
 import { listMaterials } from "@services/MaterialService.js";
+import { createCompRecipeMat } from "@services/ComponentRecipeMaterials.js";
+import { createComponentRecipe } from "@services/ComponentRecipes.js";
 
 export default function AddComponenteRecipeModal({ isVisible, setVisible }) {
   const [componenteRecipeName, setComponentRecipeName] = useState("");
   const [manHours, setManHours] = useState("");
   const [materials, setMaterials] = useState([]);
   const [materialsList, setMaterialsList] = useState([]);
-  const [materialQuantity, setMaterialsQuantity] = useState([]);
+  const [materialsQuantity, setMaterialsQuantity] = useState([]);
 
   useEffect(() => {
     const fletchMaterials = async () => {
@@ -33,8 +35,6 @@ export default function AddComponenteRecipeModal({ isVisible, setVisible }) {
     setMaterialsQuantity(aux);
   }, [materialsList]);
 
-  useEffect(() => console.log(materialQuantity), [materialQuantity]);
-
   const clearStates = () => {
     setComponentRecipeName("");
     setManHours("");
@@ -50,17 +50,24 @@ export default function AddComponenteRecipeModal({ isVisible, setVisible }) {
         manHours === ""
       ) {
         alert("Preencha todos os dados");
+        return null;
       }
 
-      console.log("Salvar material", {
+      const recipe_component = await createComponentRecipe(
         componenteRecipeName,
-        manHours,
-        materialsList,
-      });
+        manHours
+      );
 
+      const component_recipe_id = recipe_component[0].component_recipe_id;
+
+      for (const m of materialsQuantity) {
+        await createCompRecipeMat(component_recipe_id, m.id, Number(m.quantity));
+      }
+
+      console.log("Cadastrado com sucesso!");
       clearStates();
     } catch (err) {
-      console.error("Erro ao salvar material", err);
+      console.error("Erro ao salvar lista de materiais", err);
     }
   };
 
@@ -187,8 +194,8 @@ export default function AddComponenteRecipeModal({ isVisible, setVisible }) {
                         type="number"
                         className="border p-1 w-20"
                         value={
-                          materialQuantity.find((m) => m.id === id)?.quantity ||
-                          ""
+                          materialsQuantity.find((m) => m.id === id)
+                            ?.quantity || ""
                         }
                         onChange={(e) => {
                           const newValue = Number(e.target.value);

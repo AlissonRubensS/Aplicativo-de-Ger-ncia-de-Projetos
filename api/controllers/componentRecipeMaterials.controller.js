@@ -3,6 +3,10 @@ import { pool } from "../config/db.js";
 export const createCompRecipeMat = async (req, res) => {
   try {
     const { component_recipe_id, material_id, quantity_plan } = req.body;
+    if (!component_recipe_id || !material_id || !quantity_plan) {
+      return res.status(505).json({ error: "Informações inválidas" });
+    }
+
     const response = await pool.query(
       `INSERT INTO 
             component_recipes_materials(component_recipe_id, material_id, quantity_plan)
