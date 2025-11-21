@@ -84,21 +84,18 @@ function Recipes() {
           list: materialsList,
           isExpand: materialsExpanded,
           setExpand: setMaterialsExpanded,
-          detailsList: null,
         },
         {
           label: "Componente",
           list: componentsList,
           isExpand: componentsExpanded,
           setExpand: setcomponetsExpanded,
-          detailsList: ["a", "b", "c", "d"],
         },
         {
           label: "Equipamento",
           list: equipmentsList,
           isExpand: equipmentsExpanded,
           setExpand: setEquipmentsExpanded,
-          detailsList: [1, 2, 3, 4, 5],
         },
       ].map((i, key) => (
         <div className="justify-between self-center w-4/5 " key={key}>
