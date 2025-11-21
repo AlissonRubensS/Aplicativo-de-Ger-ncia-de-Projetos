@@ -1,83 +1,255 @@
 import { IoMdClose } from "react-icons/io";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import SelectMenu from "./SelectMenu";
+
+import { vwComponentRecipeMaterials } from "@services/ViewsService.js";
+// import { createCompRecipeMat } from "@services/ComponentRecipeMaterials.js";
+// import { createComponentRecipe } from "@services/ComponentRecipes.js";
 
 export default function AddEquipmentRecipeModal({ isVisible, setVisible }) {
   const [equipmentRecipeName, setEquipmentRecipeName] = useState("");
+  const [componentsRecipes, setComponentsRecipes] = useState([]);
+  const [componentsRecipeList, setComponentRecipeList] = useState([]);
+  const [componentsRecipeQuantity, setComponentsRecipeQuantity] = useState([]);
+
+  useEffect(() => {
+    const fletchComponentsRecipes = async () => {
+      const data = await vwComponentRecipeMaterials();
+      if (!Array.isArray(data) || data.length <= 0) {
+        console.error("erro no array components recipes");
+        return null;
+      }
+      setComponentsRecipes(data);
+    };
+
+    fletchComponentsRecipes();
+  }, []);
+
+  useEffect(() => {
+    let aux = [];
+    componentsRecipeList.forEach((id) => {
+      aux.push({ id: id, quantity: 0 });
+    });
+    setComponentsRecipeQuantity(aux);
+  }, [componentsRecipeList]);
 
   const clearStates = () => {
     setEquipmentRecipeName("");
+    setComponentRecipeList([]);
     setVisible(false);
   };
 
   const handleSave = async () => {
     try {
-      console.log("Salvar material", {
-        equipmentRecipeName,
-      });
+      //   if (
+      //     componentsRecipeList.length === 0 ||
+      //     equipmentRecipeName === "" ||
+      //     manHours === ""
+      //   ) {
+      //     alert("Preencha todos os dados");
+      //     return null;
+      //   }
 
+      //   const recipe_component = await createComponentRecipe(
+      //     equipmentRecipeName,
+      //     manHours
+      //   );
+
+      //   const component_recipe_id = recipe_component[0].component_recipe_id;
+
+      //   for (const m of componentsRecipeQuantity) {
+      //     await createCompRecipeMat(component_recipe_id, m.id, Number(m.quantity));
+      //   }
+
+      console.log("Cadastrado com sucesso!");
       clearStates();
     } catch (err) {
-      console.error("Erro ao salvar material", err);
+      console.error("Erro ao salvar lista de materiais", err);
     }
   };
 
+  if (!isVisible) return null;
+
   return (
-    <>
-      {isVisible ? (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 w-screen h-screen">
-          <div className="bg-gray-200 p-6 rounded-lg shadow-lg w-fit flex flex-col space-y-8">
-            <form
-              className="flex flex-col space-y-8"
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSave();
-              }}
-            >
-              {/* Título + botão X */}
-              <div className="flex flex-row items-center justify-between space-x-2">
-                <p className="text-lg font-semibold">
-                  Adicionar Receita do Equipamento
-                </p>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 w-screen min-h-screen overflow-auto">
+      <div className="bg-gray-200 p-6 rounded-lg shadow-lg w-[70vw] max-w-[120vw] h-[70vh] max-h-[90vh] flex flex-col space-y-8 overflow-auto">
+        <form
+          className="flex flex-col  space-y-8"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSave();
+          }}
+        >
+          {/* Título + botão X */}
+          <div className="flex flex-row items-center justify-between space-x-2">
+            <p className="text-lg font-semibold">
+              Adicionar Receita do Equipamento
+            </p>
 
-                <button onClick={() => setVisible(false)} type="button">
-                  <IoMdClose className="text-gray-600 hover:text-gray-700 hover:bg-gray-300 rounded" />
-                </button>
-              </div>
-
-              {/* Nome do material */}
-              <div className="flex flex-col space-y-2">
-                <label className="text-gray-700">Nome *</label>
-                <input
-                  type="text"
-                  className="p-2 rounded"
-                  placeholder="Digite o nome do material"
-                  value={equipmentRecipeName}
-                  onChange={(e) => setEquipmentRecipeName(e.target.value)}
-                  required
-                />
-              </div>
-
-              {/* Botões */}
-              <div className="flex flex-row justify-end items-center space-x-4">
-                <button
-                  className="p-2 bg-slate-50 hover:bg-gray-300 rounded"
-                  onClick={() => setVisible(false)}
-                  type="button"
-                >
-                  Cancelar
-                </button>
-
-                <button
-                  className="bg-green-600 text-white p-2 rounded hover:bg-green-700"
-                  type="submit"
-                >
-                  Salvar Receita
-                </button>
-              </div>
-            </form>
+            <button onClick={() => setVisible(false)} type="button">
+              <IoMdClose className="text-gray-600 hover:text-gray-700 hover:bg-gray-300 rounded" />
+            </button>
           </div>
-        </div>
-      ) : null}
-    </>
+
+          <div className="flex flex-row w-full justify-between gap-6">
+            {/* Nome do componente */}
+            <div className="flex flex-col space-y-2 w-full">
+              <label className="text-gray-700">Nome *</label>
+              <input
+                type="text"
+                className="p-1 rounded"
+                placeholder="Digite o nome do material"
+                value={equipmentRecipeName}
+                onChange={(e) => setEquipmentRecipeName(e.target.value)}
+                required
+              />
+            </div>
+            {/* Componentes */}
+            <div className="flex flex-col space-y-2 w-full">
+              <label className="text-gray-700">Componentes *</label>
+              <SelectMenu
+                options={componentsRecipes.map((m) => ({
+                  id: m.component_id,
+                  label: m.componente,
+                }))}
+                selectedOption={componentsRecipeList}
+                setSelectedOption={setComponentRecipeList}
+              />
+            </div>
+          </div>
+
+          {/* Lista de Materiais a serem usadas no componente */}
+          <div className="flex flex-col justify-center intems-center bg-white p-2 rounded w-full">
+            <table className="space-y-2 w-full">
+              <thead>
+                <tr className="grid grid-cols-6 gap-6">
+                  <th className="font-normal ">Componentes</th>
+                  <th className="font-normal ">Horas-Homem</th>
+                  <th className="font-normal ">Valor Unitário</th>
+                  <th className="font-normal ">Quantidade</th>
+                  <th className="font-normal ">Valor Total</th>
+                  <th className="font-normal">Ação</th>
+                </tr>
+              </thead>
+
+              <tbody className="text-sm font-serif text-center">
+                {componentsRecipeList.map((id) => (
+                  <tr key={id} className="grid grid-cols-6 gap-6">
+                    {/* Material */}
+                    <td>
+                      {Array.isArray(componentsRecipeList) &&
+                      componentsRecipeList.length > 0
+                        ? (() => {
+                            const found = componentsRecipes.find(
+                              (m) => m.component_id === id
+                            );
+                            return found ? found.componente ?? "-" : "-";
+                          })()
+                        : "-"}
+                    </td>
+
+                    {/* Horas Homem */}
+                    <td>
+                      {Array.isArray(componentsRecipeList) &&
+                      componentsRecipeList.length > 0
+                        ? (() => {
+                            const found = componentsRecipes.find(
+                              (m) => m.component_id === id
+                            );
+                            return found ? found.horas_homem ?? "-" : "-";
+                          })()
+                        : "-"}
+                    </td>
+
+                    {/* Valor unitário */}
+                    <td>
+                      {Array.isArray(componentsRecipeList) &&
+                      componentsRecipeList.length > 0
+                        ? (() => {
+                            const found = componentsRecipes.find(
+                              (m) => m.component_id === id
+                            );
+                            return found
+                              ? Number(found.total_value).toFixed(2)
+                              : "0.00";
+                          })()
+                        : "0.00"}
+                    </td>
+
+                    {/* Quantidade */}
+                    <td>
+                      <input
+                        type="number"
+                        className="border p-1 w-20"
+                        value={
+                          componentsRecipeQuantity.find((m) => m.id === id)
+                            ?.quantity || ""
+                        }
+                        onChange={(e) => {
+                          const newValue = Number(e.target.value);
+                          setComponentsRecipeQuantity((prev) =>
+                            prev.map((m) =>
+                              m.id === id ? { ...m, quantity: newValue } : m
+                            )
+                          );
+                        }}
+                      />
+                    </td>
+
+                    {/* Valor total */}
+                    <td>
+                      {(() => {
+                        const qty = Number(id.Quantidade || 0);
+                        const unit = (() => {
+                          if (
+                            Array.isArray(componentsRecipeList) &&
+                            componentsRecipeList.length > 0
+                          ) {
+                            const found = componentsRecipes.find(
+                              (m) => m.component_id === id
+                            );
+                            return found ? Number(found.total_value) : 0;
+                          }
+                          return 0;
+                        })();
+                        return (qty * unit).toFixed(2);
+                      })()}
+                    </td>
+                    <td>
+                      <button
+                        className="bnt font-normal font-sans"
+                        type="button"
+                        onClick={() => {
+                          setComponentRecipeList(
+                            componentsRecipeList.filter((i) => i != id)
+                          );
+                        }}
+                      >
+                        Excluir
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Botões */}
+          <div className="flex flex-row justify-end items-center space-x-4">
+            <button
+              className="p-2 bg-slate-50 hover:bg-gray-300 rounded"
+              onClick={() => clearStates()}
+              type="button"
+            >
+              Cancelar
+            </button>
+            <button className="bnt-add" type="submit">
+              Salvar Receita
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
