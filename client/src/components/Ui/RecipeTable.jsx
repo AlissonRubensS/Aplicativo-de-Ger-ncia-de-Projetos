@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import AlertModal from "./AlertModal";
+import EditMaterialModal from "./EditMaterialModal.jsx";
 
 import { deleteMaterial } from "@services/MaterialService.js";
 import { deleteComponentRecipe } from "@services/ComponentRecipes.js";
@@ -10,6 +11,9 @@ export default function RecipeTable({ i }) {
     Componente: false,
     Equipamento: false,
   });
+  7;
+
+  const [modalEditVisible, setModalEditVisible] = useState(false);
 
   const [selectedRow, setSelectedRow] = useState(null);
 
@@ -54,10 +58,16 @@ export default function RecipeTable({ i }) {
           body={modalLabel[i.label].body}
           neg_opt="Cancelar"
           pos_opt="Excluir"
-          func={() => modalLabel[i.label].deleteFunc(selectedRow)}
+          func={() => modalLabel[i.label].deleteFunc(selectedRow.ID)}
           isVisible={modalDeleteVisible[i.label]}
           setVisible={() => updateModalDeleteVisible(i.label, false)}
           style="waring"
+        />
+
+        <EditMaterialModal
+          isVisible={modalEditVisible}
+          setVisible={setModalEditVisible}
+          material={selectedRow}
         />
 
         <div className="card mt-4 justify-center align-middle">
@@ -101,13 +111,21 @@ export default function RecipeTable({ i }) {
                             Visualizar
                           </button>
                         )}
-                        <button className="bg-gray-100 p-1 rounded hover:bg-gray-200">
+                        <button
+                          className="bg-gray-100 p-1 rounded hover:bg-gray-200"
+                          onClick={() => {
+                            if (i.label === "Material") {
+                              setModalEditVisible(true);
+                              setSelectedRow(row);
+                            }
+                          }}
+                        >
                           Editar
                         </button>
                         <button
                           className="bg-gray-100 p-1 rounded hover:bg-gray-200"
                           onClick={() => {
-                            setSelectedRow(row.ID);
+                            setSelectedRow(row);
                             updateModalDeleteVisible(i.label, true);
                           }}
                         >
