@@ -6,8 +6,8 @@ export const readEquipRecipeCompRecipe = async () => {
     const response = await axios.get(API_URL);
     return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
-    console.error("Error ao listar Materiais:", error);
-    return [];
+    console.error("Error ao listar:", error);
+    throw error;
   }
 };
 
@@ -17,17 +17,16 @@ export const createEquipRecipeCompRecipe = async (
   quantity_plan
 ) => {
   try {
-    const response = await axios.post(
-      `${API_URL}/${equipment_recipe_id}/:${component_recipe_id}`,
-      {
-        quantity_plan,
-      }
-    );
+    const response = await axios.post(API_URL, {
+      equipment_recipe_id,
+      component_recipe_id,
+      quantity_plan,
+    });
 
     return response.data;
   } catch (error) {
-    console.error("Error criar Material:", error);
-    return [];
+    console.error("Error criar linha:", error);
+    throw error;
   }
 };
 
@@ -47,7 +46,7 @@ export const updateMaterial = async (
     return response.data;
   } catch (error) {
     console.error("Error criar Material:", error);
-    return [];
+    throw error;
   }
 };
 
@@ -62,6 +61,6 @@ export const deleteMaterial = async (
     return response.data;
   } catch (error) {
     console.error("Error criar Material:", error);
-    return [];
+    throw error;
   }
 };

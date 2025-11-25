@@ -23,22 +23,25 @@ export default function AddComponenteRecipeModal({ isVisible, setVisible }) {
       }
       setMaterials(data);
     };
-
     fletchMaterials();
   }, []);
 
   useEffect(() => {
-    let aux = [];
-    materialsList.forEach((id) => {
-      aux.push({ id: id, quantity: 0 });
+    setMaterialsQuantity((prev) => {
+      const existingIds = new Set(prev.map((item) => item.id));
+      const newItems = materialsList
+        .filter((id) => !existingIds.has(id))
+        .map((id) => ({ id, quantity: 1 }));
+
+      return [...prev, ...newItems];
     });
-    setMaterialsQuantity(aux);
   }, [materialsList]);
 
   const clearStates = () => {
     setComponentRecipeName("");
     setManHours("");
     setMaterialsList([]);
+    setMaterialsQuantity([])
     setVisible(false);
   };
 
@@ -61,11 +64,15 @@ export default function AddComponenteRecipeModal({ isVisible, setVisible }) {
       const component_recipe_id = recipe_component[0].component_recipe_id;
 
       for (const m of materialsQuantity) {
-        await createCompRecipeMat(component_recipe_id, m.id, Number(m.quantity));
+        await createCompRecipeMat(
+          component_recipe_id,
+          m.id,
+          Number(m.quantity)
+        );
       }
 
-      console.log("Cadastrado com sucesso!");
       clearStates();
+      window.location.reload();
     } catch (err) {
       console.error("Erro ao salvar lista de materiais", err);
     }
@@ -182,8 +189,11 @@ export default function AddComponenteRecipeModal({ isVisible, setVisible }) {
                               (m) => m.material_id === id
                             );
                             return found
-                              ? Number(found.value).toFixed(2)
-                              : "0.00";
+                              ? Number(found.value).toLocaleString("pt-BR", {
+                                  style: "currency",
+                                  currency: "BRL",
+                                })
+                              : "R$ 0.00";
                           })()
                         : "0.00"}
                     </td>
@@ -211,7 +221,9 @@ export default function AddComponenteRecipeModal({ isVisible, setVisible }) {
                     {/* Valor total */}
                     <td>
                       {(() => {
-                        const qty = Number(id.Quantidade || 0);
+                        const qtd =
+                          materialsQuantity.find((q) => q.id === id)
+                            ?.quantity || 0;
                         const unit = (() => {
                           if (
                             Array.isArray(materialsList) &&
@@ -224,7 +236,10 @@ export default function AddComponenteRecipeModal({ isVisible, setVisible }) {
                           }
                           return 0;
                         })();
-                        return (qty * unit).toFixed(2);
+                        return (qtd * unit).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        });
                       })()}
                     </td>
                     <td>

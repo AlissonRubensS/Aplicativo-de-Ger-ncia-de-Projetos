@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import SelectMenu from "./SelectMenu";
 
 import { vwComponentRecipeMaterials } from "@services/ViewsService.js";
-// import { createCompRecipeMat } from "@services/ComponentRecipeMaterials.js";
-// import { createComponentRecipe } from "@services/ComponentRecipes.js";
+import { createEquipmentRecipe } from "@services/EquipmentRecipesService.js";
+import { createEquipRecipeCompRecipe } from "@services/EquipRecipeCompRecipe.js";
 
 export default function AddEquipmentRecipeModal({ isVisible, setVisible }) {
   const [equipmentRecipeName, setEquipmentRecipeName] = useState("");
@@ -27,45 +27,45 @@ export default function AddEquipmentRecipeModal({ isVisible, setVisible }) {
   }, []);
 
   useEffect(() => {
-    let aux = [];
-    componentsRecipeList.forEach((id) => {
-      aux.push({ id: id, quantity: 0 });
+    setComponentsRecipeQuantity((prev) => {
+      const existingIds = new Set(prev.map((item) => item.id));
+
+      const newItems = componentsRecipeList
+        .filter((id) => !existingIds.has(id))
+        .map((id) => ({ id, quantity: 1 }));
+
+      return [...prev, ...newItems];
     });
-    setComponentsRecipeQuantity(aux);
   }, [componentsRecipeList]);
 
   const clearStates = () => {
     setEquipmentRecipeName("");
     setComponentRecipeList([]);
+    setComponentsRecipeQuantity([]);
     setVisible(false);
   };
 
   const handleSave = async () => {
     try {
-      //   if (
-      //     componentsRecipeList.length === 0 ||
-      //     equipmentRecipeName === "" ||
-      //     manHours === ""
-      //   ) {
-      //     alert("Preencha todos os dados");
-      //     return null;
-      //   }
-
-      //   const recipe_component = await createComponentRecipe(
-      //     equipmentRecipeName,
-      //     manHours
-      //   );
-
-      //   const component_recipe_id = recipe_component[0].component_recipe_id;
-
-      //   for (const m of componentsRecipeQuantity) {
-      //     await createCompRecipeMat(component_recipe_id, m.id, Number(m.quantity));
-      //   }
-
-      console.log("Cadastrado com sucesso!");
+      if (componentsRecipeList.length === 0 || equipmentRecipeName === "") {
+        alert("Preencha todos os dados");
+        return null;
+      }
+      const recipe_equipment = await createEquipmentRecipe(equipmentRecipeName);
+      const equipment_recipe_id = recipe_equipment[0].equipment_recipe_id;
+      console.log("ID do Equipamento: ", equipment_recipe_id);
+      for (const er_cr of componentsRecipeQuantity) {
+        console.log("relção equip -> comp: ", er_cr);
+        await createEquipRecipeCompRecipe(
+          equipment_recipe_id,
+          er_cr.id,
+          er_cr.quantity
+        );
+      }
       clearStates();
+      window.location.reload();
     } catch (err) {
-      console.error("Erro ao salvar lista de materiais", err);
+      console.error("Erro ao salvar lista de componentes", err);
     }
   };
 
@@ -171,10 +171,16 @@ export default function AddEquipmentRecipeModal({ isVisible, setVisible }) {
                               (m) => m.component_id === id
                             );
                             return found
-                              ? Number(found.total_value).toFixed(2)
+                              ? Number(found.total_value).toLocaleString(
+                                  "pt-BR",
+                                  {
+                                    style: "currency",
+                                    currency: "BRL",
+                                  }
+                                )
                               : "0.00";
                           })()
-                        : "0.00"}
+                        : "R$ 00,00"}
                     </td>
 
                     {/* Quantidade */}
@@ -187,7 +193,7 @@ export default function AddEquipmentRecipeModal({ isVisible, setVisible }) {
                             ?.quantity || ""
                         }
                         onChange={(e) => {
-                          const newValue = Number(e.target.value);
+                          const newValue = e.target.value;
                           setComponentsRecipeQuantity((prev) =>
                             prev.map((m) =>
                               m.id === id ? { ...m, quantity: newValue } : m
@@ -200,7 +206,9 @@ export default function AddEquipmentRecipeModal({ isVisible, setVisible }) {
                     {/* Valor total */}
                     <td>
                       {(() => {
-                        const qty = Number(id.Quantidade || 0);
+                        const qtd =
+                          componentsRecipeQuantity.find((q) => q.id === id)
+                            ?.quantity || 0;
                         const unit = (() => {
                           if (
                             Array.isArray(componentsRecipeList) &&
@@ -213,7 +221,10 @@ export default function AddEquipmentRecipeModal({ isVisible, setVisible }) {
                           }
                           return 0;
                         })();
-                        return (qty * unit).toFixed(2);
+                        return (qtd * unit).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        });
                       })()}
                     </td>
                     <td>

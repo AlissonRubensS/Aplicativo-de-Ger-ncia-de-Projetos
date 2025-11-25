@@ -4,6 +4,9 @@ export const createEquipRecipeCompRecipe = async (req, res) => {
   try {
     const { equipment_recipe_id, component_recipe_id, quantity_plan } =
       req.body;
+    if (!equipment_recipe_id || !component_recipe_id || !quantity_plan) {
+      return res.status(400).json({ message: "Algum dado está faltando" });
+    }
     const response = await pool.query(
       `INSERT INTO 
             equipment_recipes_component_recipes(equipment_recipe_id, component_recipe_id, quantity_plan)
