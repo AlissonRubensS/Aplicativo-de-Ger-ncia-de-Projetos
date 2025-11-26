@@ -67,7 +67,6 @@ export default function EditComponentRecipeModal({
 
       return [...prev, ...newItems];
     });
-    console.log(materialsQuantity);
   }, [materialsList]);
 
   const clearStates = () => {
