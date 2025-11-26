@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 
 import AddMaterialModal from "./AddMaterialModal";
-import AddComponenteRecipeModal from "./AddComponenteRecipeModal";
+import AddComponenteRecipeModal from "./AddComponentRecipeModal";
 import AddEquipmentRecipeModal from "./AddEquipmentRecipeModal";
 
 export default function RecipeHeader({ i }) {

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AlertModal from "../../Ui/AlertModal.jsx";
 import EditMaterialModal from "./EditMaterialModal.jsx";
+import EditComponentRecipeModal from "./EditComponentRecipeModal.jsx";
 
 import { deleteMaterial } from "@services/MaterialService.js";
 import { deleteComponentRecipe } from "@services/ComponentRecipes.js";
@@ -11,10 +12,8 @@ export default function RecipeTable({ i }) {
     Componente: false,
     Equipamento: false,
   });
-  7;
 
-  const [modalEditVisible, setModalEditVisible] = useState(false);
-
+  const [editType, setEditType] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
 
   const updateModalDeleteVisible = (key, value) => {
@@ -23,7 +22,6 @@ export default function RecipeTable({ i }) {
       [key]: value,
     }));
   };
-
   const modalLabel = {
     Material: {
       title: "Quer excluir esse material?",
@@ -50,6 +48,45 @@ export default function RecipeTable({ i }) {
     },
   };
 
+  const openEditModal = (label, row) => {
+    setSelectedRow(row);
+    setEditType(label);
+  };
+  const renderEditModal = () => {
+    switch (editType) {
+      case "Material":
+        return (
+          <EditMaterialModal
+            isVisible={true}
+            setVisible={() => setEditType(null)}
+            material={selectedRow}
+          />
+        );
+
+      case "Componente":
+        return (
+          <EditComponentRecipeModal
+            isVisible={true}
+            setVisible={() => setEditType(null)}
+            component={selectedRow}
+          />
+        );
+
+      case "Equipamento":
+        return (
+          // <EditEquipmentModal
+          //   isVisible={true}
+          //   setVisible={() => setEditType(null)}
+          //   equipamento={selectedRow}
+          // />
+          null
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     i.isExpand === true && (
       <React.Fragment key={i}>
@@ -63,13 +100,6 @@ export default function RecipeTable({ i }) {
           setVisible={() => updateModalDeleteVisible(i.label, false)}
           style="waring"
         />
-
-        <EditMaterialModal
-          isVisible={modalEditVisible}
-          setVisible={setModalEditVisible}
-          material={selectedRow}
-        />
-
         <div className="card mt-4 justify-center align-middle">
           {i.list.length === 0 ? (
             <p className="text-gray-500 italic">Nenhum item cadastrado.</p>
@@ -113,12 +143,7 @@ export default function RecipeTable({ i }) {
                         )}
                         <button
                           className="bg-gray-100 p-1 rounded hover:bg-gray-200"
-                          onClick={() => {
-                            if (i.label === "Material") {
-                              setModalEditVisible(true);
-                              setSelectedRow(row);
-                            }
-                          }}
+                          onClick={() => openEditModal(i.label, row)}
                         >
                           Editar
                         </button>
@@ -139,6 +164,7 @@ export default function RecipeTable({ i }) {
             </table>
           )}
         </div>
+        {renderEditModal()}
       </React.Fragment>
     )
   );

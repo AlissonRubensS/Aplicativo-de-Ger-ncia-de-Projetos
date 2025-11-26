@@ -26,11 +26,11 @@ export default function EditMaterialModal({ isVisible, setVisible, material }) {
       setMaterialName(material["Nome"] || "");
       setMaterialDesc(material["Descrição"] || "");
 
-      const value_uni = material["Valor Unitário"].split(" ");
-      const value = Number(value_uni[0]);
-      const uni = value_uni[1].replace("R$/", "");
+      const value_uni = material["Valor Unitário"]?.split(" ");
+      const value = Number(value_uni[0] ?? 0);
+      const uni = value_uni[1]?.replace("R$/", "");
       const uni_id = Unis.find(
-        (unit) => unit.label.toLowerCase() === uni.toLowerCase()
+        (unit) => unit.label?.toLowerCase() === uni?.toLowerCase()
       );
 
       setMaterialValue(value || 0);
