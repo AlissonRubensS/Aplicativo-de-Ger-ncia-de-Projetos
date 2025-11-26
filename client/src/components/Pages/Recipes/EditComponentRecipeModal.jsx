@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import SelectMenu from "../../Ui/SelectMenu";
 
 import { listMaterials } from "@services/MaterialService.js";
+import { readCompRecipeMatByComp } from "@services/ComponentRecipeMaterials.js";
 
 export default function EditComponentRecipeModal({
   isVisible,
@@ -13,10 +14,9 @@ export default function EditComponentRecipeModal({
   const [componenteRecipeName, setComponentRecipeName] = useState("");
   const [manHours, setManHours] = useState("");
   const [materials, setMaterials] = useState([]);
+
   const [materialsList, setMaterialsList] = useState([]);
   const [materialsQuantity, setMaterialsQuantity] = useState([]);
-
-  console.log(component); //debug
 
   useEffect(() => {
     // Fazendo requisição dos materiais ao banco de dados
@@ -29,19 +29,32 @@ export default function EditComponentRecipeModal({
       setMaterials(data);
     };
 
-    // Fazendo requisição da tabela de relação component_recipe -> materiails
-    const fletchRelationMaterials = async () => {
-      console.log("requisitar relações do banco");
-    };
-
     // Carregando estados iniciais
-    const loadDataInit = () => {
+    const loadDataInit = async () => {
       setComponentRecipeName(component.Componente ?? "");
       setManHours(component["Horas Homem"] ?? "");
+
+      // informação da relacão
+      const data = await readCompRecipeMatByComp(component.ID);
+      let IDs = [];
+      let quantity = [];
+
+      if (Array.isArray(data)) {
+        for (let index = 0; index < data.length; index++) {
+          const element = data[index];
+          IDs.push(element.material_id);
+          quantity.push({
+            id: element.material_id,
+            quantity: element.quantity_plan,
+          });
+        }
+
+        setMaterialsList(IDs);
+        setMaterialsQuantity(quantity);
+      }
     };
 
     fletchMaterials();
-    fletchRelationMaterials();
     loadDataInit();
   }, [component]);
 
@@ -54,6 +67,7 @@ export default function EditComponentRecipeModal({
 
       return [...prev, ...newItems];
     });
+    console.log(materialsQuantity);
   }, [materialsList]);
 
   const clearStates = () => {

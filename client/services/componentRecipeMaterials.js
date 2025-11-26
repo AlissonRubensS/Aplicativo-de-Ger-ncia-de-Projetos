@@ -11,6 +11,20 @@ export const readCompRecipeMat = async () => {
   }
 };
 
+export const readCompRecipeMatByComp = async (component_recipe_id) => {
+  try {
+    if (!component_recipe_id) {
+      console.error("Dados faltantes");
+      return;
+    }
+    const response = await axios.get(`${API_URL}/${component_recipe_id}`);
+    return  response.data;
+  } catch (error) {
+    console.error("Error ao listar Materiais:", error);
+    return [];
+  }
+};
+
 export const createCompRecipeMat = async (
   component_recipe_id,
   material_id,
@@ -52,7 +66,9 @@ export const updateCompRecipeMat = async (
 
 export const deleteMaterial = async (component_recipe_id, material_id) => {
   try {
-    const response = await axios.delete(`${API_URL}/${component_recipe_id}/${material_id}`);
+    const response = await axios.delete(
+      `${API_URL}/${component_recipe_id}/${material_id}`
+    );
     return response.data;
   } catch (error) {
     console.error("Error criar Material:", error);

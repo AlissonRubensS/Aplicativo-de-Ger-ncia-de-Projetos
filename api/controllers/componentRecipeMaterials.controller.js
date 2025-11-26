@@ -25,7 +25,26 @@ export const createCompRecipeMat = async (req, res) => {
 export const readCompRecipeMat = async (req, res) => {
   try {
     const response = await pool.query(
-      "SELECT * FROM component_recipes_materials"
+      "SELECT * FROM component_recipes_materials;"
+    );
+    res.status(200).json(response.rows);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Erro ao listar receitas dos componentes" + error });
+  }
+};
+
+export const readCompRecipeMatByComp = async (req, res) => {
+  try {
+    const { component_recipe_id } = req.params;
+    if (!component_recipe_id) {
+      res.status(400).json({ error: "Envie todos os dados!" });
+    }
+
+    const response = await pool.query(
+      "SELECT * FROM component_recipes_materials WHERE component_recipe_id = $1;",
+      [component_recipe_id]
     );
     res.status(200).json(response.rows);
   } catch (error) {

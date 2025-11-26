@@ -108,7 +108,7 @@ export default function AddComponenteRecipeModal({ isVisible, setVisible }) {
               <input
                 type="text"
                 className="p-2 rounded"
-                placeholder="Digite o nome do material"
+                placeholder="Digite o nome do Componente"
                 value={componenteRecipeName}
                 onChange={(e) => setComponentRecipeName(e.target.value)}
                 required
