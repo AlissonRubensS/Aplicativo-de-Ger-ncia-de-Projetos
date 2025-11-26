@@ -1,7 +1,7 @@
 import { IoMdClose } from "react-icons/io";
 import { useEffect, useState } from "react";
 
-import SelectMenu from "./SelectMenu";
+import SelectMenu from "../../Ui/SelectMenu";
 
 import { listMaterials } from "@services/MaterialService.js";
 import { createCompRecipeMat } from "@services/ComponentRecipeMaterials.js";

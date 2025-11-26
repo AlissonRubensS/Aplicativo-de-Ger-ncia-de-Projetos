@@ -1,56 +1,44 @@
-import SelectMenu from "./SelectMenu";
 import { IoMdClose } from "react-icons/io";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { listDepartments } from "@services/DepartmentService";
-import { createEmployee } from "@services/EmployeesService";
+import { editEmployee } from "@services/EmployeesService";
+import SelectMenu from "../../Ui/SelectMenu";
 
-export default function RegisterEmployeeModal({
-  visible,
-  setVisible,
-  onEmployeeChanged,
-}) {
-  const [departments, setDepartments] = useState([]);
-  const [selectedDepartment, setSelectedDepartment] = useState([]);
+export default function EditEmployeeModal({ visible, setVisible, user_id }) {
   const [employee_name, setEmployeeName] = useState("");
+  const [job_title, setJobTitle] = useState("");
+  const [departments, setDepartments] = useState([]);
+  const [selectedOption, setSelectedOption] = useState([]);
+  const [pay, setPay] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [job_title, setJobTitle] = useState("");
-  const [pay, setPay] = useState("");
-
-  const fetchDepartments = async () => {
-    const data = await listDepartments();
-    setDepartments(data);
-  };
 
   useEffect(() => {
+    const fetchDepartments = async () => {
+      const data = await listDepartments();
+      setDepartments(data);
+    };
     fetchDepartments();
-  }, []);
+  }, [user_id]);
 
-  const clearStates = () => {
-    setVisible(false);
-    setSelectedDepartment([]);
-    setEmployeeName("");
-    setEmail("");
-    setPassword("");
-    setJobTitle("");
-    setPay("");
-    onEmployeeChanged();
-  };
-
-  const handleRegister = async () => {
+  const handleUptadeEmployee = async () => {
     try {
-      await createEmployee(
+      await editEmployee(
+        user_id,
         email,
         employee_name,
         password,
         3,
         pay,
+        1, // temporario, fazer flech no bd para pegar o a performance do funcionario.
         job_title,
-        1
+        1 // temporario, fazer flech no bd para pegar o id do item selecionado.
       );
+      alert("Funcionário atualizado com sucesso!");
+      setVisible(false);
       window.location.reload();
-    } catch (err) {
-      console.error("Erro ao cadastrar funcionario", err);
+    } catch (error) {
+      console.log("erro ao atualizar dados", error);
     }
   };
 
@@ -63,12 +51,12 @@ export default function RegisterEmployeeModal({
               className="flex flex-col space-y-8"
               onSubmit={(e) => {
                 e.preventDefault();
-                handleRegister();
-                clearStates();
+                handleUptadeEmployee(user_id);
+                setVisible(false);
               }}
             >
               <div className="flex flex-row items-center justify-between">
-                <p className="text-lg font-semibold">Cadastrar Funcionário</p>
+                <p className="text-lg font-semibold">Editar Funcinário</p>
                 <button
                   onClick={() => {
                     setVisible(false);
@@ -150,12 +138,12 @@ export default function RegisterEmployeeModal({
                       };
                     })}
                     maxSelections={1}
-                    selectedOption={selectedDepartment}
-                    setSelectedOption={setSelectedDepartment}
+                    selectedOption={selectedOption}
+                    setSelectedOption={setSelectedOption}
                   />
                 </div>
               </div>
-              <div className="flex flex-col w-full">
+              <div className="flex flex-col space-y-4">
                 <label htmlFor="salary" className="text-gray-700">
                   Salário *
                 </label>
@@ -163,26 +151,25 @@ export default function RegisterEmployeeModal({
                   type="text"
                   name="salary"
                   className="p-2 rounded"
-                  placeholder="Digite o salário"
+                  placeholder="Digite o nome completo"
                   value={pay}
                   onChange={(e) => setPay(e.target.value)}
                   required
                 />
               </div>
-              <div className="flex flex-row justify-end items-center space-x-4">
+              <div className="flex flex-row justify-end items-center gap-4">
                 <button
-                  className="p-4 items-center justify-center bg-slate-50 hover:bg-gray-300 rounded"
-                  onClick={() => {
-                    setVisible(false);
-                  }}
+                  type="button"
+                  className="p-4 bg-slate-50 hover:bg-gray-300 rounded"
+                  onClick={() => setVisible(false)}
                 >
                   Cancelar
                 </button>
                 <button
-                  className="items-center bg-green-600 text-white p-4 rounded hover:bg-green-700"
-                  type="subimit"
+                  type="submit"
+                  className="p-4 bg-green-600 text-white rounded hover:bg-green-700"
                 >
-                  Cadastrar Funcionário
+                  Editar Funcionário
                 </button>
               </div>
             </form>

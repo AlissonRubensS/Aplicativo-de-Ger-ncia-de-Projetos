@@ -9,9 +9,9 @@ import { IoMdAdd } from "react-icons/io";
 import { TfiReload } from "react-icons/tfi";
 import { FiUser } from "react-icons/fi";
 
-import NavBar from "../Ui/NavBar";
-import SelectMenu from "../Ui/SelectMenu";
-import AddComponent from "../Ui/AddComponent";
+import NavBar from "../../Ui/NavBar";
+import SelectMenu from "../../Ui/SelectMenu";
+import AddComponent from "../../Ui/AddComponent";
 
 import { listDepartments } from "@services/DepartmentService.js";
 import { listProjects } from "@services/ProjectService.js";

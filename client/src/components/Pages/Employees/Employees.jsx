@@ -1,9 +1,9 @@
-import NavBar from "../Ui/NavBar";
-import SearchBar from "../Ui/SearchBar";
-import EmployeeFramework from "../Ui/EmployeeFramework";
-import RegisterEmployeeModal from "../Ui/RegisterEmployeeModal";
-import DepartmentCard from "../Ui/DepartmentCard";
-import DepartmentModalRegister from "../Ui/DepartmentModalRegister";
+import NavBar from "../../Ui/NavBar";
+import SearchBar from "../../Ui/SearchBar";
+import EmployeeFramework from "./EmployeeFramework";
+import RegisterEmployeeModal from "./RegisterEmployeeModal";
+import DepartmentCard from "./DepartmentCard";
+import DepartmentModalRegister from "./DepartmentModalRegister";
 import { useState, useEffect } from "react";
 import { listEmployees } from "@services/EmployeesService";
 import { listDepartments } from "@services/DepartmentService";
@@ -52,7 +52,7 @@ export default function Employees() {
       />
 
       <div className="flex flex-col w-screen h-screen space-y-4 overflow-x-hidden">
-        <NavBar select_index={4}/>
+        <NavBar select_index={4} />
         <div className="bg-slate-200 flex flex-row items-start w-screen h-screen">
           <div className="flex flex-col w-4/6 space-y-4 p-4">
             <SearchBar

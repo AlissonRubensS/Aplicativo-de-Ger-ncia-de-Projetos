@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { FaFilter } from "react-icons/fa";
 import { useState, useContext } from "react";
-import { selectedProjectContext } from "../Content/SeletedProject.jsx";
+import { selectedProjectContext } from "../../Content/SeletedProject.jsx";
 
 function ProjectsList({ projects, setOpen }) {
   const [filter, setFilter] = useState("Running");

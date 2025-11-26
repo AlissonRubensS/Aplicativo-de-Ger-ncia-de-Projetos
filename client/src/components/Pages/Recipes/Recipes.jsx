@@ -2,9 +2,9 @@
 import { useEffect, useState } from "react";
 
 // Componentes
-import NavBar from "../Ui/NavBar";
-import RecipeTable from "../Ui/RecipeTable";
-import RecipeHeader from "../Ui/RecipeHeader";
+import NavBar from "../../Ui/NavBar";
+import RecipeTable from "./RecipeTable";
+import RecipeHeader from "./RecipeHeader";
 
 // Serviços
 import { listMaterials } from "@services/MaterialService.js";

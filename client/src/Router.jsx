@@ -1,14 +1,14 @@
 import { createBrowserRouter } from "react-router-dom";
 
 // Importar as páginas
-import Home from "@pages/Home.jsx";
-import Production from "@pages/Production.jsx";
-import Projects from "@pages/Projects.jsx";
-import Employees from "@pages/Employees.jsx";
-import Reports from "@pages/Reports.jsx";
-import Login from "@pages/Login.jsx";
-import Budgets from "@pages/Budgets.jsx";
-import Recipes from "@pages/Recipes.jsx";
+import Home from "@pages/Home/Home.jsx";
+import Production from "@pages/Production/Production.jsx";
+import Projects from "@pages/Projects/Projects.jsx";
+import Employees from "@pages/Employees/Employees.jsx";
+import Reports from "@pages/Reports/Reports.jsx";
+import Login from "@pages/Login/Login.jsx";
+import Budgets from "@pages/Budgets/Budgets.jsx";
+import Recipes from "@pages/Recipes/Recipes.jsx";
 
 const token = sessionStorage.getItem("loginPermission");
 const router = createBrowserRouter([

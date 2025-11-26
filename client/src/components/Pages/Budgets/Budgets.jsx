@@ -1,6 +1,6 @@
-import NavBar from "../Ui/NavBar";
-import BudgetsList from "../Ui/BudgetsList";
-import AddBudgetModal from "../Ui/AddBudgetModal";
+import NavBar from "../../Ui/NavBar";
+import BudgetsList from "./BudgetsList";
+import AddBudgetModal from "./AddBudgetModal";
 
 import { listBudgets } from "@services/BudgetService.js";
 import { useEffect, useState } from "react";
@@ -45,7 +45,7 @@ function Budgets() {
               currentBudget={selectedBudget}
               setCurrentBudget={setSelectedBudget}
             />
-        
+
             <div className="bg-white rounded-sm shadow p-1  ">
               <button>Aprovar Orçamento</button>
             </div>

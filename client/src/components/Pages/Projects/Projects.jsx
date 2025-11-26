@@ -1,6 +1,6 @@
-import NavBar from "../Ui/NavBar";
-import ProjectsList from "../Ui/ProjectsList";
-import AddBudgetModal from "../Ui/AddBudgetModal";
+import NavBar from "../../Ui/NavBar";
+import ProjectsList from "./ProjectsList";
+import AddBudgetModal from "../Budgets/AddBudgetModal";
 
 import { selectedProjectContext } from "@content/SeletedProject.jsx";
 import { listProjects } from "@services/ProjectService";

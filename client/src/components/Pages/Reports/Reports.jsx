@@ -1,10 +1,10 @@
-import NavBar from "../Ui/NavBar";
-import CascadeTable from "../Ui/CascadeTable";
-import CascadeTableTwoLevel from "../Ui/CascadeTableTwoLevel";
-import InfoCard from "../Ui/InfoCard";
-import SelectMenu from "../Ui/SelectMenu";
-import ProjectEvolutionGraph from "../Ui/ProjectEvolutionGraph";
-import TotalConsumptionGraph from "../Ui/TotalConsumptionGraph";
+import NavBar from "../../Ui/NavBar";
+import CascadeTable from "../../Ui/CascadeTable";
+import CascadeTableTwoLevel from "../../Ui/CascadeTableTwoLevel";
+import InfoCard from "../../Ui/InfoCard";
+import SelectMenu from "../../Ui/SelectMenu";
+import ProjectEvolutionGraph from "./ProjectEvolutionGraph";
+import TotalConsumptionGraph from "./TotalConsumptionGraph";
 import { useState, useEffect } from "react";
 
 import { listProjects } from "@services/ProjectService.js";

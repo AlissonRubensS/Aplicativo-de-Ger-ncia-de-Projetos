@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AlertModal from "./AlertModal";
+import AlertModal from "../../Ui/AlertModal.jsx";
 import EditMaterialModal from "./EditMaterialModal.jsx";
 
 import { deleteMaterial } from "@services/MaterialService.js";

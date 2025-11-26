@@ -1,13 +1,13 @@
 import { IoMdClose } from "react-icons/io";
-import { useState } from "react";
-import SelectMenu from "./SelectMenu";
-import { createMaterial } from "@services/MaterialService.js";
+import { useState, useEffect } from "react";
+import SelectMenu from "../../Ui/SelectMenu";
 
-export default function AddMaterialModal({ isVisible, setVisible }) {
+import { updateMaterial } from "@services/MaterialService.js";
+
+export default function EditMaterialModal({ isVisible, setVisible, material }) {
   const [materialName, setMaterialName] = useState("");
   const [materialDesc, setMaterialDesc] = useState("");
-  const [materialValue, setMaterialValue] = useState(0);
-
+  const [materialValue, setMaterialValue] = useState("");
   const [materialUni, setMaterialUni] = useState([]);
 
   const Unis = [
@@ -20,6 +20,24 @@ export default function AddMaterialModal({ isVisible, setVisible }) {
     { id: 6, label: "L" },
     { id: 7, label: "ml" },
   ];
+
+  useEffect(() => {
+    if (material) {
+      setMaterialName(material["Nome"] || "");
+      setMaterialDesc(material["Descrição"] || "");
+
+      const value_uni = material["Valor Unitário"].split(" ");
+      const value = Number(value_uni[0]);
+      const uni = value_uni[1].replace("R$/", "");
+      const uni_id = Unis.find(
+        (unit) => unit.label.toLowerCase() === uni.toLowerCase()
+      );
+
+      setMaterialValue(value || 0);
+      setMaterialUni([uni_id.id]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [material]);
 
   const clearStates = () => {
     setMaterialName("");
@@ -34,11 +52,14 @@ export default function AddMaterialModal({ isVisible, setVisible }) {
       if (materialName === "" || materialUni.length <= 0 || materialValue <= 0)
         return null;
 
-      createMaterial(
+      const uni = Unis.find((unit) => unit.id === materialUni[0]);
+
+      updateMaterial(
         materialName,
         materialDesc,
-        materialValue,
-        Unis[materialUni].label
+        Number(materialValue),
+        uni.label,
+        material.ID
       );
 
       window.location.reload();
@@ -62,7 +83,7 @@ export default function AddMaterialModal({ isVisible, setVisible }) {
             >
               {/* Título + botão X */}
               <div className="flex flex-row items-center justify-between">
-                <p className="text-lg font-semibold">Adicionar Material</p>
+                <p className="text-lg font-semibold">Editando Material</p>
 
                 <button onClick={() => setVisible(false)} type="button">
                   <IoMdClose className="text-gray-600 hover:text-gray-700 hover:bg-gray-300 rounded" />
