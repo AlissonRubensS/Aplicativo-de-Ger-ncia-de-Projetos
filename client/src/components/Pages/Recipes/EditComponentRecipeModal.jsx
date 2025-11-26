@@ -1,10 +1,17 @@
+/* eslint-disable no-unused-vars */
 import { IoMdClose } from "react-icons/io";
 import { useEffect, useState } from "react";
 
 import SelectMenu from "../../Ui/SelectMenu";
 
 import { listMaterials } from "@services/MaterialService.js";
-import { readCompRecipeMatByComp } from "@services/ComponentRecipeMaterials.js";
+import { updateComponentRecipe } from "@services/ComponentRecipes.js";
+import {
+  createCompRecipeMat,
+  readCompRecipeMatByComp,
+  updateCompRecipeMat,
+  deleteMaterial,
+} from "@services/ComponentRecipeMaterials.js";
 
 export default function EditComponentRecipeModal({
   isVisible,
@@ -17,6 +24,9 @@ export default function EditComponentRecipeModal({
 
   const [materialsList, setMaterialsList] = useState([]);
   const [materialsQuantity, setMaterialsQuantity] = useState([]);
+
+  // Valores da relação receita do componente -> materiais, sem nenhuma alteração.
+  const [materialsQuantityBackUp, setMaterialsQuantityBackUp] = useState([]);
 
   useEffect(() => {
     // Fazendo requisição dos materiais ao banco de dados
@@ -45,18 +55,25 @@ export default function EditComponentRecipeModal({
           IDs.push(element.material_id);
           quantity.push({
             id: element.material_id,
-            quantity: element.quantity_plan,
+            quantity: Number(element.quantity_plan),
           });
+        }
+
+        for (let index = 0; index < materialsQuantity.length; index++) {
+          const relation = materialsQuantity[index];
         }
 
         setMaterialsList(IDs);
         setMaterialsQuantity(quantity);
+        setMaterialsQuantityBackUp(quantity);
       }
     };
 
     fletchMaterials();
     loadDataInit();
-  }, [component]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     setMaterialsQuantity((prev) => {
@@ -79,9 +96,43 @@ export default function EditComponentRecipeModal({
 
   const handleSave = async () => {
     try {
-      // edit componente
+      if (
+        !componenteRecipeName ||
+        !manHours ||
+        !component ||
+        materialsList.length <= 0
+      ) {
+        console.log("Informações inválidas!");
+        return;
+      }
+
+      // Atualiza nome e horas
+      await updateComponentRecipe(component.ID, componenteRecipeName, manHours);
+
+      // Criar e atualizar
+      for (const item of materialsQuantity) {
+        const old = materialsQuantityBackUp.find((b) => b.id === item.id);
+
+        // Criar
+        if (!old) {
+          await createCompRecipeMat(component.ID, item.id, item.quantity);
+
+          // Atualizar
+        } else if (old.quantity !== item.quantity) {
+          await updateCompRecipeMat(component.ID, item.id, item.quantity);
+        }
+      }
+
+      // Deletar
+      for (const oldItem of materialsQuantityBackUp) {
+        const stillExists = materialsQuantity.some((c) => c.id === oldItem.id);
+
+        if (!stillExists) {
+          await deleteMaterial(component.ID, oldItem.id);
+        }
+      }
+
       clearStates();
-      window.location.reload();
     } catch (err) {
       console.error("Erro ao salvar lista de materiais", err);
     }

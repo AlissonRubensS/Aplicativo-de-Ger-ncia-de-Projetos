@@ -7,7 +7,7 @@ export const readCompRecipeMat = async () => {
     return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
     console.error("Error ao listar Materiais:", error);
-    return [];
+    
   }
 };
 
@@ -21,7 +21,7 @@ export const readCompRecipeMatByComp = async (component_recipe_id) => {
     return  response.data;
   } catch (error) {
     console.error("Error ao listar Materiais:", error);
-    return [];
+    
   }
 };
 
@@ -40,7 +40,7 @@ export const createCompRecipeMat = async (
     return response.data;
   } catch (error) {
     console.error("Error criar Material:", error);
-    return [];
+    
   }
 };
 
@@ -60,7 +60,7 @@ export const updateCompRecipeMat = async (
     return response.data;
   } catch (error) {
     console.error("Error criar Material:", error);
-    return [];
+    
   }
 };
 
@@ -72,6 +72,6 @@ export const deleteMaterial = async (component_recipe_id, material_id) => {
     return response.data;
   } catch (error) {
     console.error("Error criar Material:", error);
-    return [];
+    
   }
 };
