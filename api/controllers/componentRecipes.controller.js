@@ -26,7 +26,8 @@ export const createComponentRecipe = async (req, res) => {
 
 export const deleteComponentRecipe = async (req, res) => {
   try {
-    const { id : component_recipe_id } = req.params;
+    const { id: component_recipe_id } = req.params;
+
     const response = await pool.query(
       "DELETE FROM component_recipes WHERE component_recipe_id = $1 RETURNING *",
       [component_recipe_id]
@@ -46,7 +47,7 @@ export const deleteComponentRecipe = async (req, res) => {
 export const updateComponentRecipe = async (req, res) => {
   try {
     const { recipe_name, man_hours } = req.body;
-    const { id : component_recipe_id } = req.params;
+    const { id: component_recipe_id } = req.params;
 
     const response = await pool.query(
       `
@@ -59,13 +60,12 @@ export const updateComponentRecipe = async (req, res) => {
       `,
       [recipe_name, man_hours, component_recipe_id]
     );
-    
+
     response.rowCount > 0
       ? res.status(200).json(response.rows)
       : res
           .status(404)
           .json({ error: "Não foi possivel encontrar relação na tabela" });
-
   } catch (error) {
     res
       .status(500)

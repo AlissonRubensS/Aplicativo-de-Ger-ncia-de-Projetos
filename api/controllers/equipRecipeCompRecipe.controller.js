@@ -35,6 +35,28 @@ export const readEquipRecipeCompRecipe = async (req, res) => {
   }
 };
 
+export const readEquipRecipeCompRecipeById = async (req, res) => {
+  try {
+    const { equipment_recipe_id } = req.params;
+
+    if (!equipment_recipe_id) {
+      res.status(400).json({ error: "Dados faltantes" });
+      return;
+    }
+
+    const response = await pool.query(
+      "SELECT * FROM equipment_recipes_component_recipes WHERE equipment_recipe_id = $1;",
+      [equipment_recipe_id]
+    );
+
+    res.status(200).json(response.rows);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Erro ao listar receitas dos equipamento" + error });
+  }
+};
+
 export const updateEquipRecipeCompRecipe = async (req, res) => {
   try {
     const { quantity_plan } = req.body;

@@ -1,136 +1,141 @@
-/* eslint-disable no-unused-vars */
 import { IoMdClose } from "react-icons/io";
 import { useEffect, useState } from "react";
 
 import SelectMenu from "../../Ui/SelectMenu";
 
-import { listMaterials } from "@services/MaterialService.js";
-import { updateComponentRecipe } from "@services/ComponentRecipes.js";
+import { vwComponentRecipeMaterials } from "@services/ViewsService.js";
+import { updateEquipmentRecipe } from "@services/EquipmentRecipesService.js";
 import {
-  createCompRecipeMat,
-  readCompRecipeMatByComp,
-  updateCompRecipeMat,
-  deleteMaterial,
-} from "@services/ComponentRecipeMaterials.js";
+  readEquipRecipeCompRecipeById,
+  createEquipRecipeCompRecipe,
+  updateEquipRecipeCompRecipe,
+  deleteEquipRecipeCompRecipe,
+} from "@services/EquipRecipeCompRecipe.js";
 
-export default function EditComponentRecipeModal({
+export default function EditEquipmentRecipeModal({
   isVisible,
   setVisible,
-  component,
+  equipment,
 }) {
-  const [componenteRecipeName, setComponentRecipeName] = useState("");
-  const [manHours, setManHours] = useState("");
-  const [materials, setMaterials] = useState([]);
+  const [equipmentRecipeName, setEquipmentRecipeName] = useState("");
+  const [componentsRecipes, setComponentsRecipes] = useState([]);
 
-  const [materialsList, setMaterialsList] = useState([]);
-  const [materialsQuantity, setMaterialsQuantity] = useState([]);
+  // Estão na receita
+  const [componentsRecipeList, setComponentRecipeList] = useState([]);
+  const [componentsRecipeQuantity, setComponentsRecipeQuantity] = useState([]);
 
-  // Valores da relação receita do componente -> materiais, sem nenhuma alteração.
-  const [materialsQuantityBackUp, setMaterialsQuantityBackUp] = useState([]);
+  const [quantityBackUp, setQuantityBackUp] = useState([]);
 
   useEffect(() => {
-    // Fazendo requisição dos materiais ao banco de dados
-    const fletchMaterials = async () => {
-      const data = await listMaterials();
+    const fletchComponentsRecipes = async () => {
+      const data = await vwComponentRecipeMaterials();
       if (!Array.isArray(data) || data.length <= 0) {
-        console.error("erro no array materiasl");
+        console.error("erro no array components recipes");
         return null;
       }
-      setMaterials(data);
+      setComponentsRecipes(data);
     };
 
     // Carregando estados iniciais
     const loadDataInit = async () => {
-      setComponentRecipeName(component.Componente ?? "");
-      setManHours(component["Horas Homem"] ?? "");
+      setEquipmentRecipeName(equipment["Nome do Equipamento"] ?? "");
 
       // informação da relacão
-      const data = await readCompRecipeMatByComp(component.ID);
+      const data = await readEquipRecipeCompRecipeById(equipment.ID);
       let IDs = [];
       let quantity = [];
 
       if (Array.isArray(data)) {
         for (let index = 0; index < data.length; index++) {
           const element = data[index];
-          IDs.push(element.material_id);
+          IDs.push(element.component_recipe_id);
           quantity.push({
-            id: element.material_id,
+            id: element.component_recipe_id,
             quantity: Number(element.quantity_plan),
           });
         }
 
-        setMaterialsList(IDs);
-        setMaterialsQuantity(quantity);
-        setMaterialsQuantityBackUp(quantity);
+        setComponentRecipeList(IDs);
+        setQuantityBackUp(quantity);
+        setComponentsRecipeQuantity(quantity);
       }
     };
 
-    fletchMaterials();
+    fletchComponentsRecipes();
     loadDataInit();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    setMaterialsQuantity((prev) => {
+    setComponentsRecipeQuantity((prev) => {
       const existingIds = new Set(prev.map((item) => item.id));
-      const newItems = materialsList
+
+      const newItems = componentsRecipeList
         .filter((id) => !existingIds.has(id))
         .map((id) => ({ id, quantity: 1 }));
 
       return [...prev, ...newItems];
     });
-  }, [materialsList]);
+  }, [componentsRecipeList]);
 
   const clearStates = () => {
-    setComponentRecipeName("");
-    setManHours("");
-    setMaterialsList([]);
-    setMaterialsQuantity([]);
+    setEquipmentRecipeName("");
+    setComponentRecipeList([]);
+    setComponentsRecipeQuantity([]);
     setVisible(false);
   };
 
-  const handleSave = async () => {
+  const handleEdit = async () => {
     try {
       if (
-        !componenteRecipeName ||
-        !manHours ||
-        !component ||
-        materialsList.length <= 0
+        !equipmentRecipeName ||
+        !equipment ||
+        componentsRecipeList.length <= 0
       ) {
         console.error("Informações inválidas!");
         return;
       }
 
-      // Atualiza nome e horas
-      await updateComponentRecipe(component.ID, componenteRecipeName, manHours);
+      await updateEquipmentRecipe(equipment.ID, equipmentRecipeName);
 
       // Criar e atualizar
-      for (const item of materialsQuantity) {
-        const old = materialsQuantityBackUp.find((b) => b.id === item.id);
+      for (const item of componentsRecipeQuantity) {
+        const old = quantityBackUp.find((b) => b.id === item.id);
 
         // Criar
         if (!old) {
-          await createCompRecipeMat(component.ID, item.id, item.quantity);
+          await createEquipRecipeCompRecipe(
+            equipment.ID,
+            item.id,
+            item.quantity
+          );
 
           // Atualizar
         } else if (old.quantity !== item.quantity) {
-          await updateCompRecipeMat(component.ID, item.id, item.quantity);
+          await updateEquipRecipeCompRecipe(
+            equipment.ID,
+            item.id,
+            item.quantity
+          );
         }
       }
 
       // Deletar
-      for (const oldItem of materialsQuantityBackUp) {
-        const stillExists = materialsQuantity.some((c) => c.id === oldItem.id);
+      for (const oldItem of quantityBackUp) {
+        const stillExists = componentsRecipeQuantity.some(
+          (e) => e.id === oldItem.id
+        );
 
         if (!stillExists) {
-          await deleteMaterial(component.ID, oldItem.id);
+          await deleteEquipRecipeCompRecipe(equipment.ID, oldItem.id);
         }
       }
 
       clearStates();
+      window.location.reload();
     } catch (err) {
-      console.error("Erro ao salvar lista de materiais", err);
+      console.error("Erro ao salvar lista de componentes", err);
     }
   };
 
@@ -143,13 +148,13 @@ export default function EditComponentRecipeModal({
           className="flex flex-col  space-y-8"
           onSubmit={(e) => {
             e.preventDefault();
-            handleSave();
+            handleEdit();
           }}
         >
           {/* Título + botão X */}
           <div className="flex flex-row items-center justify-between space-x-2">
             <p className="text-lg font-semibold">
-              Editar Receita do Componente
+              Editar Receita do Equipamento
             </p>
 
             <button onClick={() => setVisible(false)} type="button">
@@ -163,37 +168,25 @@ export default function EditComponentRecipeModal({
               <label className="text-gray-700">Nome *</label>
               <input
                 type="text"
-                className="p-2 rounded"
+                className="p-1 rounded"
                 placeholder="Digite o nome do material"
-                value={componenteRecipeName}
-                onChange={(e) => setComponentRecipeName(e.target.value)}
+                value={equipmentRecipeName}
+                onChange={(e) => setEquipmentRecipeName(e.target.value)}
                 required
               />
             </div>
-
-            {/* Horas Homem */}
+            {/* Componentes */}
             <div className="flex flex-col space-y-2 w-full">
-              <label className="text-gray-700">Horas Homem *</label>
-              <input
-                type="number"
-                className="p-2 rounded"
-                placeholder="Digite o Tempo que o componente deve ser feito em Horas Homem"
-                value={manHours}
-                onChange={(e) => setManHours(e.target.value)}
-                required
+              <label className="text-gray-700">Componentes *</label>
+              <SelectMenu
+                options={componentsRecipes.map((m) => ({
+                  id: m.component_id,
+                  label: m.componente,
+                }))}
+                selectedOption={componentsRecipeList}
+                setSelectedOption={setComponentRecipeList}
               />
             </div>
-          </div>
-          <div>
-            <label className="text-gray-700">Materiais *</label>
-            <SelectMenu
-              options={materials.map((m) => ({
-                id: m.material_id,
-                label: m.material_name,
-              }))}
-              selectedOption={materialsList}
-              setSelectedOption={setMaterialsList}
-            />
           </div>
 
           {/* Lista de Materiais a serem usadas no componente */}
@@ -201,8 +194,8 @@ export default function EditComponentRecipeModal({
             <table className="space-y-2 w-full">
               <thead>
                 <tr className="grid grid-cols-6 gap-6">
-                  <th className="font-normal ">Material</th>
-                  <th className="font-normal ">Descrição</th>
+                  <th className="font-normal ">Componentes</th>
+                  <th className="font-normal ">Horas-Homem</th>
                   <th className="font-normal ">Valor Unitário</th>
                   <th className="font-normal ">Quantidade</th>
                   <th className="font-normal ">Valor Total</th>
@@ -211,47 +204,53 @@ export default function EditComponentRecipeModal({
               </thead>
 
               <tbody className="text-sm font-serif text-center">
-                {materialsList.map((id) => (
+                {componentsRecipeList.map((id) => (
                   <tr key={id} className="grid grid-cols-6 gap-6">
                     {/* Material */}
                     <td>
-                      {Array.isArray(materialsList) && materialsList.length > 0
+                      {Array.isArray(componentsRecipeList) &&
+                      componentsRecipeList.length > 0
                         ? (() => {
-                            const found = materials.find(
-                              (m) => m.material_id === id
+                            const found = componentsRecipes.find(
+                              (m) => m.component_id === id
                             );
-                            return found ? found.material_name ?? "-" : "-";
+                            return found ? found.componente ?? "-" : "-";
                           })()
                         : "-"}
                     </td>
 
-                    {/* Descrição: mostra label do material selecionado */}
+                    {/* Horas Homem */}
                     <td>
-                      {Array.isArray(materialsList) && materialsList.length > 0
+                      {Array.isArray(componentsRecipeList) &&
+                      componentsRecipeList.length > 0
                         ? (() => {
-                            const found = materials.find(
-                              (m) => m.material_id === id
+                            const found = componentsRecipes.find(
+                              (m) => m.component_id === id
                             );
-                            return found ? found.material_desc ?? "-" : "-";
+                            return found ? found.horas_homem ?? "-" : "-";
                           })()
                         : "-"}
                     </td>
 
                     {/* Valor unitário */}
                     <td>
-                      {Array.isArray(materialsList) && materialsList.length > 0
+                      {Array.isArray(componentsRecipeList) &&
+                      componentsRecipeList.length > 0
                         ? (() => {
-                            const found = materials.find(
-                              (m) => m.material_id === id
+                            const found = componentsRecipes.find(
+                              (m) => m.component_id === id
                             );
                             return found
-                              ? Number(found.value).toLocaleString("pt-BR", {
-                                  style: "currency",
-                                  currency: "BRL",
-                                })
-                              : "R$ 0.00";
+                              ? Number(found.total_value).toLocaleString(
+                                  "pt-BR",
+                                  {
+                                    style: "currency",
+                                    currency: "BRL",
+                                  }
+                                )
+                              : "0.00";
                           })()
-                        : "0.00"}
+                        : "R$ 00,00"}
                     </td>
 
                     {/* Quantidade */}
@@ -260,12 +259,12 @@ export default function EditComponentRecipeModal({
                         type="number"
                         className="border p-1 w-20"
                         value={
-                          materialsQuantity.find((m) => m.id === id)
+                          componentsRecipeQuantity.find((m) => m.id === id)
                             ?.quantity || ""
                         }
                         onChange={(e) => {
-                          const newValue = Number(e.target.value);
-                          setMaterialsQuantity((prev) =>
+                          const newValue = e.target.value;
+                          setComponentsRecipeQuantity((prev) =>
                             prev.map((m) =>
                               m.id === id ? { ...m, quantity: newValue } : m
                             )
@@ -278,17 +277,17 @@ export default function EditComponentRecipeModal({
                     <td>
                       {(() => {
                         const qtd =
-                          materialsQuantity.find((q) => q.id === id)
+                          componentsRecipeQuantity.find((q) => q.id === id)
                             ?.quantity || 0;
                         const unit = (() => {
                           if (
-                            Array.isArray(materialsList) &&
-                            materialsList.length > 0
+                            Array.isArray(componentsRecipeList) &&
+                            componentsRecipeList.length > 0
                           ) {
-                            const found = materials.find(
-                              (m) => m.material_id === id
+                            const found = componentsRecipes.find(
+                              (m) => m.component_id === id
                             );
-                            return found ? Number(found.value) : 0;
+                            return found ? Number(found.total_value) : 0;
                           }
                           return 0;
                         })();
@@ -303,8 +302,8 @@ export default function EditComponentRecipeModal({
                         className="bnt font-normal font-sans"
                         type="button"
                         onClick={() => {
-                          setMaterialsList(
-                            materialsList.filter((i) => i != id)
+                          setComponentRecipeList(
+                            componentsRecipeList.filter((i) => i != id)
                           );
                         }}
                       >

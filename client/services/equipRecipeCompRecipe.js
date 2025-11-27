@@ -6,7 +6,22 @@ export const readEquipRecipeCompRecipe = async () => {
     const response = await axios.get(API_URL);
     return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
-    console.error("Error ao listar:", error);
+    console.error("Error na requisição:", error);
+    throw error;
+  }
+};
+
+export const readEquipRecipeCompRecipeById = async (equipment_recipe_id) => {
+  try {
+    if (!equipment_recipe_id) {
+      console.error("ID não existe");
+      return;
+    }
+
+    const response = await axios.get(`${API_URL}/${equipment_recipe_id}`);
+    return Array.isArray(response.data) ? response.data : [];
+  } catch (error) {
+    console.error("Error na requisição:", error);
     throw error;
   }
 };
@@ -25,19 +40,19 @@ export const createEquipRecipeCompRecipe = async (
 
     return response.data;
   } catch (error) {
-    console.error("Error criar linha:", error);
+    console.error("Error na requisição:", error);
     throw error;
   }
 };
 
-export const updateMaterial = async (
+export const updateEquipRecipeCompRecipe = async (
   equipment_recipe_id,
   component_recipe_id,
   quantity_plan
 ) => {
   try {
     const response = await axios.put(
-      `${API_URL}/${equipment_recipe_id}/:${component_recipe_id}`,
+      `${API_URL}/${equipment_recipe_id}/${component_recipe_id}`,
       {
         quantity_plan,
       }
@@ -45,12 +60,12 @@ export const updateMaterial = async (
 
     return response.data;
   } catch (error) {
-    console.error("Error criar Material:", error);
+    console.error("Error na requisição:", error);
     throw error;
   }
 };
 
-export const deleteMaterial = async (
+export const deleteEquipRecipeCompRecipe = async (
   equipment_recipe_id,
   component_recipe_id
 ) => {
@@ -60,7 +75,7 @@ export const deleteMaterial = async (
     );
     return response.data;
   } catch (error) {
-    console.error("Error criar Material:", error);
+    console.error("Error na na requisição:", error);
     throw error;
   }
 };

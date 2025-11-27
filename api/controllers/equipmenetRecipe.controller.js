@@ -26,7 +26,7 @@ export const createEquipmentRecipe = async (req, res) => {
 
 export const deleteEquipmentRecipe = async (req, res) => {
   try {
-    const { id: equipment_recipe_id } = req.params;
+    const { equipment_recipe_id } = req.params;
     const response = await pool.query(
       "DELETE FROM equipment_recipes WHERE equipment_recipe_id = $1 RETURNING *",
       [equipment_recipe_id]
@@ -48,7 +48,7 @@ export const deleteEquipmentRecipe = async (req, res) => {
 
 export const updateEquipmentRecipe = async (req, res) => {
   try {
-    const { id: equipment_recipe_id } = req.params;
+    const { equipment_recipe_id } = req.params;
     const { recipe_name } = req.body;
 
     const response = await pool.query(

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import AlertModal from "../../Ui/AlertModal.jsx";
 import EditMaterialModal from "./EditMaterialModal.jsx";
 import EditComponentRecipeModal from "./EditComponentRecipeModal.jsx";
+import EditEquipmentRecipeModal from "./EditEquipmentRecipeModal.jsx";
 
 import { deleteMaterial } from "@services/MaterialService.js";
 import { deleteComponentRecipe } from "@services/ComponentRecipes.js";
@@ -74,12 +75,11 @@ export default function RecipeTable({ i }) {
 
       case "Equipamento":
         return (
-          // <EditEquipmentModal
-          //   isVisible={true}
-          //   setVisible={() => setEditType(null)}
-          //   equipamento={selectedRow}
-          // />
-          null
+          <EditEquipmentRecipeModal
+            isVisible={true}
+            setVisible={() => setEditType(null)}
+            equipment={selectedRow}
+          />
         );
 
       default:
