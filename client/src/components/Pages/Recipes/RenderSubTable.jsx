@@ -8,6 +8,8 @@ import {
 export default function RenderSubTable({ row, expandedRow, i }) {
   const [materials, setMaterials] = useState([]);
   const [components, setComponents] = useState([]);
+  const [selectedComponent, setSelectedComponent] = useState(null);
+  const [selectedMaterials, setSelectedMaterials] = useState([]); // MATERIAIS DO COMPONENTE VISUALIZADO
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -24,7 +26,9 @@ export default function RenderSubTable({ row, expandedRow, i }) {
 
   if (!expandedRow || expandedRow.ID !== row.ID) return null;
 
-  // ------------ COMPONENTE ------------
+  // --------------------------------------------------------------------
+  // --------------------------   COMPONENTE   ---------------------------
+  // --------------------------------------------------------------------
   if (i.label === "Componente") {
     return (
       <tr>
@@ -40,7 +44,6 @@ export default function RenderSubTable({ row, expandedRow, i }) {
                 </tr>
               </thead>
               <tbody>
-                {/* Row.materials não existe, então não renderiza nada  */}
                 {materials?.map((m, idx) => (
                   <tr key={idx} className="border-b">
                     <td className="px-2 py-1">{m.material_name}</td>
@@ -59,7 +62,9 @@ export default function RenderSubTable({ row, expandedRow, i }) {
     );
   }
 
-  // ------------ EQUIPAMENTO ------------
+  // --------------------------------------------------------------------
+  // -----------------------   EQUIPAMENTO   ----------------------------
+  // --------------------------------------------------------------------
   if (i.label === "Equipamento") {
     return (
       <tr>
@@ -75,9 +80,10 @@ export default function RenderSubTable({ row, expandedRow, i }) {
                   <th className="px-2 py-1">Ações</th>
                 </tr>
               </thead>
+
               <tbody>
-                {components?.map((c, idx) => (
-                  <React.Fragment key={idx}>
+                {components?.map((c) => (
+                  <React.Fragment key={c.component_recipe_id}>
                     <tr className="border-b">
                       <td className="px-2 py-1">{c.component_recipe_name}</td>
                       <td className="px-2 py-1">{c.quantity_component_plan}</td>
@@ -85,15 +91,75 @@ export default function RenderSubTable({ row, expandedRow, i }) {
                       <td className="px-2 py-1">
                         {c.value * c.quantity_component_plan}
                       </td>
+
+                      {/* Botão visualizar */}
                       <td className="px-2 py-1">
                         <button
                           className="bg-gray-200 px-2 py-1 rounded"
-                          onClick={() => {}}
+                          onClick={async () => {
+                            if (selectedComponent === c.component_recipe_id) {
+                              // FECHAR
+                              setSelectedComponent(null);
+                              setSelectedMaterials([]);
+                              return;
+                            }
+
+                            // ABRIR
+                            setSelectedComponent(c.component_recipe_id);
+
+                            const data =
+                              await vwMaterialDetailsComponentsRecipes(
+                                c.component_recipe_id
+                              );
+                            setSelectedMaterials(data);
+                          }}
                         >
                           Visualizar
                         </button>
                       </td>
                     </tr>
+
+                    {/* SUB-TABELA DE MATERIAIS DO COMPONENTE SELECIONADO */}
+                    {selectedComponent === c.component_recipe_id && (
+                      <tr className="bg-white">
+                        <td colSpan="100%">
+                          <div className="p-3 border rounded bg-white mt-2">
+                            <p className="font-semibold mb-2">
+                              Materiais do componente: {c.component_recipe_name}
+                            </p>
+
+                            <table className="w-full text-left border-collapse">
+                              <thead>
+                                <tr className="border-b">
+                                  <th className="px-2 py-1">Material</th>
+                                  <th className="px-2 py-1">Quantidade</th>
+                                  <th className="px-2 py-1">Valor Unitário</th>
+                                  <th className="px-2 py-1">Valor Total</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {selectedMaterials?.map((m, idx) => (
+                                  <tr key={idx} className="border-b">
+                                    <td className="px-2 py-1">
+                                      {m.material_name}
+                                    </td>
+                                    <td className="px-2 py-1">
+                                      {m.quantity_plan}
+                                    </td>
+                                    <td className="px-2 py-1">
+                                      {m.value} R$/{m.uni}
+                                    </td>
+                                    <td className="px-2 py-1">
+                                      {m.value * m.quantity_plan}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
                   </React.Fragment>
                 ))}
               </tbody>

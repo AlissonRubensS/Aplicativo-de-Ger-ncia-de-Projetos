@@ -10,7 +10,7 @@ import {
   createCompRecipeMat,
   readCompRecipeMatByComp,
   updateCompRecipeMat,
-  deleteMaterial,
+  deleteCompRecipeMat,   // <-- RENOMEADO
 } from "@services/ComponentRecipeMaterials.js";
 
 export default function EditComponentRecipeModal({
@@ -25,106 +25,104 @@ export default function EditComponentRecipeModal({
   const [materialsList, setMaterialsList] = useState([]);
   const [materialsQuantity, setMaterialsQuantity] = useState([]);
 
-  // Valores da relação receita do componente -> materiais, sem nenhuma alteração.
   const [materialsQuantityBackUp, setMaterialsQuantityBackUp] = useState([]);
 
+  // ----------------------------------------------------------
+  // CARREGAMENTO INICIAL
+  // ----------------------------------------------------------
   useEffect(() => {
-    // Fazendo requisição dos materiais ao banco de dados
-    const fletchMaterials = async () => {
+    if (!component || !isVisible) return;
+
+    const fetchMaterials = async () => {
       const data = await listMaterials();
-      if (!Array.isArray(data) || data.length <= 0) {
-        console.error("erro no array materiasl");
-        return null;
-      }
-      setMaterials(data);
+      setMaterials(Array.isArray(data) ? data : []);
     };
 
-    // Carregando estados iniciais
-    const loadDataInit = async () => {
+    const loadInit = async () => {
       setComponentRecipeName(component.Componente ?? "");
       setManHours(component["Horas Homem"] ?? "");
 
-      // informação da relacão
       const data = await readCompRecipeMatByComp(component.ID);
-      let IDs = [];
-      let quantity = [];
+      if (!Array.isArray(data)) return;
 
-      if (Array.isArray(data)) {
-        for (let index = 0; index < data.length; index++) {
-          const element = data[index];
-          IDs.push(element.material_id);
-          quantity.push({
-            id: element.material_id,
-            quantity: Number(element.quantity_plan),
-          });
-        }
+      const ids = data.map((m) => m.material_id);
+      const qty = data.map((m) => ({
+        id: m.material_id,
+        quantity: Number(m.quantity_plan),
+      }));
 
-        setMaterialsList(IDs);
-        setMaterialsQuantity(quantity);
-        setMaterialsQuantityBackUp(quantity);
-      }
+      setMaterialsList(ids);
+      setMaterialsQuantity(qty);
+      setMaterialsQuantityBackUp(qty);
     };
 
-    fletchMaterials();
-    loadDataInit();
+    fetchMaterials();
+    loadInit();
+  }, [component, isVisible]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+  // ----------------------------------------------------------
+  // SINCRONIZAÇÃO ENTRE SELECT E QUANTIDADES
+  // ----------------------------------------------------------
   useEffect(() => {
     setMaterialsQuantity((prev) => {
-      const existingIds = new Set(prev.map((item) => item.id));
-      const newItems = materialsList
-        .filter((id) => !existingIds.has(id))
+      const exist = new Set(prev.map((p) => p.id));
+
+      const novos = materialsList
+        .filter((id) => !exist.has(id))
         .map((id) => ({ id, quantity: 1 }));
 
-      return [...prev, ...newItems];
+      return [...prev, ...novos];
     });
   }, [materialsList]);
 
+  // ----------------------------------------------------------
+  // LIMPAR
+  // ----------------------------------------------------------
   const clearStates = () => {
     setComponentRecipeName("");
     setManHours("");
     setMaterialsList([]);
     setMaterialsQuantity([]);
+    setMaterialsQuantityBackUp([]);
     setVisible(false);
   };
 
+  // ----------------------------------------------------------
+  // SALVAR
+  // ----------------------------------------------------------
   const handleSave = async () => {
     try {
       if (
         !componenteRecipeName ||
         !manHours ||
-        !component ||
         materialsList.length <= 0
       ) {
         console.error("Informações inválidas!");
         return;
       }
 
-      // Atualiza nome e horas
+      // Atualiza nome do componente
       await updateComponentRecipe(component.ID, componenteRecipeName, manHours);
 
-      // Criar e atualizar
+      // CREATE / UPDATE
       for (const item of materialsQuantity) {
-        const old = materialsQuantityBackUp.find((b) => b.id === item.id);
+        const old = materialsQuantityBackUp.find((x) => x.id === item.id);
 
-        // Criar
         if (!old) {
+          // CRIAR
           await createCompRecipeMat(component.ID, item.id, item.quantity);
-
-          // Atualizar
         } else if (old.quantity !== item.quantity) {
+          // ATUALIZAR
           await updateCompRecipeMat(component.ID, item.id, item.quantity);
         }
       }
 
-      // Deletar
+      // DELETE
       for (const oldItem of materialsQuantityBackUp) {
-        const stillExists = materialsQuantity.some((c) => c.id === oldItem.id);
+        const exists = materialsQuantity.some((x) => x.id === oldItem.id);
 
-        if (!stillExists) {
-          await deleteMaterial(component.ID, oldItem.id);
+        if (!exists) {
+          await deleteCompRecipeMat(component.ID, oldItem.id);
         }
       }
 
@@ -136,56 +134,53 @@ export default function EditComponentRecipeModal({
 
   if (!isVisible) return null;
 
+  // ----------------------------------------------------------
+  // RENDER
+  // ----------------------------------------------------------
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 w-screen min-h-screen overflow-auto">
       <div className="bg-gray-200 p-6 rounded-lg shadow-lg w-[70vw] max-w-[120vw] h-[70vh] max-h-[90vh] flex flex-col space-y-8 overflow-auto">
         <form
-          className="flex flex-col  space-y-8"
+          className="flex flex-col space-y-8"
           onSubmit={(e) => {
             e.preventDefault();
             handleSave();
           }}
         >
-          {/* Título + botão X */}
-          <div className="flex flex-row items-center justify-between space-x-2">
-            <p className="text-lg font-semibold">
-              Editar Receita do Componente
-            </p>
-
-            <button onClick={() => setVisible(false)} type="button">
+          {/* Título */}
+          <div className="flex flex-row items-center justify-between">
+            <p className="text-lg font-semibold">Editar Receita do Componente</p>
+            <button onClick={() => clearStates()} type="button">
               <IoMdClose className="text-gray-600 hover:text-gray-700 hover:bg-gray-300 rounded" />
             </button>
           </div>
 
+          {/* NOME + HORAS */}
           <div className="flex flex-row w-full justify-between gap-6">
-            {/* Nome do componente */}
             <div className="flex flex-col space-y-2 w-full">
-              <label className="text-gray-700">Nome *</label>
+              <label>Nome *</label>
               <input
                 type="text"
                 className="p-2 rounded"
-                placeholder="Digite o nome do material"
                 value={componenteRecipeName}
                 onChange={(e) => setComponentRecipeName(e.target.value)}
-                required
               />
             </div>
 
-            {/* Horas Homem */}
             <div className="flex flex-col space-y-2 w-full">
-              <label className="text-gray-700">Horas Homem *</label>
+              <label>Horas Homem *</label>
               <input
                 type="number"
                 className="p-2 rounded"
-                placeholder="Digite o Tempo que o componente deve ser feito em Horas Homem"
                 value={manHours}
                 onChange={(e) => setManHours(e.target.value)}
-                required
               />
             </div>
           </div>
+
+          {/* SELECT DE MATERIAIS */}
           <div>
-            <label className="text-gray-700">Materiais *</label>
+            <label>Materiais *</label>
             <SelectMenu
               options={materials.map((m) => ({
                 id: m.material_id,
@@ -196,136 +191,93 @@ export default function EditComponentRecipeModal({
             />
           </div>
 
-          {/* Lista de Materiais a serem usadas no componente */}
-          <div className="flex flex-col justify-center intems-center bg-white p-2 rounded w-full">
-            <table className="space-y-2 w-full">
+          {/* TABELA DE MATERIAIS */}
+          <div className="flex flex-col bg-white p-2 rounded w-full">
+            <table className="w-full">
               <thead>
                 <tr className="grid grid-cols-6 gap-6">
-                  <th className="font-normal ">Material</th>
-                  <th className="font-normal ">Descrição</th>
-                  <th className="font-normal ">Valor Unitário</th>
-                  <th className="font-normal ">Quantidade</th>
-                  <th className="font-normal ">Valor Total</th>
-                  <th className="font-normal">Ação</th>
+                  <th>Material</th>
+                  <th>Descrição</th>
+                  <th>Valor Unitário</th>
+                  <th>Qtd</th>
+                  <th>Valor Total</th>
+                  <th>Ação</th>
                 </tr>
               </thead>
 
-              <tbody className="text-sm font-serif text-center">
-                {materialsList.map((id) => (
-                  <tr key={id} className="grid grid-cols-6 gap-6">
-                    {/* Material */}
-                    <td>
-                      {Array.isArray(materialsList) && materialsList.length > 0
-                        ? (() => {
-                            const found = materials.find(
-                              (m) => m.material_id === id
-                            );
-                            return found ? found.material_name ?? "-" : "-";
-                          })()
-                        : "-"}
-                    </td>
+              <tbody>
+                {materialsList.map((id) => {
+                  const mat = materials.find((m) => m.material_id === id);
+                  const objQty = materialsQuantity.find((m) => m.id === id);
 
-                    {/* Descrição: mostra label do material selecionado */}
-                    <td>
-                      {Array.isArray(materialsList) && materialsList.length > 0
-                        ? (() => {
-                            const found = materials.find(
-                              (m) => m.material_id === id
-                            );
-                            return found ? found.material_desc ?? "-" : "-";
-                          })()
-                        : "-"}
-                    </td>
-
-                    {/* Valor unitário */}
-                    <td>
-                      {Array.isArray(materialsList) && materialsList.length > 0
-                        ? (() => {
-                            const found = materials.find(
-                              (m) => m.material_id === id
-                            );
-                            return found
-                              ? Number(found.value).toLocaleString("pt-BR", {
-                                  style: "currency",
-                                  currency: "BRL",
-                                })
-                              : "R$ 0.00";
-                          })()
-                        : "0.00"}
-                    </td>
-
-                    {/* Quantidade */}
-                    <td>
-                      <input
-                        type="number"
-                        className="border p-1 w-20"
-                        value={
-                          materialsQuantity.find((m) => m.id === id)
-                            ?.quantity || ""
-                        }
-                        onChange={(e) => {
-                          const newValue = Number(e.target.value);
-                          setMaterialsQuantity((prev) =>
-                            prev.map((m) =>
-                              m.id === id ? { ...m, quantity: newValue } : m
-                            )
-                          );
-                        }}
-                      />
-                    </td>
-
-                    {/* Valor total */}
-                    <td>
-                      {(() => {
-                        const qtd =
-                          materialsQuantity.find((q) => q.id === id)
-                            ?.quantity || 0;
-                        const unit = (() => {
-                          if (
-                            Array.isArray(materialsList) &&
-                            materialsList.length > 0
-                          ) {
-                            const found = materials.find(
-                              (m) => m.material_id === id
-                            );
-                            return found ? Number(found.value) : 0;
-                          }
-                          return 0;
-                        })();
-                        return (qtd * unit).toLocaleString("pt-BR", {
+                  return (
+                    <tr key={id} className="grid grid-cols-6 gap-6">
+                      <td>{mat?.material_name ?? "-"}</td>
+                      <td>{mat?.material_desc ?? "-"}</td>
+                      <td>
+                        {Number(mat?.value || 0).toLocaleString("pt-BR", {
                           style: "currency",
                           currency: "BRL",
-                        });
-                      })()}
-                    </td>
-                    <td>
-                      <button
-                        className="bnt font-normal font-sans"
-                        type="button"
-                        onClick={() => {
-                          setMaterialsList(
-                            materialsList.filter((i) => i != id)
-                          );
-                        }}
-                      >
-                        Excluir
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                        })}
+                      </td>
+
+                      <td>
+                        <input
+                          type="number"
+                          className="border p-1 w-20"
+                          value={objQty?.quantity || 1}
+                          onChange={(e) => {
+                            const newValue = Number(e.target.value);
+                            setMaterialsQuantity((prev) =>
+                              prev.map((m) =>
+                                m.id === id ? { ...m, quantity: newValue } : m
+                              )
+                            );
+                          }}
+                        />
+                      </td>
+
+                      <td>
+                        {(objQty?.quantity * (mat?.value || 0)).toLocaleString(
+                          "pt-BR",
+                          { style: "currency", currency: "BRL" }
+                        )}
+                      </td>
+
+                      <td>
+                        <button
+                          type="button"
+                          className="bnt"
+                          onClick={() => {
+                            setMaterialsList((list) =>
+                              list.filter((x) => x !== id)
+                            );
+
+                            setMaterialsQuantity((prev) =>
+                              prev.filter((x) => x.id !== id)
+                            );
+                          }}
+                        >
+                          Excluir
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
 
-          {/* Botões */}
-          <div className="flex flex-row justify-end items-center space-x-4">
+          {/* BOTÕES */}
+          <div className="flex flex-row justify-end space-x-4">
             <button
               className="p-2 bg-slate-50 hover:bg-gray-300 rounded"
-              onClick={() => clearStates()}
               type="button"
+              onClick={() => clearStates()}
             >
               Cancelar
             </button>
+
             <button className="bnt-add" type="submit">
               Salvar Receita
             </button>

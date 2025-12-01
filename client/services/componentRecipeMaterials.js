@@ -64,7 +64,7 @@ export const updateCompRecipeMat = async (
   }
 };
 
-export const deleteMaterial = async (component_recipe_id, material_id) => {
+export const deleteCompRecipeMat = async (component_recipe_id, material_id) => {
   try {
     const response = await axios.delete(
       `${API_URL}/${component_recipe_id}/${material_id}`
