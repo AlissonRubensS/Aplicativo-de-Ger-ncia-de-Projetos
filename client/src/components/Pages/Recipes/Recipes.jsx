@@ -22,6 +22,30 @@ function Recipes() {
   const [componentsList, setComponentsList] = useState([]);
   const [equipmentsList, setEquipmentsList] = useState([]);
 
+  // 🔍 Novos estados de busca
+  const [searchMaterial, setSearchMaterial] = useState("");
+  const [searchComponent, setSearchComponent] = useState("");
+  const [searchEquipment, setSearchEquipment] = useState("");
+
+  // Listas filtradas
+  const filteredMaterials = materialsList.filter((item) =>
+    Object.values(item).some((v) =>
+      String(v).toLowerCase().includes(searchMaterial.toLowerCase())
+    )
+  );
+
+  const filteredComponents = componentsList.filter((item) =>
+    Object.values(item).some((v) =>
+      String(v).toLowerCase().includes(searchComponent.toLowerCase())
+    )
+  );
+
+  const filteredEquipments = equipmentsList.filter((item) =>
+    Object.values(item).some((v) =>
+      String(v).toLowerCase().includes(searchEquipment.toLowerCase())
+    )
+  );
+
   useEffect(() => {
     const fletchMaterials = async () => {
       const data = await listMaterials();
@@ -35,6 +59,7 @@ function Recipes() {
 
       setMaterialsList(formatted_data);
     };
+
     const fletchComponentRecipeMaterial = async () => {
       const data = await vwComponentRecipeMaterials();
 
@@ -78,24 +103,28 @@ function Recipes() {
   return (
     <div className="w-full flex flex-col gap-4 text-xs mb-16 overflow-x-hidden overflow-y-auto">
       <NavBar select_index={5} />
+
       {[
         {
           label: "Material",
-          list: materialsList,
+          list: filteredMaterials,
           isExpand: materialsExpanded,
           setExpand: setMaterialsExpanded,
+          setSearch: setSearchMaterial,
         },
         {
           label: "Componente",
-          list: componentsList,
+          list: filteredComponents,
           isExpand: componentsExpanded,
           setExpand: setcomponetsExpanded,
+          setSearch: setSearchComponent,
         },
         {
           label: "Equipamento",
-          list: equipmentsList,
+          list: filteredEquipments,
           isExpand: equipmentsExpanded,
           setExpand: setEquipmentsExpanded,
+          setSearch: setSearchEquipment,
         },
       ].map((i, key) => (
         <div className="justify-between self-center w-4/5 " key={key}>

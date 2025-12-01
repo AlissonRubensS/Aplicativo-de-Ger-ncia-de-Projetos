@@ -12,6 +12,13 @@ export default function RecipeHeader({ i }) {
     Equipamento: false,
   });
 
+  const [searchText, setSearchText] = useState("");
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    i.setSearch(searchText); // <-- Envia busca para o Recipes.jsx
+  };
+
   return (
     <React.Fragment key={i.label}>
       <AddMaterialModal
@@ -43,18 +50,24 @@ export default function RecipeHeader({ i }) {
           }))
         }
       />
+
       <div className="card justify-between items-center overflow-auto">
         <h1 className="text-base">{i.label}</h1>
+
         <div className="flex flex-row space-x-4">
-          <form className="flex flex-row space-x-4">
+          <form className="flex flex-row space-x-4" onSubmit={handleSearch}>
             <input
               type="text"
-              className="border hover:border-gray-300  rounded-md py-1 px-2 outline-none"
+              className="border hover:border-gray-300 rounded-md py-1 px-2 outline-none"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              placeholder={`Buscar ${i.label}...`}
             />
             <button className="bg-gray-100 p-2 rounded hover:bg-gray-200">
               Pesquisar
             </button>
           </form>
+
           <button
             className="bg-gray-100 p-2 rounded hover:bg-gray-200 w-36"
             onClick={() =>
@@ -66,11 +79,12 @@ export default function RecipeHeader({ i }) {
           >
             Adicionar {i.label}
           </button>
+
           <button
             className="bg-gray-100 p-2 rounded hover:bg-gray-200"
             onClick={() => i.setExpand(!i.isExpand)}
           >
-            {i.isExpand === true ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}
+            {i.isExpand ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}
           </button>
         </div>
       </div>
