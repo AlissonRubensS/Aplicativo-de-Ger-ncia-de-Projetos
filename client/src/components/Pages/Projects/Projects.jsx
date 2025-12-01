@@ -20,7 +20,7 @@ function Projects() {
     }
     fetchProjects();
   }, []);
-
+  
   return (
     <>
       <div className="flex flex-col w-screen overflow-y-auto">

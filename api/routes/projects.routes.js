@@ -9,7 +9,7 @@ import {
 const router = Router();
 
 router.post("/", createProject);
-router.get("/", listProject);
+router.get("/:user_id", listProject);
 router.put("/", editProject);
 router.delete("/", deleteProject);
 

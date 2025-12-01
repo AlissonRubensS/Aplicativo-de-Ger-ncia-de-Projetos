@@ -1,5 +1,4 @@
 import axios from "axios";
-import Budget from "@models/Budget";
 const API_URL = "http://localhost:3001/budgets";
 
 export async function createBudget(
@@ -24,18 +23,8 @@ export async function createBudget(
 
 export async function listBudgets(user_id) {
   try {
-    const response = await axios.get(API_URL, { params: { user_id } });
-    return Array.isArray(response.data)
-      ? response.data.map(
-          (budget) =>
-            new Budget(
-              budget.budget_id,
-              budget.budget_name,
-              budget.budget_local,
-              budget.budget_desc
-            )
-        )
-      : null;
+    const response = await axios.get(`${API_URL}/${user_id}`);
+    return Array.isArray(response.data) ? response.data : null;
   } catch (error) {
     console.error("Error ao listar orçamentos", error);
     throw error;

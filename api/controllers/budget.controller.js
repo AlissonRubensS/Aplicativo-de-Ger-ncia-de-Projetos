@@ -29,13 +29,20 @@ export const createBudget = async (req, res) => {
 
 export const listBudget = async (req, res) => {
   try {
-    const { user_id } = req.query;
+    const { user_id } = req.params;
+
+    if (isNaN(Number(user_id))) {
+      return res.status(400).json({ error: "Invalid user_id" });
+    }
+
     const response = await pool.query(
       `SELECT b.*
-        FROM BUDGETS b
-        JOIN BUDGETS_USERS bu ON b.budget_id = bu.budget_id
-        WHERE bu.user_id = ${user_id};`
+       FROM budgets b
+       JOIN budgets_users bu ON b.budget_id = bu.budget_id
+       WHERE bu.user_id = $1`,
+      [user_id]
     );
+
     res.json(response.rows);
   } catch (error) {
     console.error("Erro ao listar orçamentos", error);

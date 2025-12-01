@@ -15,9 +15,7 @@ function Budgets() {
   useEffect(() => {
     async function fetchBudgets() {
       const data = await listBudgets(1); //valor temporário
-      if (data) {
-        setBudgets(data);
-      }
+      if (data) setBudgets(data);
     }
     fetchBudgets();
   }, []);
@@ -25,7 +23,7 @@ function Budgets() {
   return (
     <>
       <div className="flex flex-col w-full h-screen overflow-y-auto">
-        <NavBar />
+        <NavBar select_index={1} />
 
         <div className="flex flex-row justify-between items-center bg-white px-4 py-2 ml-4 mt-4 mr-4 rounded shadow">
           <h1>Orçamento</h1>
@@ -40,7 +38,11 @@ function Budgets() {
         <div className="flex flex-row">
           <div className="flex flex-col p-4 h-screen space-y-4">
             <BudgetsList
-              budgets={budgets}
+              budgets={budgets.map((b) => ({
+                id: b.budget_id,
+                name: b.budget_name,
+                status: b.status,
+              }))}
               setOpen={setAddBudgetModalOpen}
               currentBudget={selectedBudget}
               setCurrentBudget={setSelectedBudget}
