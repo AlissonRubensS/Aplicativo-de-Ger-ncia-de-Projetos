@@ -64,3 +64,43 @@ export const vwEquipmentRecipesMaterialSummary = async (req, res) => {
     });
   }
 };
+
+export const vwMaterialDetailsComponentsRecipes = async (req, res) => {
+  try {
+    const { component_recipe_id } = req.params;
+
+    if (!component_recipe_id) {
+      return res.status(400).json({ error: "Faltando dados" });
+    }
+
+    const response = await pool.query(
+      "SELECT * FROM Vw_Material_Details_Components_Recipes WHERE component_recipe_id = $1",
+      [component_recipe_id]
+    );
+
+    return res.status(200).json(response.rows);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Erro interno no servidor" });
+  }
+};
+
+export const vwMaterialDetailsEquipmentsRecipes = async (req, res) => {
+  try {
+    const { equipment_recipe_id } = req.params;
+
+    if (!equipment_recipe_id) {
+      return res.status(400).json({ error: "Faltando dados" });
+    }
+
+    const response = await pool.query(
+      "SELECT * FROM Vw_Material_Details_Equipment_Recipes WHERE equipment_recipe_id = $1",
+      [equipment_recipe_id]
+    );
+
+    return res.status(200).json(response.rows);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Erro interno no servidor" });
+  }
+};

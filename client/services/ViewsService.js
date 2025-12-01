@@ -31,7 +31,9 @@ export const vwProjectDepartmentDelays = async () => {
 
 export const vwEquipmentRecipesMaterialSummary = async () => {
   try {
-    const response = await axios.get(API_URL + "/equipment-recipes-materials-summary");
+    const response = await axios.get(
+      API_URL + "/equipment-recipes-materials-summary"
+    );
     return response.data && Array.isArray(response.data) ? response.data : [];
   } catch (error) {
     console.error(
@@ -52,5 +54,41 @@ export const vwComponentRecipeMaterials = async () => {
       error
     );
     return [];
+  }
+};
+
+export const vwMaterialDetailsComponentsRecipes = async (
+  component_recipe_id
+) => {
+  try {
+    if (!component_recipe_id) {
+      console.error("Faltando dados");
+      return null;
+    }
+    const response = await axios.get(
+      `${API_URL}/material-details-componentes-recipes/${component_recipe_id}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Erro no front, ", error);
+    return null;
+  }
+};
+
+export const vwMaterialDetailsEquipmentRecipes = async (
+  equipment_recipe_id
+) => {
+  try {
+    if (!equipment_recipe_id) {
+      console.error("Faltando dados");
+      return null;
+    }
+    const response = await axios.get(
+      `${API_URL}/material-details-equipment-recipes/${equipment_recipe_id}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Erro no front, ", error);
+    return null;
   }
 };

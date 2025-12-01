@@ -71,7 +71,7 @@ export const deleteEquipRecipeCompRecipe = async (
 ) => {
   try {
     const response = await axios.delete(
-      `${API_URL}/${equipment_recipe_id}/:${component_recipe_id}`
+      `${API_URL}/${equipment_recipe_id}/${component_recipe_id}`
     );
     return response.data;
   } catch (error) {

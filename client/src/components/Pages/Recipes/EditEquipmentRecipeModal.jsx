@@ -68,15 +68,12 @@ export default function EditEquipmentRecipeModal({
   }, []);
 
   useEffect(() => {
-    setComponentsRecipeQuantity((prev) => {
-      const existingIds = new Set(prev.map((item) => item.id));
-
-      const newItems = componentsRecipeList
-        .filter((id) => !existingIds.has(id))
-        .map((id) => ({ id, quantity: 1 }));
-
-      return [...prev, ...newItems];
-    });
+    setComponentsRecipeQuantity(
+      componentsRecipeList.map((id) => {
+        const existing = componentsRecipeQuantity.find((q) => q.id === id);
+        return existing || { id, quantity: 1 };
+      })
+    );
   }, [componentsRecipeList]);
 
   const clearStates = () => {
@@ -97,10 +94,17 @@ export default function EditEquipmentRecipeModal({
         return;
       }
 
+      // Atualiza nome do equipamento
       await updateEquipmentRecipe(equipment.ID, equipmentRecipeName);
 
-      // Criar e atualizar
-      for (const item of componentsRecipeQuantity) {
+      // Normaliza quantities (garante número)
+      const quantities = componentsRecipeQuantity.map((q) => ({
+        id: q.id,
+        quantity: Number(q.quantity),
+      }));
+
+      // ---- CRIAR / ATUALIZAR ----
+      for (const item of quantities) {
         const old = quantityBackUp.find((b) => b.id === item.id);
 
         // Criar
@@ -110,9 +114,10 @@ export default function EditEquipmentRecipeModal({
             item.id,
             item.quantity
           );
+        }
 
-          // Atualizar
-        } else if (old.quantity !== item.quantity) {
+        // Atualizar
+        else if (old.quantity !== item.quantity) {
           await updateEquipRecipeCompRecipe(
             equipment.ID,
             item.id,
@@ -121,11 +126,9 @@ export default function EditEquipmentRecipeModal({
         }
       }
 
-      // Deletar
+      // ---- DELETAR ----
       for (const oldItem of quantityBackUp) {
-        const stillExists = componentsRecipeQuantity.some(
-          (e) => e.id === oldItem.id
-        );
+        const stillExists = quantities.some((e) => e.id === oldItem.id);
 
         if (!stillExists) {
           await deleteEquipRecipeCompRecipe(equipment.ID, oldItem.id);
@@ -266,7 +269,9 @@ export default function EditEquipmentRecipeModal({
                           const newValue = e.target.value;
                           setComponentsRecipeQuantity((prev) =>
                             prev.map((m) =>
-                              m.id === id ? { ...m, quantity: newValue } : m
+                              m.id === id
+                                ? { ...m, quantity: Number(newValue) }
+                                : m
                             )
                           );
                         }}
