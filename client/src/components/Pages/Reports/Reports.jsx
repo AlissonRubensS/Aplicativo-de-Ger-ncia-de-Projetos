@@ -142,12 +142,12 @@ export default function Reports() {
         {/* Título da Página */}
         <div className="flex flex-row bg-white py-1 px-2 items-center justify-between shadow-lg mx-4 rounded">
           <h2 className="font-bold text-lg">Dashboard</h2>
-          <div className="flex flex-row space-x-2 text-sm">
+          <div className="flex flex-row space-x-2 ">
             <div>
               <p className="text-xs">Projetos</p>
               {/* <SelectProjects/> */}
               <SelectMenu
-                className="text-sm h-6"
+                className=" h-6"
                 maxSelections={1}
                 options={projects.map((proj) => {
                   return { id: proj.project_id, label: proj.project_name };
@@ -159,7 +159,7 @@ export default function Reports() {
             <div>
               <p className="text-xs">Equipamento</p>
               <SelectMenu
-                className="text-sm h-6"
+                className=" h-6"
                 options={equipments.map((equip) => {
                   return {
                     id: equip.equipment_id,
@@ -232,13 +232,13 @@ export default function Reports() {
           </div>
 
           {/* Outros cards */}
-          <div className="bg-white py-1 px-2 rounded shadow-lg col-span-4 text-sm h-96">
+          <div className="bg-white py-1 px-2 rounded shadow-lg col-span-4  h-96">
             <TotalConsumptionGraph data={dataProjects} />
           </div>
-          <div className="bg-white py-1 px-2 rounded shadow-lg col-span-4 text-sm h-96">
+          <div className="bg-white py-1 px-2 rounded shadow-lg col-span-4  h-96">
             <h1>Lead Time Meta X Real</h1>
           </div>
-          <div className="bg-white py-1 px-2 rounded shadow-lg col-span-4 text-sm h-96 overflow-y-auto">
+          <div className="bg-white py-1 px-2 rounded shadow-lg col-span-4  h-96 overflow-y-auto">
             {/* tabela 2 processos em atraso por setor */}
             <CascadeTableTwoLevel
               title="Processos em Atraso por Departamento"

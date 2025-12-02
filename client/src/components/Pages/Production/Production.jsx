@@ -125,7 +125,7 @@ export default function Production() {
             <FaCalendar className="h-5 w-5" />
             <span>
               <h2 className="text-lg font-semibold">Quadro de Produção</h2>
-              <h3 className="text-sm font-light text-gray-600">
+              <h3 className=" font-light text-gray-600">
                 Semana {weekDays[0].formatted.split(" ")[1]} até{" "}
                 {weekDays[6].formatted.split(" ")[1]}
               </h3>
@@ -230,7 +230,7 @@ export default function Production() {
                         })
                       )}
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className=" text-gray-600">
                       {day.date.toLocaleDateString("pt-BR", {
                         day: "2-digit",
                         month: "2-digit",

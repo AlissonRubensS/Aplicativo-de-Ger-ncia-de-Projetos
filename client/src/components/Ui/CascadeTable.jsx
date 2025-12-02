@@ -109,7 +109,7 @@ function CascadeTable({ title, headers, values, filter }) {
         {filters.length > 1 && (
           <div className="absolute right-2">
             <select
-              className="border-none rounded p-1 text-sm bg-transparent"
+              className="border-none rounded p-1  bg-transparent"
               value={selectedFilterIndex}
               onChange={(e) => setSelectedFilterIndex(Number(e.target.value) || 0)}
             >
@@ -126,7 +126,7 @@ function CascadeTable({ title, headers, values, filter }) {
       {/* 🔹 Tabela */}
       <table className="min-w-full border-collapse text-base">
         <thead>
-          <tr className="bg-sky-200 uppercase font-semibold text-sm">
+          <tr className="bg-sky-200 uppercase font-semibold ">
             {displayedHeaders.map((header, index) => (
               <th key={index} className="p-2 border-b border-sky-300 text-center">
                 {header}
@@ -151,7 +151,7 @@ function CascadeTable({ title, headers, values, filter }) {
               return (
                 <React.Fragment key={project}>
                   {/* Projeto */}
-                  <tr className="bg-sky-100 hover:bg-sky-200 text-sm">
+                  <tr className="bg-sky-100 hover:bg-sky-200 ">
                     <td colSpan={2}>
                       <button
                         onClick={() => toggleGroup(project)}
@@ -185,7 +185,7 @@ function CascadeTable({ title, headers, values, filter }) {
 
                       return (
                         <React.Fragment key={equipKey}>
-                          <tr className="bg-sky-50 hover:bg-sky-100 text-sm">
+                          <tr className="bg-sky-50 hover:bg-sky-100 ">
                             <td colSpan={2}>
                               <button
                                 onClick={() => toggleGroup(equipKey)}
@@ -216,7 +216,7 @@ function CascadeTable({ title, headers, values, filter }) {
 
                               return (
                                 <React.Fragment key={compKey}>
-                                  <tr className="bg-white hover:bg-sky-50 text-sm">
+                                  <tr className="bg-white hover:bg-sky-50 ">
                                     <td colSpan={2} className="p-2 pl-12 font-semibold">
                                       <button
                                         onClick={() => toggleGroup(compKey)}
@@ -244,7 +244,7 @@ function CascadeTable({ title, headers, values, filter }) {
                                     materials.map((m, i) => (
                                       <tr
                                         key={i}
-                                        className="bg-white hover:bg-sky-50 text-sm"
+                                        className="bg-white hover:bg-sky-50 "
                                       >
                                         <td className="p-2 pl-16 border-b border-sky-100">
                                           {m.material}

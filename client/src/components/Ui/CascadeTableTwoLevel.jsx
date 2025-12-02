@@ -43,7 +43,7 @@ function CascadeTableTwoLevel({ title, data }) {
       {/* 🔹 Tabela */}
       <table className="min-w-full border-collapse text-base">
         <thead>
-          <tr className="bg-sky-200 uppercase font-semibold text-sm">
+          <tr className="bg-sky-200 uppercase font-semibold ">
             <th className="p-2 border-b border-sky-300 text-center">
               Departamento / Componente
             </th>
@@ -65,7 +65,7 @@ function CascadeTableTwoLevel({ title, data }) {
               return (
                 <React.Fragment key={department}>
                   {/* 🔹 Departamento */}
-                  <tr className="bg-sky-100 hover:bg-sky-200 text-sm">
+                  <tr className="bg-sky-100 hover:bg-sky-200 ">
                     <td colSpan={2}>
                       <button
                         onClick={() => toggleGroup(department)}
@@ -95,7 +95,7 @@ function CascadeTableTwoLevel({ title, data }) {
                     components.map((item, i) => (
                       <tr
                         key={i}
-                        className="bg-white hover:bg-sky-50 text-sm border-b border-sky-100"
+                        className="bg-white hover:bg-sky-50  border-b border-sky-100"
                       >
                         <td className="p-2 pl-8">{item.component_name}</td>
                         <td className="p-2 text-center">{item.days_late}</td>

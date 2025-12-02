@@ -14,10 +14,8 @@ function SidebarList({
   idPrefix = "sidebar", // para nomes únicos de radios
 }) {
   const [isExtend, setIsExtend] = useState(false);
-  // por padrão não filtramos até o usuário expandir; se quiser filtrar assim que abrir, troque para filterOptions?.[0]?.value
   const [filter, setFilter] = useState(null);
 
-  // normaliza status para comparar de forma case-insensitive
   const matchesFilter = (item) => {
     if (!filter) return true;
     const s = (item?.status ?? "").toString().toLowerCase();
@@ -36,7 +34,7 @@ function SidebarList({
         className="bg-green-300 hover:bg-green-400 py-px px-1 rounded-sm font-semibold"
         onClick={onAdd}
       >
-        <p className="text-sm">{addLabel}</p>
+        <p >{addLabel}</p>
       </button>
 
       {/* Filtro */}
@@ -47,7 +45,7 @@ function SidebarList({
             onClick={() => setIsExtend((v) => !v)}
           >
             <FaFilter size={10} />
-            <p className="font-semibold text-gray-800 text-sm">Filtro</p>
+            <p className="font-semibold text-gray-800 ">Filtro</p>
           </button>
 
           {isExtend && (
@@ -69,7 +67,7 @@ function SidebarList({
                       checked={filter === opt.value}
                       onChange={() => setFilter(opt.value)}
                     />
-                    <span className="text-gray-700 font-medium text-sm">
+                    <span className="text-gray-700 font-medium ">
                       {opt.label}
                     </span>
                   </label>
@@ -84,8 +82,8 @@ function SidebarList({
       <button
         className={
           selectedItem === null
-            ? "text-blue-500 text-sm"
-            : "text-gray-400 hover:text-blue-400 text-sm"
+            ? "text-blue-500 "
+            : "text-gray-400 hover:text-blue-400 "
         }
         onClick={() => onSelectItem(null)}
       >
@@ -95,13 +93,13 @@ function SidebarList({
       {/* Lista */}
       {filteredItems.map((item, idx) =>
         selectedItem?.id === item.id ? (
-          <p key={item.id ?? idx} className="text-blue-500 text-sm">
+          <p key={item.id ?? idx} className="text-blue-500 ">
             {item.name}
           </p>
         ) : (
           <button
             key={item.id ?? idx}
-            className="text-sm text-gray-400 hover:text-blue-400"
+            className=" text-gray-400 hover:text-blue-400"
             onClick={() => onSelectItem(item)}
           >
             {item.name}

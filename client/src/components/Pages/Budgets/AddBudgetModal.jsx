@@ -29,7 +29,7 @@ function AddBudgetModal({ isOpen, setOpen }) {
           >
             <h1 className="text-base font-semibold text-gray-800 align-middle text-center">Adicionar Orçamento</h1>
             <div className="flex flex-col space-y-4 ">
-              <label htmlFor="projectName" className="text-sm font-semibold">
+              <label htmlFor="projectName" className="font-semibold">
                 Nome do Orçamento
               </label>
               <input
@@ -42,7 +42,7 @@ function AddBudgetModal({ isOpen, setOpen }) {
               />
               <label
                 htmlFor="projectLocation"
-                className="text-sm font-semibold"
+                className="font-semibold"
               >
                 Localização do Projeto
               </label>
@@ -54,7 +54,7 @@ function AddBudgetModal({ isOpen, setOpen }) {
                 value={budget_local}
                 onChange={(e) => set_budget_local(e.target.value)}
               />
-              <label htmlFor="description" className="text-sm font-semibold">
+              <label htmlFor="description" className="font-semibold">
                 Descrição do Projeto
               </label>
               <textarea

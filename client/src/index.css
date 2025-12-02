@@ -2,12 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  @apply text-sm;
+}
+
 .card {
   @apply bg-gray-50 mx-8 p-4 shadow-md rounded-md flex flex-wrap space-x-2;
 }
 
 .bnt {
-  @apply bg-gray-300 hover:bg-gray-400 p-1 rounded;
+  @apply bg-gray-300 hover:bg-gray-400 p-2 rounded;
 }
 
 .bnt-add {

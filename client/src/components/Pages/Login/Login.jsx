@@ -48,7 +48,7 @@ function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <a href="#" className="text-sm text-blue-500 hover:underline mb-4">
+          <a href="#" className="text-blue-500 hover:underline mb-4">
             Esqueceu a senha?
           </a>
           <button

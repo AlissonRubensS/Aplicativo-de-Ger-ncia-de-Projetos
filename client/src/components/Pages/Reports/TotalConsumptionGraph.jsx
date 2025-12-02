@@ -102,7 +102,7 @@ const TotalConsumptionGraph = ({ data = [] }) => {
   return (
     <div className="p-3 bg-white rounded-2xl shadow-sm h-full w-full flex flex-col">
       {/* Título e Botões (seção fixa) */}
-      <div className="flex items-center gap-2 mb-3 text-sm font-medium">
+      <div className="flex items-center gap-2 mb-3  font-medium">
         <span>Consumo Total</span>
         <div className="flex gap-1 ml-2 border rounded-lg overflow-hidden">
           <button

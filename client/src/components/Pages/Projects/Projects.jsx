@@ -1,5 +1,5 @@
 import NavBar from "../../Ui/NavBar";
-import ProjectsList from "./ProjectsList";
+import SidebarList from "../../Ui/SlideBarList";
 import AddBudgetModal from "../Budgets/AddBudgetModal";
 
 import { selectedProjectContext } from "@content/SeletedProject.jsx";
@@ -10,7 +10,9 @@ import { useNavigate } from "react-router";
 function Projects() {
   const [projects, setProjects] = useState([]); // inicial vazio
   const [isAddBudgetModalOpen, setAddBudgetModalOpen] = useState(false);
-  const { currentProject } = useContext(selectedProjectContext);
+  const { currentProject, setCurrentProject } = useContext(
+    selectedProjectContext
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,52 +22,75 @@ function Projects() {
     }
     fetchProjects();
   }, []);
-  
+
   return (
     <>
-      <div className="flex flex-col w-screen overflow-y-auto">
-        <NavBar select_index={1} />
+      <div className="flex flex-col w-screen h-screen overflow-y-auto overflow-x-hidden gap-6">
+        <div>
+          <NavBar select_index={1} />
 
-        <div className="flex flex-row justify-between items-center bg-white px-4 py-2 ml-4 mt-4 mr-4 rounded shadow">
-          <h1>Projetos</h1>
-          <button
-            className="px-4 py-1 rounded bg-gray-100 hover:bg-gray-200"
-            onClick={() => navigate("/budgets")}
-          >
-            Ir para Orçamento
-          </button>
+          <div className="flex flex-row p-2 px-8 bg-white justify-between">
+            <h1 className="text-base font-medium">Projetos</h1>
+            <button
+              className="px-4 py-1 rounded bg-gray-100 hover:bg-gray-200"
+              onClick={() => navigate("/budgets")}
+            >
+              Ir para Orçamento
+            </button>
+          </div>
         </div>
 
-        <div className="flex flex-row">
-          <div className="flex flex-col p-4 h-screen space-y-4">
-            <ProjectsList
-              projects={projects.map((project) => ({
+        <div className="grid grid-cols-10 grid-rows-10 min-h-screen p-8 gap-4">
+          {/* Barra Lateral */}
+          <div className="row-span-10">
+            <SidebarList
+              items={projects.map((project) => ({
                 id: project.project_id,
                 name: project.project_name,
                 status: project.status,
               }))}
-              setOpen={setAddBudgetModalOpen}
+              selectedItem={currentProject}
+              onSelectItem={setCurrentProject}
+              onAdd={() => setAddBudgetModalOpen(true)}
+              addLabel="+ Novo Projeto"
+              titleAll="Todos os Projetos"
+              filterOptions={[
+                { value: "Running", label: "Executando" },
+                { value: "Completed", label: "Concluído" },
+              ]}
             />
-
-            <div className="bg-white rounded-sm shadow p-1  ">
-              <button>Concluir Projeto</button>
-            </div>
           </div>
-          <div className="flex flex-col w-full h-full m-4 pb-4 space-y-8">
-            <div className="bg-white rounded shadow-sm p-4">
-              {currentProject ? (
-                <>
-                  <p>ID: {currentProject.id}</p>
-                  <p>Nome: {currentProject.name}</p>
-                  <p>Status: {currentProject.status}</p>
-                </>
-              ) : (
-                <p>Nenhum projeto selecionado</p>
-              )}
-            </div>
 
-            <div className="bg-white rounded shadow-sm p-4 h-full">
-              <h1>aqui vai ter a tabela</h1>
+          {/* Conteúdo Principal */}
+          <header className="col-span-9 row-span-2 card">
+            <div className="text-center text-lg font-semibold">
+              <item>item 1</item>
+              <item>item 2</item>
+              <item>item 3</item>
+            </div>
+          </header>
+
+          <main className="col-span-9 row-span-7 card"></main>
+
+          <div className="col-span-9 row-span-1 flex justify-center">
+            <div className="w-1/4 h-16 card flex items-center justify-around gap-4">
+              <button className="flex items-center gap-2 bnt">
+                <img
+                  src="src/imgs/archive.png"
+                  alt="arquivo"
+                  className="h-5 w-5"
+                />
+                Arquivar Projeto
+              </button>
+
+              <button className="flex items-center gap-2 bnt-add">
+                <img
+                  src="src/imgs/tick-double.png"
+                  alt="Dois conferes"
+                  className="h-5 w-5"
+                />
+                Concluir Projeto
+              </button>
             </div>
           </div>
         </div>

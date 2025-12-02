@@ -206,7 +206,7 @@ export default function EditEquipmentRecipeModal({
                 </tr>
               </thead>
 
-              <tbody className="text-sm font-serif text-center">
+              <tbody className="font-serif text-center">
                 {componentsRecipeList.map((id) => (
                   <tr key={id} className="grid grid-cols-6 gap-6">
                     {/* Material */}

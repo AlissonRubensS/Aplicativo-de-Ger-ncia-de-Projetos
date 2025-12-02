@@ -13,7 +13,7 @@ function AlertModal({
   return (
     isVisible && (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 w-screen min-h-screen overflow-auto">
-        <div className="card flex flex-col space-y-4 text-sm">
+        <div className="card flex flex-col space-y-4 ">
           <div className="flex flex-col gap-1 justify-center">
             <h1 className="text-base font-medium">{title}</h1>
             <p>{body}</p>

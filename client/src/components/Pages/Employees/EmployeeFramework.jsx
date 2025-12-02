@@ -60,7 +60,7 @@ export default function EmployeeFramework(props) {
             </p>
             <div className="flex flex-row items-center space-x-1">
               <FaRegAddressCard />
-              <p className="text-sm">{office}</p>
+              <p>{office}</p>
             </div>
           </div>
           <button
@@ -77,27 +77,25 @@ export default function EmployeeFramework(props) {
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-row items-center space-x-1">
                 <CiBadgeDollar />
-                <p className="text-sm">Salário: R$ {pay}</p>
+                <p>Salário: R$ {pay}</p>
               </div>
               <div className="flex flex-row items-center space-x-1">
                 <CiCalendar />
-                <p className="text-sm">Total de Faltas: {absences || "0"}</p>
+                <p>Total de Faltas: {absences || "0"}</p>
               </div>
               <div className="flex flex-row items-center space-x-1">
                 <BsBarChartLine />
-                <p className="text-sm">
-                  Desempenho: {performance * 100 || "100"}%
-                </p>
+                <p>Desempenho: {performance * 100 || "100"}%</p>
               </div>
               <div className="flex flex-row items-center space-x-1">
                 <IoTimeOutline />
-                <p className="text-sm">Horas Extras: {overtime || "0"}</p>
+                <p>Horas Extras: {overtime || "0"}</p>
               </div>
             </div>
             <div className="flex flex-row space-x-4">
               {/* editar funcionário */}
               <button
-                className="text-sm font-semibold bg-blue-500 text-white hover:bg-blue-600 p-1 rounded w-full"
+                className="font-semibold bg-blue-500 text-white hover:bg-blue-600 p-1 rounded w-full"
                 onClick={() => setIsModalVisible(true)}
               >
                 <FaUserEdit className="inline-block mr-1" />
@@ -106,7 +104,7 @@ export default function EmployeeFramework(props) {
 
               {/* remover funcionário */}
               <button
-                className="text-sm font-semibold bg-red-500 text-white hover:bg-red-600 p-1 rounded w-full"
+                className="font-semibold bg-red-500 text-white hover:bg-red-600 p-1 rounded w-full"
                 onClick={async () => {
                   const confirm = window.confirm(
                     "Tem certeza que quer excluir o funcionário?"
