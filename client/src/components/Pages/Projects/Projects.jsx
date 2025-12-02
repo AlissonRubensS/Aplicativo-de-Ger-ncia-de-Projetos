@@ -26,23 +26,21 @@ function Projects() {
   return (
     <>
       <div className="flex flex-col w-screen h-screen overflow-y-auto overflow-x-hidden gap-6">
-        <div>
-          <NavBar select_index={1} />
+        <NavBar select_index={1} />
 
-          <div className="flex flex-row p-2 px-8 bg-white justify-between">
-            <h1 className="text-base font-medium">Projetos</h1>
-            <button
-              className="px-4 py-1 rounded bg-gray-100 hover:bg-gray-200"
-              onClick={() => navigate("/budgets")}
-            >
-              Ir para Orçamento
-            </button>
-          </div>
+        <div className="card justify-between">
+          <h1 className="text-base font-medium">Projetos</h1>
+          <button
+            className="px-4 py-1 rounded bg-gray-100 hover:bg-gray-200"
+            onClick={() => navigate("/budgets")}
+          >
+            Ir para Orçamento
+          </button>
         </div>
 
-        <div className="grid grid-cols-10 grid-rows-10 min-h-screen p-8 gap-4">
+        <div className="grid grid-cols-10 grid-rows-10 min-h-screen ml-8 gap-4 mb-8">
           {/* Barra Lateral */}
-          <div className="row-span-10">
+          <div className="row-span-10 col-span-1">
             <SidebarList
               items={projects.map((project) => ({
                 id: project.project_id,
@@ -74,13 +72,15 @@ function Projects() {
 
           <div className="col-span-9 row-span-1 flex justify-center">
             <div className="w-1/4 h-16 card flex items-center justify-around gap-4">
-              <button className="flex items-center gap-2 bnt">
+              <button className="flex items-center align-middle gap-2 bnt">
                 <img
                   src="src/imgs/archive.png"
                   alt="arquivo"
                   className="h-5 w-5"
                 />
-                Arquivar Projeto
+                <span className="font-semibold text-base">
+                  Arquivar Projeto
+                </span>
               </button>
 
               <button className="flex items-center gap-2 bnt-add">
@@ -89,7 +89,9 @@ function Projects() {
                   alt="Dois conferes"
                   className="h-5 w-5"
                 />
-                Concluir Projeto
+                <span className="font-semibold text-base">
+                  Concluir Projeto
+                </span>
               </button>
             </div>
           </div>
