@@ -1,4 +1,3 @@
-import { response } from "express";
 import { pool } from "../config/db.js";
 
 export const vwProjectConsumedMaterials = async (req, res) => {
@@ -20,7 +19,7 @@ export const vwProjectConsumedMaterials = async (req, res) => {
   }
 };
 
-export const vwProjectDepartmentDelays = async (req, res) => {
+export const vwEquipmentConsumedMaterials = async (req, res) => {
   try {
     const response = await pool.query(
       "SELECT department_name, component_name, days_late FROM vw_project_department_delays"

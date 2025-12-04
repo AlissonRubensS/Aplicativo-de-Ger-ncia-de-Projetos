@@ -15,6 +15,7 @@ import { VerifyAuth } from "@services/AuthService";
 function Projects() {
   const [projects, setProjects] = useState([]); // inicial vazio
   const [isAddBudgetModalOpen, setAddBudgetModalOpen] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [projectsConsumedMaterials, setProjectsConsumedMaterials] = useState(
     []
   );
@@ -25,29 +26,20 @@ function Projects() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function fetchProjects() {
-      const data = await listProjects(1);
-      if (data) setProjects(data);
-    }
-
-    async function fetchProjectsConsumendMaterials() {
+    async function loadData() {
       const user = await VerifyAuth();
-      const data = await vwProjectConsumedMaterials(user.user_id);
-      setProjectsConsumedMaterials(data);
-    }
 
-    fetchProjectsConsumendMaterials();
-    fetchProjects();
+      const project_data = await listProjects(user.user_id);
+      if (project_data) setProjects(project_data);
+
+      const consumed_data = await vwProjectConsumedMaterials(user.user_id);
+      if (consumed_data) setProjectsConsumedMaterials(consumed_data);
+    }
+    loadData();
   }, []);
 
-  useEffect(
-    () => console.log("Projeto Atual" , currentProject),
-    [currentProject]
-  );
-  useEffect(
-    () => console.log("Detalhes" , projectsConsumedMaterials),
-    [projectsConsumedMaterials]
-  );
+  useEffect(() => console.log("Projetos", projects), [projects]);
+
   return (
     <>
       <div className="flex flex-col w-screen min-h-screen overflow-x-hidden gap-6">
@@ -85,7 +77,7 @@ function Projects() {
               titleAll="Todos os Projetos"
               filterOptions={[
                 { value: "Running", label: "Executando" },
-                { value: "Completed", label: "Concluído" },
+                { value: "Pending", label: "Pendente" },
               ]}
             />
           </div>
@@ -138,7 +130,7 @@ function Projects() {
               </div>
 
               {/* Tabela */}
-              <ProjectEquipmentsTable project_id={currentProject?.id}/>
+              <ProjectEquipmentsTable project_id={currentProject?.id} />
             </main>
 
             {/* Footer */}
