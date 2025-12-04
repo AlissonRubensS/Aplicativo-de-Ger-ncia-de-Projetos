@@ -1,18 +1,27 @@
 import NavBar from "../../Ui/NavBar";
 import SidebarList from "../../Ui/SlideBarList";
 import AddBudgetModal from "../Budgets/AddBudgetModal";
+import ProjectEquipmentsTable from "./ProjectEquipmentsTable";
+import { FaSearch } from "react-icons/fa";
 
 import { selectedProjectContext } from "@content/SeletedProject.jsx";
-import { listProjects } from "@services/ProjectService";
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router";
+
+import { listProjects } from "@services/ProjectService";
+import { vwProjectConsumedMaterials } from "@services/ViewsService";
+import { VerifyAuth } from "@services/AuthService";
 
 function Projects() {
   const [projects, setProjects] = useState([]); // inicial vazio
   const [isAddBudgetModalOpen, setAddBudgetModalOpen] = useState(false);
+  const [projectsConsumedMaterials, setProjectsConsumedMaterials] = useState(
+    []
+  );
   const { currentProject, setCurrentProject } = useContext(
     selectedProjectContext
   );
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,14 +29,31 @@ function Projects() {
       const data = await listProjects(1);
       if (data) setProjects(data);
     }
+
+    async function fetchProjectsConsumendMaterials() {
+      const user = await VerifyAuth();
+      const data = await vwProjectConsumedMaterials(user.user_id);
+      setProjectsConsumedMaterials(data);
+    }
+
+    fetchProjectsConsumendMaterials();
     fetchProjects();
   }, []);
 
+  useEffect(
+    () => console.log("Projeto Atual" , currentProject),
+    [currentProject]
+  );
+  useEffect(
+    () => console.log("Detalhes" , projectsConsumedMaterials),
+    [projectsConsumedMaterials]
+  );
   return (
     <>
-      <div className="flex flex-col w-screen h-screen overflow-y-auto overflow-x-hidden gap-6">
+      <div className="flex flex-col w-screen min-h-screen overflow-x-hidden gap-6">
         <NavBar select_index={1} />
 
+        {/* Header Principal */}
         <div className="card justify-between">
           <h1 className="text-base font-medium">Projetos</h1>
           <button
@@ -38,14 +64,19 @@ function Projects() {
           </button>
         </div>
 
-        <div className="grid grid-cols-10 grid-rows-10 min-h-screen ml-8 gap-4 mb-8">
-          {/* Barra Lateral */}
-          <div className="row-span-10 col-span-1">
+        {/* Layout Principal */}
+        <div className="flex flex-1 ml-8 gap-4 mb-8">
+          {/* Sidebar */}
+          <div className="w-1/12 min-w-[150px]">
             <SidebarList
               items={projects.map((project) => ({
                 id: project.project_id,
                 name: project.project_name,
+                desc: project.project_desc,
                 status: project.status,
+                start_date: project.start_date,
+                completion_date: project.completion_date,
+                deadline: project.deadline,
               }))}
               selectedItem={currentProject}
               onSelectItem={setCurrentProject}
@@ -60,39 +91,73 @@ function Projects() {
           </div>
 
           {/* Conteúdo Principal */}
-          <header className="col-span-9 row-span-2 card">
-            <div className="text-center text-lg font-semibold">
-              <item>item 1</item>
-              <item>item 2</item>
-              <item>item 3</item>
-            </div>
-          </header>
+          <div className="flex flex-col flex-1 gap-4">
+            {/* Header do Projeto */}
+            <header className="card p-4">
+              <div className="flex gap-8 w-full">
+                <h1 className="text-xl font-bold">
+                  {currentProject?.name || "Gastos Totais"}
+                </h1>
+                <p className="text-xl font-bold text-blue-500">
+                  R$ 1.000.000,00
+                </p>
+              </div>
 
-          <main className="col-span-9 row-span-7 card"></main>
+              <div className="flex gap-8 mt-2">
+                <p>Resina: 250 Kg</p>
+                <p>Roving: 300 Kg</p>
+                <p>Tecido: 50 Kg</p>
+                <p>CMD Tec: 20 cmd</p>
+                <p>Total de Horas: 250 Horas</p>
+                <p>Total de Homens: 20 F</p>
+                <p>Total Horas-Homem: 12,5 HH</p>
+              </div>
+            </header>
 
-          <div className="col-span-9 row-span-1 flex justify-center">
-            <div className="w-1/4 h-16 card flex items-center justify-around gap-4">
-              <button className="flex items-center align-middle gap-2 bnt">
-                <img
-                  src="src/imgs/archive.png"
-                  alt="arquivo"
-                  className="h-5 w-5"
-                />
-                <span className="font-semibold text-base">
-                  Arquivar Projeto
-                </span>
-              </button>
+            {/* MAIN expansivo */}
+            <main className="card m-0 p-4 gap-4 overflow-y-auto">
+              {/* Barra de Pesquisa */}
+              <div className="flex flex-row justify-between w-full">
+                <form className="flex flex-row justify-between space-x-4 p-2 rounded-xl bg-white-gray h-fit">
+                  <button>
+                    <FaSearch />
+                  </button>
+                  <input
+                    type="text"
+                    placeholder="Pesquisar..."
+                    className="bg-transparent"
+                  />
+                </form>
 
-              <button className="flex items-center gap-2 bnt-add">
-                <img
-                  src="src/imgs/tick-double.png"
-                  alt="Dois conferes"
-                  className="h-5 w-5"
-                />
-                <span className="font-semibold text-base">
-                  Concluir Projeto
-                </span>
-              </button>
+                {/* Botões de ações */}
+                <div className="flex flex-row justify-center gap-4 h-fit">
+                  <button className="bnt-add">+ Novo Equipamento</button>
+                  <button className="bnt">Ir para Cronograma</button>
+                  <button className="bnt">Ir para Acessórios</button>
+                </div>
+              </div>
+
+              {/* Tabela */}
+              <ProjectEquipmentsTable project_id={currentProject?.id}/>
+            </main>
+
+            {/* Footer */}
+            <div className="flex justify-center">
+              <div className="w-1/4 h-fit bg-white flex flex-row rounded shadow p-2 justify-around">
+                <button className="flex items-center gap-2 bnt">
+                  <img src="src/imgs/archive.png" className="h-5 w-5" />
+                  <span className="font-medium text-base">
+                    Arquivar Projeto
+                  </span>
+                </button>
+
+                <button className="flex items-center gap-2 bnt-add">
+                  <img src="src/imgs/tick-double.png" className="h-5 w-5" />
+                  <span className="font-medium text-base">
+                    Concluir Projeto
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

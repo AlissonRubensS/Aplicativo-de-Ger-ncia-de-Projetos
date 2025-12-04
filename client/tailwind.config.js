@@ -7,6 +7,7 @@ export default {
         "light-blue": "#DBEBFF",
         "white-gray": "#F3F4F7",
         "spring-green": "#5EED9A",
+        "white-blue" : "#FDFDFE",
       },
     },
   },

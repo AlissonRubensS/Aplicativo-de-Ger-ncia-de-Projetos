@@ -86,7 +86,8 @@ export const listProject = async (req, res) => {
       `SELECT p.*
        FROM projects p
        INNER JOIN projects_users pu ON p.project_id = pu.project_id
-       WHERE pu.user_id = $1`,
+       WHERE pu.user_id = $1
+       ORDER BY project_name`,
       [user_id]
     );
 

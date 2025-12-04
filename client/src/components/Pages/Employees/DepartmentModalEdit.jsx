@@ -75,7 +75,7 @@ function DepartmentModalEdit({ visible, setVisible, department, id }) {
 DepartmentModalEdit.propTypes = {
   visible: PropTypes.bool.isRequired,
   setVisible: PropTypes.func.isRequired,
-  department: PropTypes.object.isRequired, // precisa receber o departamento a ser editado
+  department: PropTypes.string.isRequired, // precisa receber o departamento a ser editado
   id: PropTypes.number.isRequired,
 };
 

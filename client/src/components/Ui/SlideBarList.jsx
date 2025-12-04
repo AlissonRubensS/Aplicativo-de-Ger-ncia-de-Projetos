@@ -24,17 +24,17 @@ function SidebarList({
 
   const filteredItems = useMemo(() => {
     return isExtend ? items.filter(matchesFilter) : items;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items, isExtend, filter]);
 
   return (
-    <div className="flex flex-col bg-white shadow-sm rounded w-40 h-full items-center space-y-2 p-1">
+    <div className="flex flex-col bg-white-blue shadow-sm rounded w-40 h-full items-center space-y-2 p-1">
       {/* Botão de adicionar */}
       <button
         className="bg-green-300 hover:bg-green-400 py-px px-1 rounded-sm font-semibold"
         onClick={onAdd}
       >
-        <p >{addLabel}</p>
+        <p>{addLabel}</p>
       </button>
 
       {/* Filtro */}

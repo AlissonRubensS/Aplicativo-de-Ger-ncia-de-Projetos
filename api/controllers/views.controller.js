@@ -3,7 +3,7 @@ import { pool } from "../config/db.js";
 
 export const vwProjectConsumedMaterials = async (req, res) => {
   try {
-    const user_id = req.query.user_id;
+    const user_id = req.params.user_id;
 
     if (!user_id) {
       res.status(500).json("O usuário está vazio!");

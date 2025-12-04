@@ -69,7 +69,7 @@ export default function RecipeHeader({ i }) {
           </form>
 
           <button
-            className="bg-gray-100 p-2 rounded hover:bg-gray-200 w-36"
+            className="bnt-add w-44"
             onClick={() =>
               setAddModalVisible((prev) => ({
                 ...prev,

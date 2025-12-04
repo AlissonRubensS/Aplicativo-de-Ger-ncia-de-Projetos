@@ -6,16 +6,32 @@
   @apply text-sm;
 }
 
+@layer components {
+  table.project-equipments thead tr th {
+    @apply text-base font-mono font-normal text-center p-2 bg-transparent;
+  }
+
+  table.project-equipments tbody tr th {
+    @apply font-mono font-normal text-center p-1 bg-transparent;
+  }
+
+  table.project-equipments tbody tr td {
+    @apply font-mono font-normal text-center p-1 bg-transparent;
+  }
+}
+
+
+
 .card {
-  @apply bg-gray-50 mx-8 p-4 shadow-md rounded-md flex flex-wrap space-x-2;
+  @apply flex flex-wrap bg-white-blue mx-8 p-4 shadow-md rounded-md space-x-2;
 }
 
 .bnt {
-  @apply bg-gray-300 hover:bg-gray-400 p-2 rounded;
+  @apply bg-white-gray hover:bg-gray-300 p-2 rounded;
 }
 
 .bnt-add {
-  @apply bg-green-600 text-white p-2 rounded hover:bg-green-700;
+  @apply bg-[#5EED9A] p-2 rounded hover:bg-[#4cc27d];
 }
 
 .bnt-blue {
