@@ -1,14 +1,14 @@
 import { Router } from "express";
 import {
-    vwProjectConsumedMaterials,
-    vwEquipmentConsumedMaterials,
-    vwComponentRecipeMaterials
-} from "../controllers/viewsSummary.controller"
+    vwProjectMaterialsSummary,
+    vwEquipmentMaterialsSummary,
+    vwComponentMaterialsSummary
+} from "../controllers/viewsSummary.controller.js"
 
 const router = Router()
 
-router.get("/projects", vwProjectConsumedMaterials)
-router.get("/equipments", vwEquipmentConsumedMaterials)
-router.get("/components", vwComponentRecipeMaterials)
+router.get("/projects", vwProjectMaterialsSummary)
+router.get("/equipments", vwEquipmentMaterialsSummary)
+router.get("/components", vwComponentMaterialsSummary)
 
 export default router;

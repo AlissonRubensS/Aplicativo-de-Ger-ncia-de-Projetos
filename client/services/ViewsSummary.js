@@ -29,7 +29,7 @@ export const vwEquipmentMaterialsSummary = async () => {
   }
 };
 
-export const vwComponentMaterialsSummary = async () => {
+export const vwComponentRecipeMaterials = async () => {
   try {
     const response = await axios.get(
       API_URL + "/components"
