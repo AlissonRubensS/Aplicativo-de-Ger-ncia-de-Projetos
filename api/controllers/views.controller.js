@@ -103,3 +103,59 @@ export const vwMaterialDetailsEquipmentsRecipes = async (req, res) => {
     return res.status(500).json({ error: "Erro interno no servidor" });
   }
 };
+
+export const getTimesCascade = async (req, res) => {
+  try {
+    // Consultas às três views
+    const projectQuery = await pool.query(`SELECT * FROM vw_project_times;`);
+    const equipmentQuery = await pool.query(`SELECT * FROM vw_equipment_times;`);
+    const componentQuery = await pool.query(`SELECT * FROM vw_component_hours;`);
+
+    // Transformar em objeto cascata
+    const result = {
+      projects: {},
+      equipments: {},
+      components: {}
+    };
+
+    // ----- PROJECTS -----
+    projectQuery.rows.forEach(row => {
+      result.projects[row.project_id] = {
+        project_id: row.project_id,
+        start_date: row.start_date,
+        end_date: row.end_date,
+        total_hours: Number(row.total_hours),
+        qtd_employees: Number(row.qtd_employees)
+      };
+    });
+
+    // ----- EQUIPMENTS -----
+    equipmentQuery.rows.forEach(row => {
+      result.equipments[row.equipment_id] = {
+        equipment_id: row.equipment_id,
+        start_date: row.start_date,
+        end_date: row.end_date,
+        total_hours: Number(row.total_hours),
+        qtd_employees: Number(row.qtd_employees)
+      };
+    });
+
+    // ----- COMPONENTS -----
+    componentQuery.rows.forEach(row => {
+      result.components[row.component_id] = {
+        component_id: row.component_id,
+        start_date: row.start_date,
+        end_date: row.end_date,
+        total_hours: Number(row.total_hours),
+        qtd_employees: Number(row.qtd_employees)
+      };
+    });
+
+    // Retornar só JSON
+    res.json(result);
+
+  } catch (error) {
+    console.error("Erro ao buscar dados em cascata:", error);
+    res.status(500).json({ error: "Erro ao buscar dados." });
+  }
+};

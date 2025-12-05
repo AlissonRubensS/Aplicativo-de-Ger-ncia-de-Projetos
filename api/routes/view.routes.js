@@ -5,7 +5,8 @@ import {
   vwComponentRecipeMaterials,
   vwEquipmentRecipesMaterialSummary,
   vwMaterialDetailsComponentsRecipes,
-  vwMaterialDetailsEquipmentsRecipes
+  vwMaterialDetailsEquipmentsRecipes,
+  getTimesCascade,
 } from "../controllers/views.controller.js";
 
 const router = Router();
@@ -25,5 +26,7 @@ router.get(
   "/material-details-equipment-recipes/:equipment_recipe_id",
   vwMaterialDetailsEquipmentsRecipes
 );
+
+router.get("/get-times", getTimesCascade)
 
 export default router;

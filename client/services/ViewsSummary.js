@@ -4,7 +4,7 @@ const API_URL = "http://localhost:3001/vwSumary";
 export const vwProjectMaterialsSummary = async (user_id) => {
   try {
     const response = await axios.get(
-      `${API_URL}/project/${user_id}`
+      `${API_URL}/projects/${user_id}`
     );
     return response.data;
   } catch (error) {

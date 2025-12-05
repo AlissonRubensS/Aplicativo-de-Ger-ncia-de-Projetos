@@ -9,7 +9,10 @@ import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router";
 
 import { listProjects } from "@services/ProjectService";
-import { vwProjectConsumedMaterials } from "@services/ViewsService";
+import {
+  vwProjectConsumedMaterials,
+  getTimesCascade,
+} from "@services/ViewsService";
 import { VerifyAuth } from "@services/AuthService";
 
 function Projects() {
@@ -22,6 +25,7 @@ function Projects() {
   const { currentProject, setCurrentProject } = useContext(
     selectedProjectContext
   );
+  const [times, setTimes] = useState({});
 
   const navigate = useNavigate();
 
@@ -34,11 +38,12 @@ function Projects() {
 
       const consumed_data = await vwProjectConsumedMaterials(user.user_id);
       if (consumed_data) setProjectsConsumedMaterials(consumed_data);
+
+      const hours_data = await getTimesCascade();
+      setTimes(hours_data);
     }
     loadData();
   }, []);
-
-  useEffect(() => console.log("Projetos", projects), [projects]);
 
   return (
     <>
@@ -100,9 +105,22 @@ function Projects() {
                 <p>Roving: 300 Kg</p>
                 <p>Tecido: 50 Kg</p>
                 <p>CMD Tec: 20 cmd</p>
-                <p>Total de Horas: 250 Horas</p>
-                <p>Total de Homens: 20 F</p>
-                <p>Total Horas-Homem: 12,5 HH</p>
+                <p>
+                  Total de Horas:{" "}
+                  {times?.projects?.[currentProject?.id]?.total_hours ?? 0}{" "}
+                  Horas
+                </p>
+                <p>
+                  Total de Homens:{" "}
+                  {times?.projects?.[currentProject?.id]?.qtd_employees ?? 0} F
+                </p>
+                <p>
+                  Total Horas-Homem: {" "}
+                  {(times?.projects?.[currentProject?.id]?.qtd_employees ?? 0) *
+                    (times?.projects?.[currentProject?.id]?.total_hours ??
+                      0)}{" "}
+                  F HH
+                </p>
               </div>
             </header>
 
@@ -130,7 +148,10 @@ function Projects() {
               </div>
 
               {/* Tabela */}
-              <ProjectEquipmentsTable project_id={currentProject?.id} />
+              <ProjectEquipmentsTable
+                project_id={currentProject?.id}
+                times={times ?? {}}
+              />
             </main>
 
             {/* Footer */}

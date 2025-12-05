@@ -92,3 +92,13 @@ export const vwMaterialDetailsEquipmentRecipes = async (
     return null;
   }
 };
+
+export const getTimesCascade = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/get-times`);
+    return response.data;
+  } catch (error) {
+    console.error("Erro no front, ", error);
+    return null;
+  }
+};
